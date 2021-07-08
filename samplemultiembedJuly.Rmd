@@ -1,0 +1,466 @@
+---
+title: "3 Multivariate"
+author: "Kim Cuddington"
+date: "05/07/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,kableExtra.auto_format = FALSE)
+
+```
+
+# Introduction to multivariate analysis
+In this module we'll be disccusing multivariate quantitative methods. These methods are used for data where there is more than one response or measurement which we are trying to understand by using more than one feature or characteristic of the system. For example we may wish to understand how both precipitation and soil type are related to plant community composition. In this question, we may be tracking the abundance of over a dozen different species and many different sites with different types of soil, precipitation and other environmental factors. You can easily see that this is not a situation that ordinary univariate approaches are designed to handle!
+
+
+
+<br>
+<br>
+
+
+```{r f1, fig.height=5., fig.width=6., echo=FALSE, fig.cap="Types of multivariate analysis", fig.alt = "A 4 quadrant plane titled Types of mulitvariate analysis.where the vertical axis has lables response variable at the top and latent variable at the bottom. The top left quadrant contans the text Regression in green, the bottom left contains the word Ordination in orange, the top right contains the word Classification in red, and the bottom right contains the word Clustering in blue."}
+
+x =0
+y =0
+plot(x,y, type = "n", xlim = c(-100,100), ylim = c(-100,100), frame.plot = FALSE, xaxt = "n", yaxt= "n", ann = FALSE)
+par(mar = c(5,7,5,4))
+abline(h=0, v=0)
+text(x=-50, y=50, labels = "Regression", col = 'green', cex = 1.3)
+text(x=50, y=50, labels = "Classification", col = 'red', cex = 1.3)
+text(x=-50, y=-50, labels = "Ordination", col = 'orange', cex = 1.3)
+text(x=50, y=-50, labels = "Clustering", col = 'blue', cex = 1.3)
+#title(main = "Types of Multivariate Analysis")
+mtext("Discrete", side = 4, line = 0.3, at=0, las = 1)
+mtext("Latent Variable", side = 1, line = 0.3, at = 0)
+mtext("Continuous", side = 2, line = 0.3, at = 0, las = 1)
+mtext("Response Variable", side = 3, line = 0.3, at = 0)
+```
+<br>
+
+There are many types of maultivariate analysis, and in this module we will only describe some of the most common ones. We can think of these different types of anlaysis as laying at different ends of a spectrum of treating the data as discrete vs continuous, and relying on identfying a reponse variable a priori versus letting the "data tell us" about explanatory features, i.e., latent variables (\@ref(fig:f1).
+
+<br>
+<br>
+
+# Multivariate distance and cluster analysis
+
+## Thinking about resemblence
+
+We are often interested in the question of how similar two things might be and a natural way to quantify similar is to list those characters that are shared. For example, what genetic or morphological features are the sameo or different between two species? A **resemblance measure** quantifies similarity by adding up in some way the similarities and differences between two things. In fact, this type of overall measure of the relationship among objects or attributes is a strating point for most multivariate analyses, and is often the most critical step. We can express the shared characters of objects as either:
+**similarity (S)**, which quantifies the degree of resemblance or **dissimilarity (D)** which quantifies the degree of difference. 
+
+
+
+```{r t1}
+library(knitr)
+my_tbl <- data.frame(Att=c("Attribute 1","Attribute 2", "Attribute 3", "Attribute 4", "Attribute 5", "Attribute 6",  "Attribute 7", "Attribute 8", "Attribute 9","Attribute 10"), Obj1=c(1,0,0,1,1,0,0,0,1,1),
+Obj2=c(0,1,0,1,1,0,1,0,1,0)) 
+my_tbl$sim=c("x","x",rep(("✓"),4), "x", rep(("✓"),2), "x")
+
+knitr::kable(my_tbl, digits = 3, row.names = FALSE, caption = "**Table 3.1** List of shared attributes for two things",col.names = c("Attribute","Object 1","Object 2","Similarity"),  format="html",table.attr = "style='width:50%;'", align="c")
+
+```
+
+<br>
+
+## Binary Similarity metrics
+The simplest similarity metric just tallys the number of shared features. So we just indicate yes or no for each characteristic for each of the two things we wish to compare \@ref(tab:t1).
+<br>
+<br>
+
+
+```{r t2,echo=FALSE}
+library(kableExtra)
+dt<-data.frame(stringsAsFactors=TRUE,
+               c("Object 1", "Object 2"),
+               c("Present", "Absent"),
+               c("a", "c"),
+               c("b", "d"))
+colnames(x = dt) <-c("", "", "Present", "Absent")
+xt=kable(dt, caption= "**Table 3.2** Summary of shared and absent atributes",format="html",table.attr = "style='width:50%;'", align="c")
+xt=kable_styling(xt,bootstrap_options = "bordered",
+                full_width = FALSE, position="l")
+xt=add_header_above(xt,c("", "", "Object 1", "Object 2"),
+                   bold = FALSE) 
+column_spec(xt,column = 1:2, bold = TRUE)
+```
+
+We could also find a shared lack of features and indicator of similarity. The simple matching coefficient uses both shared features, and shared absent features to quantify similarity as $S_m=\frac{a+d}{a+b+c+d}$, where a refers to the number of characteristics that object 1 possesses and b is the number that object 2 possesses and so on (see \@ref(tab:t2)).
+<br>
+<br>
+
+We can further categorize similarity metrics as **symmetric**, where we regard both shared presence and shared absence as evidence of similarity. the simple matching coefficeint would be an example of this, or **asymmetric**, where
+we regard only shared presence as evidence of similarity (that is, we ignore shared absences). Asymmetric measures are most useful in analyzing ecological community data, since it is unlikely to be informative that two temperature zone communities lack tropical data, or that aquantic environments lack terrestrial species.
+
+The Jaccard index is an asymteric binary similarity coefficient calculated as $S_J=\frac{a}{a+b+c}$, while the quite similar Sørenson index is given as $S_S=\frac{2a}{2a+b+c}$, and so gives greater weight to shared similarities.both metrics range from 0 to 1, where a value of 1 indicates complete similarity.
+
+
+
+```{r t3, echo=FALSE}
+#manually enter data
+lkerie=c(rep(1, 19), rep(0,5))
+lkontario=c(rep(1, 18),0,1,rep(0,4))
+sp=1:24
+lksp=data.frame(species=sp, erie=as.factor(lkerie), ontario=as.factor(lkontario))
+lksp$erie=ordered(lksp$erie, c("1", "0"))
+lksp$ontario=ordered(lksp$ontario, c("1", "0"))
+knitr::kable(lksp, caption="**Table 3.3** Species presence and absence in lake Erie and lake Ontario (data from from Watson 1974)",  table.attr = "style='width:50%;'", align="c")
+```
+<br>
+Let's try an example. In the 70s, Watson (1974) compared the zooplankton species present in Lake Erie and Lake Ontario. We can use this information to compare how similar the communities in the two lakes were at this time. We can see that they shared a lot of species \@ref(tab:t3)!
+
+We can calculate the similarity metrics quite easily using the table() function and the dataframe "lksp" where I have stored the data. 
+
+```{r, echo=TRUE, comment=""}
+tlake=table(lksp[,c("erie","ontario")])
+tlake
+
+a=tlake[1,1]
+b=tlake[1,2]
+c=tlake[2,1]
+d=tlake[2,2]
+
+S_j=a/(a+b+c)
+S_j
+S_s=2*a/(2*a+b+c)
+S_s
+
+
+
+```
+
+
+We can also talk about the dissimilarity between things. When a disimilarity or similarity metric has a finite range,  we can simply convert from one to the other. For example, for similarities that range from 1 (identical) to 0 (completely different), dissimilarity would simply be 1-similarity.
+
+
+## Quantitative similarity & dissimilarity metrics
+While binary similarity metrics are easy to understand, there are a few problems. These metrics work best when we have a small number of characteristics and we have sampled very well (e.g., the zooplankton in Lake Erie and Ontario). The metrics are biased against maximum similarity values when we have lots of charactersitics or species and poor sampling. 
+
+In addition, we sometimes have more information than just a "yes" or "no" which we could use to further charactersitize similarity. Quantiative similarity and dissimularity metrics make use of this information. Problems with Binary similarity coefficients. Work best: small number of items, heavy sampling. Some examples of quantitative similarity metrics you will see are: Percentage similarity (Renkonen index), Morisita’s index of similarity (not dispersion) and Horn’s index. 
+
+There are also many quantitive dissimilarity metrics. For example, Bray Curtis dissimilarity is frequently used by ecologists to quantify differences between samples based on abundance or count data. This measure is usually applied to raw abundance data, but can be applied to relative abundances. In this case, we often talk about the "distance" between two things. Distances are of two types, either dissimilarity, converted from analogous similarity indices, or specific distance measures, such as Euclidean distance, which doesn't have a counterpart in any similarity index. There are many, many such metrics, and obviously, you should choose the most accurate and meaningful distance measure for a given  application. Legendre & Legendre (2012) offers a key how to select an appropriate measure for given data and problem (check their Tables 7.4-7.6). If you uncertain then choose several distance measures and compare the results.
+
+### Euclidean Distance
+
+Perhaps the mostly commonly used dissimilarity or distance measure is Euclidian distance. This metric is zero for identical sampling units and has no fixed upper bound. 
+
+```{r f2, echo=FALSE, fig.cap="Euclidean Distance", fig.alt=""}
+x=c(19, 35)
+y=c(30, 10)
+plot(x,y, xlim = c(0,40), ylim = c(0,40), xlab = "Species 1", ylab = "Species 2",frame.plot = FALSE, box(bty="l"), pch = 19, col = "blue", cex = 2, font.lab = 2, cex.main = 2)
+text(x=19, y=35, labels = "Sample j")
+text(x=35, y=5, labels = "Sample k")
+lines(x,y, lwd = 3, col = "blue")
+lines(c(19,19), c(29,10), lty = "dotted", lwd = 2)
+lines(c(19,34), c(10,10), lty = "dotted", lwd = 2)
+```
+
+Eclidean distance in multivariate space is derived from our understanding of distance in a cartesian plane. If we had two species measured in in two different samples, we could then plot the abundance of species 1 and species 2 for each sample, and draw a line between them. This would be our Euclidean distance: the shortest path between the two points \@ref(fig:f2).
+
+We know that to calculate this distance we would just use the Pythagorean theorem as $c=\sqrt{a^2+b^2}$. To generalize to n species we can say
+$D^E_{jk}=\sqrt{\sum^n_{i=1}(X_{ij}-X_{ik})^2}$, where Euclidean distance between samples j and k, $D^E_{jk}$, is calculated by summing over the distance in abundance of each of n species in the two samples.
+
+
+
+```{r t4}
+library(knitr)
+nm=c("Species 1","Species 2", "Species 3", "Species 4", "Species 5", "Species 6",  "Species 7", "Species 8", "Species 9","Species 10")
+eu <- data.frame(Att=nm, j=c(19,35,0,35,10,0,0,0,30,2), k=c(35,10,0,5,50,0,3,0,10,0), stringsAsFactors = FALSE) 
+eu$X2=(eu$j-eu$k)^2
+sj=sum(eu$j)
+sk=sum(eu$k)
+sS=sum(eu$X2)
+eu[11,1]="TOTAL"
+eu[11,2:4]=c( sj,sk, sS)
+
+
+knitr::kable(eu, digits = 3, row.names = FALSE, caption = "Species abundance and distance calculations for two samples",col.names = c("","Sample j","Sample k","$(X_j-X_k)^2$" ),  format="html",table.attr = "style='width:50%;'", align="c")
+
+```
+
+<br>
+Let's try an example. Given the species abundances in \@ref(tab:t4), we can calculate the squared difference in abundance for each species, and sum that quantity. Then all we need is to take the square root to obtain the Euclidean distance. Did you get the correct answer of `r round(sqrt(eu[11,4]),2)`? Of course, R makes this much easier, I can calculate Euclidan distance using the **dist()** function, after creating a matrix of the two columns of species abundance data from my original eu dataframe.
+
+```{r , echo=TRUE, comment=""}
+dist(rbind(eu$j[1:10], eu$k[1:10]), method = "euclidean")
+```
+
+### Comparing more than two communities/samples/sites/genes/species
+
+What about the situation where we want to compare more than two communtiies, species, samples or genes? We can simply generate a dissimilarity or similarity **matrix**, where each pairwise comparison is given. 
+
+In the species composition matrix below \@ref(tab:t5), sample A and B do not share any species, while sample A and C share all species but differ in abundances (e.g. species 3 = 1 in sample A and 8 in sample C). The calculation of Euclidean distance using the **dist()** function produces a lower triangular matrix with the pairwise comparisons (I've included the distance with the sample itself on the diagonal). 
+
+The Euclidan distance values suggest that A and B are the most similar! Euclidean distance puts more weight on differences in species abundances than on difference in species presences. As a result, two samples not sharing any species could appear more similar (with lower Euclidean distance) than two samples which share species that largely differ in their abundances.
+
+There are other disadvantages as well, and in general, there is simply no perfect metric. For example, you may dislike the fact that Euclidean distance also has no upper bound, and so it becomes difficult to understand **how** similar two things are (i.e., the metric can only be understood in a relative way when comparing many things, Sample A is more similar to Sample B than Sample C, for example). You could use a Pearson correlation coefficient instead, since it has an upper bound of 1.0, but this metric is very senstive to outliers, which is also a disadvantage.
+
+
+
+
+```{r t5}
+nm=c("Species 1","Species 2", "Species 3")
+meu <- data.frame(Att=nm, A=c(0,1,1), B=c(1,0,0),C=c(0,4,8), stringsAsFactors = FALSE) 
+
+knitr::kable(meu, digits = 3, row.names = FALSE, caption = "Species abundance versus species presence and Euclidean distance",col.names = c("","Sample A","Sample B","Sample C" ),  format="html",table.attr = "style='width:50%;'", align="c")
+
+```
+<br>
+<br>
+```{r, echo=TRUE, comment=""}
+dist(t(meu[2:4]), method="euclidean", diag=TRUE)
+```
+### R functions 
+
+There are a number of functions in R that can be used to calculate similarity and dissimilarity metrics. Since we are usually NOT just comparing two objects, sites or samples, these functions can help make your calculations much quicker when you are comparing many units.
+
+**dist()** offers a number of distance measures - e.g. euclidean,canberra and manhattan. The result is the distance matrix which gives the dissimilarity of each pair of objects, sites or samples. the matrix is an object of the class dist in R.
+
+**vegdist()** (library vegan) - default distance used in this function is Bray-Curtis distance, which is (in contrast to Euclidean distance) considered as more suitable for ecological data (it is a quantitative analog of Sørensen dissimilarity).
+
+**dsvdis()** (library labdsv) - offers some other indices than vegdist, e.g. ruzicka (Růžička, quantitative analogue of Jaccard) and roberts. 
+
+For full comparison of dist, vegdist and dsvdis,see http://ecology.msu.montana.edu/labdsv/R/labs/lab8/lab8.html.
+
+**dist.ldc()** (library adespatial) - includes 21 dissimilarity indices described in Legendre & De Cáceres (2013), twelve of which are not readily available in other packages. Note that Bray-Curtis dissimilarity is called percentage difference (method = “percentdiff”). By default this function returns an informative message as to whether the given dissimilarity index is Euclidean or not and whether it becomes Euclidean if square-rooted (as is the case of e.g. Bray-Curtis).
+
+**designdist()** (library vegan) - allows one to design virtually any distance measure using the formula for their calculation.
+
+**daisy()** (library cluster) - offers euclidean, manhattan and gower distance.
+
+**distance()** (library ecodist) - contains seven distance measures, but the function is more for demonstration (for larger matrices, the calculation takes rather long).
+
+## Cluster Analysis
+
+When we have a large number of things to compare, and examination of a matrix of similarlity or dissimilatiry metrics can be tedious or even impossible to do. One way to visualize the similarity among units is to use some form of cluster analysis. Clustering is the classification of data objects into discrete similarity groups (clusters) according to a defined distance measure.
+
+So we can constrast clustering, which assumes that units (e.g., sites, communities, species or genes) can be grouped into discrete categories based on similarity, with ordination,  which treats the similarity between units as a continuous gradient (we'll discuss ordination in section XX). We can use clustering to do things like discern whether there are one or two or three different communities in three or four or five sampling units. It is used in many fields, such as machine learning, data mining, pattern recognition, image analysis, genomics, systems biology, etc. Machine learning typically regards data clustering as a form of unsupervised learning. It is “unsupervised” because we are not guided by a priori ideas of which variables or samples belong in which clusters. “Learning” because the machine algorithm “learns” how to cluster.
+
+### Hierarchical clustering: groups are nested within other groups.
+
+Perhaps the most familiar type of clustering is hierarchical. There are two kinds: **divisive** and **agglomerative**. In the divisive method, the entire set of units is dividied into smaller and smaller groups. The agglomerative method starts with small groups of few units, and groups them into larger and larger clusters, until the entire data set is sampled (Pielou, 1984). Of course, once you have more than two units, you need some way to assess similarlity between the clusters. There are a couple of different methods here. Single linkage assigns the similairty between clusters to the most similar units in each cluster. Complete linkage uses the similarity between the most dissmilar units in each cluster, while average linkage aveages over all the units in each cluster (\@ref(fig:f6)). 
+
+
+
+
+```{r f6, fig.cap="Different methods of determining similarity between clusters", fig.alt=""}
+library(plotrix)
+plot(rbind(c(-3,9), c(-2,10), c(-2,7), c(1,9), c(2,10), c(2,7), c(-3,1), c(-2,2), c(-2,-1), c(1,1), c(2,2), c(2,-1), c(-3,-7), c(-2,-6), c(-2,-9), c(1,-7), c(2,-6), c(2,-9)), xlim = c(-8,7), ylim = c(-10, 13), xaxt = "n", yaxt = "n", frame.plot = FALSE, ann = FALSE, pch = 16)
+draw.circle(-2.4,8.5,1.3)
+draw.circle(1.6,8.5,1.3)
+draw.circle(-2.4,0.5,1.3)
+draw.circle(1.6,0.5,1.3)
+draw.circle(-2.4,-7.5,1.3)
+draw.circle(1.6,-7.5,1.3)
+lines(c(-2,1), c(10,9), lwd=1.5)
+lines(c(-3,2), c(1,-1), lwd=1.5)
+lines(c(-3,1), c(-7,-7), lwd=1.5)
+lines(c(-3,2), c(-7,-6), lwd=1.5)
+lines(c(-3,2), c(-7,-9), lwd=1.5)
+lines(c(-2,1), c(-6,-7), lwd=1.5)
+lines(c(-2,2), c(-6,-6), lwd=1.5)
+lines(c(-2,2), c(-6,-9), lwd=1.5)
+lines(c(-2,1), c(-9,-7), lwd=1.5)
+lines(c(-2,2), c(-9,-6), lwd=1.5)
+lines(c(-2,2), c(-9,-9), lwd=1.5)
+text(x=-2.5, y=12.7, labels = "Simple Linkage")
+text(x=-2.5, y=4.6, labels = "Complete Linkage")
+text(x=-2.5, y=-3.7, labels = "Average Linkage")
+```
+
+##### Single Linkage Cluster Analysis
+
+Single linkage cluster analysis is one of the easiest to explain. It is hierarchical, agglomerative technique. We start by creating a matrix of similarity (or dissimilarity) indices between the units we want to compare.
+
+Then we find the most similar pair of samples, and that will form the 1st cluster. Next, we find either: (a) the second most similar pair of samples or (b) highest similarity between a cluster and a sample, or (c) most similar pair of clusters, whichever is greatest. We then continue this process until until there is one big cluster. Remember that in single linkage, similarity between two clusters = similarity between the two nearest members of the clusters. Or if we are comparing a sample to a cluster, the similarity is defined as, the similarity between sample and the nearest member of the cluster.
+```{r, echo=TRUE, comment=""}
+cls=data.frame(a=c(5,6,34,1,12),b=c(10,1,2,32,4),  c=c(1,59,32,3,4), d=c(2,63,1,2,45), e=c(4,3,4,90,2))
+clsd=dist(t(cls), method="euclidean")
+clsd
+```
+
+
+```{r, echo=FALSE}
+plot(rbind(c(0,0)), xlim = c(-50,50), ylim = c(-120, 100), frame.plot = FALSE, ann = FALSE, type = "n", xaxt = "n", yaxt = "n")
+text(x=-40, y=75, labels = "a")
+text(x=-20, y=75, labels = "b")
+text(x=0, y=75, labels = "c")
+text(x=20, y=75, labels = "d")
+text(x=40, y=75, labels = "e")
+text(x=-40, y=5, labels = "a")
+text(x=-20, y=5, labels = "b")
+text(x=0, y=5, labels = "c")
+text(x=20, y=5, labels = "d")
+text(x=40, y=5, labels = "e")
+text(x=-40, y=-105, labels = "a")
+text(x=-20, y=-105, labels = "b")
+text(x=0, y=-105, labels = "c")
+text(x=20, y=-105, labels = "d")
+text(x=40, y=-105, labels = "e")
+lines(c(-40,-40), c(85,100), lwd=2)
+lines(c(-40,-20), c(100,100), lwd=2)
+lines(c(-20,-20), c(100,85), lwd=2)
+text(x=-30, y=90, labels = "0.1")
+lines(c(-40,-40), c(15,30), lwd=2)
+lines(c(-40,-20), c(30,30), lwd=2)
+lines(c(-20,-20), c(30,15), lwd=2)
+text(x=-30, y=20, labels = "0.1")
+lines(c(0,0), c(15,55), lwd=2)
+lines(c(0,20), c(55,55), lwd=2)
+lines(c(20,20), c(55,15), lwd=2)
+text(x=10, y=45, labels = "0.4")
+lines(c(-40,-40), c(-90,-75), lwd=2)
+lines(c(-40,-20), c(-75,-75), lwd=2)
+lines(c(-20,-20), c(-75,-90), lwd=2)
+text(x=-30, y=-85, labels = "0.1")
+lines(c(0,0), c(-90,-50), lwd=2)
+lines(c(0,20), c(-50,-50), lwd=2)
+lines(c(20,20), c(-50,-90), lwd=2)
+text(x=10, y=-60, labels = "0.4")
+lines(c(10,10), c(-50,-35), lwd=2)
+lines(c(10,40), c(-35,-35), lwd=2)
+lines(c(40,40), c(-35,-90), lwd=2)
+text(x=25, y=-45, labels = "0.5")
+lines(c(-30,-30), c(-75,-20), lwd=2)
+lines(c(-30,25), c(-20,-20), lwd=2)
+lines(c(25,25), c(-20,-35), lwd=2)
+text(x=-2.5, y=-30, labels = "0.6")
+text(x=-50, y=100, labels = "a)")
+text(x=-50, y=55, labels = "b)")
+text(x=-50, y=-20, labels = "c)")
+```
+
+```{r}
+library(RColorBrewer)
+set.seed(1)
+y <- matrix(rnorm(50), 10, 5, dimnames=list(paste("g", 1:10, sep=""), paste("t", 1:5, sep="")))
+colfunc <- colorRampPalette(c("green", "red"))
+heatmap(y,col=colfunc(15))
+```
+
+### R functions
+Agglomerative approach (bottom-up)
+**hclust()** calculates hierarchical cluster analysis. Requires at least two arguments: d for distance matrix, and method for agglomerative algorithm, one of ward.D, ward.D2, single, complete, average (= UPGMA), mcquitty (= WPGMA), median (= WPGMC) or centroid (= UPGMC). Has it's own plot function.
+
+and **agnes()** (library cluster) - contains six agglomerative algorithms, some not included in hclust. 
+
+Divisive approach (top-down)
+**diana()**
+
+
+
+### How many clusters
+```{r}
+library(plotrix)
+plot(rbind(c(-4,9.5), c(-3.5,10.5), c(-3,9.2), c(-2.7,10), c(-2,8.2), c(-1.2,10.5),
+           c(-2.1,11.9), c(3.1,11.1), c(4,12.5), c(4.5,10.6), c(5,10), c(5.5,11.1), 
+           c(6,10), c(5,7), c(5.7,7.9), c(6.1,6.9), c(6.6,7.3), c(7.1,5.9),c(8,8),
+           c(-4,0.5),c(-3.5,1.5),c(-3,0.5),c(-2.5,1),c(-2,-0.5),c(-1.1,1.6),c(-2,3),
+           c(3.1,2.1),c(4,3.5),c(4.5,1.8),c(5,1),c(5.5,2.1),c(6,1),c(5.6,-1),
+           c(5,-2),c(6.6,-1.6),c(6.1,-2.1),c(7.1,-3.1),c(7.9,-1),c(-2,-7),
+           c(-3.5,-8.5),c(-4,-9.5),c(-3,-9.5),c(-2.5,-9),c(-2,-10.8),
+           c(-1.2,-8.5),c(4,-6.2),c(3.1,-7.9),c(4.5,-8.2),c(5,-9),c(5.5,-7.9),
+           c(6,-9),c(5,-12),c(5.6,-11),c(6.1,-12.1),c(6.6,-11.6),c(7.1,-13.1),c(7.9,-11)), 
+     xlim = c(-25,25), ylim = c(-14,13), xaxt = "n", yaxt = "n", 
+     frame.plot = FALSE, ann = FALSE, pch = 21, bg="red", col="red")
+points(rbind(c(-2,6.7),c(0.5,12.5),c(1,3.5),c(1.7,7.7),c(-2,-3),c(2.5,-1.2),
+             c(-2,-9.2),c(4.8,-7.4),c(7,-12.4)),pch=4)
+draw.circle(-2.5,1.1,2.4)
+draw.circle(4.9,2.5,2.3)
+draw.circle(6.5,-2,2)
+draw.circle(-2.5,-9,2.4)
+draw.circle(4.9,-7.5,2.3)
+draw.circle(6.5,-12,2)
+segments(-2.5,-1.5,-2.1,-2.3)
+segments(2.7,3,1.5,3.5)
+segments(4.6,-1.2,3,-1)
+text(x=-9, y=13, labels = "(a)")
+text(x=-9, y=4, labels = "(b)")
+text(x=-9, y=-6, labels = "(c)")
+```
+
+
+
+### K-Means Clustering
+
+Partitional Clustering: A division of data objects into non-overlapping subsets
+
+(clusters) such that each data object is in exactly one subset
+
+Each cluster is associated with a centroid (center point)
+
+Each point is assigned to the cluster with the closest centroid
+
+Number of clusters, K, must be specified
+
+1. Choose the number of K clusters
+2. Select K points as the initial centroids
+3. Calculate the distance of all items to the K centroids
+4. Assign items to closest centroid
+5. Recompute the centroid of each cluster
+6. Repeat from (3) until clusters assignments are stable
+
+
+K-means has problems when clusters are of differing
+– Sizes
+– Densities
+– Non-globular shapes
+
+ K-means has problems when the data contains outliers.
+
+### Fuzzy C-Means Clustering
+
+
+In contrast to strict (hard) clustering approaches, fuzzy (soft) clustering methods allow multiple cluster memberships of the clustered items.
+
+This is commonly achieved by assigning to each item a weight of belonging to each cluster. 
+
+Thus, items at the edge of a cluster, may be in a cluster to a lesser degree than items at the center of a cluster.
+
+Typically, each item has as many coefficients (weights) as there are clusters that sum up for each item to one.
+
+## Exercise: Cluster analysis of isotope data
+
+we will read data into R. Download and import the dataset “Dataset_S1.csv” from Perkins et al. 2014 on the learn site in the lab folder. This data contains δ15N and δ13C signatures for species from different food webs.
+To read data into R one of the easiest options is to use the read.csv() function with the argument on a .csv file. These Comma Separated Files are one of your best options for reproducible research. They are human readable and easily handled by almost every time of software.
+
+Once you have successfully read your data file into R, take a look at it! Type mydata (or whatever you named your data object) to see if the data file was read in properly. Some datasets will be too large for this approach to be useful (the data will scroll right off the page). In that case, there are a number of commands to look at a portion of the dataset. You could use a command like names(mydata), but it has one obvious shortcoming. What is it?
+
+One of the best things to do is plot the imported data. Of course, this is not always possible with very large datasets, but this set should work. Use the plot function as plot(iso$N~iso$C, pch=16, xlab="C", ylab="N") to take a quick look.
+
+We are going to use this data set to see if a cluster analysis on δ15N and δ13C can identify the foodweb and trophic level of different species. That is we are going to “supervise” our unsupervised learning algorithm. Our first step is to create a dissimilarity matrix, but even before this, we must select that part of the data that we wish to use. We’ll be creating the dissimilarity matrix using just the δ15N and δ13C data, not the other components of the dataframe, so you will need to select and save just these two columns.
+
+In addition, our analysis will be affected by the missing data. So let’s get remove those rows with missing data right now using the complete.cases() function. The function returns a value of TRUE for every row in a dataframe that no missing values in any column. So newdat=mydata[complete.cases(mydata),], will be a new data frame with only complete row entries.
+Select and save only the C and N columns of this data, and you should be set to create a dissimilarity matrix.
+
+3. Create a dissimilarity matrix using dist()
+The function dist() will generate a matrix of the pairwise Euclidean distances between pairs of observations. Instead of “euclidean”, you can also use these distance measures of the dist() function "maximum", "manhattan", "canberra", "binary" or "minkowski". Check the help file for dist() by typing ?dist.
+
+4. Complete a hierarchical cluster analysis
+Now that you have a dissimilarity matrix, you complete a cluster analysis. The function hclust() will produce a data.frame that can be sent to the plot() function plotted to visualize the recommended clustering. The method used to complete the analysis is indicated below the graph.
+Please adjust the arguments of the function to complete a single linkage analysis (look at help(hclust)) to determine the method to do this).
+
+When you graph your cluster using plot(), you notice that there are many individual measurements, but there are only a few large groups. Does it look like there is an outlier? If so, you may want to remove this point from the data set, and then rerun the analysis. Remember to remove the point from the dataframe that has all the food chain info in it, otherwise you will have problems plotting later.
+
+When you examine the data set, you noted that there are 4 Food.chain designations. We will use the cutree() function to cut our cluster tree to get the desired number of groups, and then save
+the group numbers to a new column in our original dataframe. For example, newdata$clust<- cutree(p,4).
+
+We can then plot the data using colours and symbols to see how well our clustering works
+plot(ndata$N~ndata$C, pch=as.numeric(ndata$Food.Chain), col=ndata$clust,xlab="C", ylab="N",main="Four clusters") legend("topright", legend=c(1:4),pch=1,col=c(1:4), bty="n") legend("bottom", legend=as.character(levels(iso$Food.Chain)[2:5]), pch=c(2:5), bty="n")
+If you are not happy with the success of this clustering algorithm you could try other variants. For example the “complete” linkage variant.
+
+BTW If you are feeling bored try a heatmap() display of the cluster analysis. This function works on the raw N and C data, but we have to send the data as a matrix rather than a dataframe, and we have to transpose it using the t() function as heatmap(as.matrix(t(net))).
+
+5. Clustering with kmeans()
+Let’s try a non-hierarchical cluster analysis on the same data. The kmeans() function requires that we select the required number of clusters ahead of time (4) as kclust=kmeans(ndata, 4), we can then save the assigned clusters to our dataframe as ndata$kclust=kclust$cluster, and plot in a similar way
+You can compare your clustering methods with a side by side plot. Just enter the command par(mfrow=c(1,2)), and then each plot statement. You can also compare by generating a table of the Food.chain and cluster designations for each method (e.g., table(ndata$Food.Chain, ndata $clust)
+
+6. Fuzzy clustering with the package cluster and fanny()
+To compete a fuzzy cluster analysis, you will need to install the package “cluster” on your computer, read the library into memory and then use the fanny() function
+
+
+
+Perkins, M.J., McDonald, R.A., van Veen, F.F., Kelly, S.D., Rees, G. and Bearhop, S., 2014. Application of nitrogen and carbon stable isotopes (δ15N and δ13C) to quantify food chain length and trophic structure. PloS one, 9(3), p.e93281.
