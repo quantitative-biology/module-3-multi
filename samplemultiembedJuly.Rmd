@@ -343,9 +343,9 @@ heatmap(y,col=colfunc(15))
 
 ### R functions
 Agglomerative approach (bottom-up)
-**hclust()** calculates hierarchical cluster analysis. Requires at least two arguments: d for distance matrix, and method for agglomerative algorithm, one of ward.D, ward.D2, single, complete, average (= UPGMA), mcquitty (= WPGMA), median (= WPGMC) or centroid (= UPGMC). Has it's own plot function.
+**hclust()** calculates hierarchical cluster analysis. Requires at least two arguments: d for distance matrix, and method for agglomerative algorithm, one of ward.D, ward.D2, single, complete, average (= UPGMA), mcquitty (= WPGMA), median (= WPGMC) or centroid (= UPGMC). Has it's own plot function.
 
-and **agnes()** (library cluster) - contains six agglomerative algorithms, some not included in hclust. 
+and **agnes()** (library cluster) - contains six agglomerative algorithms, some not included in hclust. 
 
 Divisive approach (top-down)
 **diana()**
@@ -381,7 +381,9 @@ text(x=-9, y=13, labels = "(a)")
 text(x=-9, y=4, labels = "(b)")
 text(x=-9, y=-6, labels = "(c)")
 ```
+Drafty below
 
+***
 
 
 ### K-Means Clustering
@@ -464,3 +466,143 @@ To compete a fuzzy cluster analysis, you will need to install the package “clu
 
 
 Perkins, M.J., McDonald, R.A., van Veen, F.F., Kelly, S.D., Rees, G. and Bearhop, S., 2014. Application of nitrogen and carbon stable isotopes (δ15N and δ13C) to quantify food chain length and trophic structure. PloS one, 9(3), p.e93281.
+
+***
+
+# Ordination
+
+While cluster analysis let's us visualize multivariate data by grouping objects into dscrete categories, ordination uses continuous axes to help us accomplish the same task. While physicists grumble if space exceeds four dimensions, biologists typically grapple with dozens of dimensions (species and/or samples). In effect, we  “order” this multivariate data in order to produce a low dimensional picture (i.e., a graph in 1-3 dimensions). Just like cluster analysis, we wil use similarity metrics to accomplish this. Also like cluster anlaysis, simple ordination is not a statistical test: it is a method of visualizing data. 
+
+```{r dummy1, fig.cap="Synthetic axis rotation in ordination", fig.alt=""}
+plot.new()
+```
+
+```{r dummy2, fig.cap="Data reduction ordination", fig.alt=""}
+plot.new()
+```
+## Ordination as data reduction
+
+Essentially, we find axes in the data that explain a lot of variation, and rotate so we can use that axis as one of our dimensions of visual representation \@ref(fig:dummy1). Another way to think about it, is that we are going to summarize the raw data, which has many variables (p) byt a smaller set of derived (or synthetic or composite) variables, k \@ref(fig:dummy2). If the ordination is informative, it reduces a large number of original correlated variables to a small number of new uncorrelated variables. But it really is a bit of a balancing act between clarity of representation (and ease of understanding), and oversimiplication. We will lose information in this data reduction, and if that information is important, then we can make the multivariate data harder to understand! Also note that if the original variables are not correlated, then we won't gain anything with ordinaton.
+
+
+## Methods of Ordination
+
+
+There are lots of different ways to perform an ordination, but most methods are based on extracting the eigenvalues of a similarity matrix. The four most commonly used methods are: *Principle Component Analysis (PCA)*, which is the main eigenvector-based method, *Correspondence Analysis (CA)* which is used used on frequency data, *Principle Coordinate Analysis (PCoA)* which works on dissimilarity matrices, and *Non Metric Multidimensional Scaling (NMDS)* which is NOT an eigenvector method, instead it represents objects along a predetermined number of axes. 
+
+
+```{r tord}
+library(kableExtra)
+dt<-data.frame(stringsAsFactors = FALSE,
+               c("Principal component analysis (PCA)", "Correspondence analysis (CA)", "Principal coordinate analysis (PCoA), metric (multidimensional) scaling, classical scaling", "Nonmetric multidimensional scaling (nMDS)"),
+               c("Euclidean", "X^2", "Any", "Any"),
+               c("Quantitative data", "Non-negative, quantitiative or binary data; species frequencies or presence/absence data", "Quantitative, semiquantitative, qualitative, or mixed", "Quantitative, semiquantitative, qualitative, or mixed"))
+colnames(x = dt) <-c("Method", "Distance", "Variables")
+knitr::kable(dt, caption= "Domains of Application of Ordination Methods (adpated from Legnedre & Lengendre 2012) ",  align="l", padding=10)
+#xt=kable_classic(xt, full_width = F, table.attr = "style='width:50%;'", align="c")
+
+#column_spec(xt, column = 1:3, extra_css = "vertical- align:bottom;")
+```
+
+
+Legendre & Legendre (2012) provide a nice summary of when you should use each method \@ref(tab:tord)
+
+## Principal Components Analysis (PCA)
+
+Principal Components Analusis is probably the most widely-used and well-known of the “standard” multivariate methods. It was invented by Pearson (1901) and Hotelling (1933), and first applied in ecology by Goodall (1954) under the name “factor analysis” (NB “principal factor analysis” is a synonym of PCA). Like most ordination methods, PCA takes a data matrix of n objects by p variables, which may be correlated, and summarizes it by uncorrelated axes (principal components or principal axes) that are linear combinations of the original p variables. The first k components display as much as possible of the variation among objects. PCA uses Euclidean distance calculated from the p variables as the measure of dissimilarity among the n objects, and derives the best possible k dimensional (k < p) representation of the Euclidean distances among objects. 
+
+
+```{r varord, fig.cap="Selecting the synthetic axes in ordination", fig.alt="" }
+ctlns<-list(structure(list(level = 10, x = c(-0.8,0,1,2,2.5,3,3.1,2.8,2.3,2,1.8), 
+                           y = c(2.7,2.3,2.5,2.7,2.5,2,1.5,0,-1,-2,-3)),
+                      .Names = c("level", "x", "y")))
+ctlns2<-list(structure(list(level = 10, x = c(4,5.4,5.7,6,6.5,7,7.5,8,9,10.5,11.5,12.5,13.5), 
+                           y = c(-1.5,-0.1,0.7,2,3.2,4,4.5,4.7,4.6,4.3,4.2,4.5,5)),
+                      .Names = c("level", "x", "y")))
+x <- seq(0, 40, length=1000)
+y <- dnorm(x, mean=3, sd=0.3)*-cosh(60)+2
+#plot(x,y,type="l", xlab="time", ylab="Sine wave",frame.plot = FALSE,ann=FALSE,
+ #    xlim = c(-6,20),ylim = c(-6,12),axes = FALSE)
+plot(rbind(c(2.6,3),c(3,4),c(3.5,4.6),c(3.6,5.2),c(3.5,2),c(4,2.8),c(4.5,2),
+           c(5,3.2),c(5.2,4),c(6,2.5),c(6,5),c(6.5,4),c(7,2),c(7,3),c(7,6.5),
+           c(7,5),c(8,4),c(8,5.5),c(8.5,4.5),c(9,6),c(9,7.2),c(9.5,5),c(10,7.5),
+           c(11,6)),pch = 21,ann=FALSE,frame.plot = FALSE,axes = FALSE,
+     xlim = c(-10,20),ylim = c(-10,12),col="green",bg="green")
+arrows(0,0,18,0,col="blue",cex=3,length = 0.1)
+arrows(0,0,0,11,col="blue",cex=3,length = 0.1)
+arrows(1.5,-3.5,-1.5,3.5,col="darkred",cex=3,length = 0.1)
+arrows(1.5,-3.5,17,7,col="darkred",cex=3,length = 0.1)
+segments(0,0,15,10,col="orange",cex=3,lty="dashed")
+text(x=18, y=-1, labels = "X1")
+text(x=-1, y=11, labels = "X2")
+text(x=17, y=5, labels = "Y1")
+text(x=-3, y=3, labels = "Y2")
+xspline(ctlns[[1]], shape=1)
+xspline(ctlns2[[1]], shape=1)
+
+text(x=5, y=-5, "Y1 axis selected to maximize variation explained")
+text(x=5, y=-7, "Y2 axis must be orthogonal to Y1 and maximize variation explained")
+```
+
+We can think about this spatially. Objects are represented as a cloud of n points in a multidimensional space with an axis for each of the p variables. So the centroid of the points is defined by the mean of each variable, and 
+the variance of each variable is the average squared deviation of its n values around the mean of that variable (i.e., $V_i= \frac{1}{n-1}\sum_{m=1}^{n}{(X_{im}-\bar{X_i)}^2}$). The degree to which the variables are linearly correlcted is given by their covariances $C_{ij}=\frac{1}{n-1}\sum_{m=1}^n{(X_{im}-\bar{X_i})(X_{jm}-\bar{X_j})}$. The objective of PCA is to rigidly rotate the axes of the p-dimenional space to new positions (principal axes) that have the following properties: they are ordered such that principal axis 1 has the highest variance, axis 2 has the next highest variance etc, and the covariance among each pair of principal axes is zero (the principal axes are uncorrelated) \@ref(fig:varord)
+
+
+Drafty below
+
+***
+Let's try an example. We’re going to use a sample dataset in R and the base R version of PCA to start exploring this data analysis technique. Get the iris dataset into memory by typing “data(“iris”). Take a look at this dataset using the head, str or summary functions.  For a multivariate data set, you would like to take a look at the pairwise correlations. Remember that PCA can’t help us if the variables are not correlated.  Let’s use the pairs() function to do this as: pairs(iris[1:4],main="Iris Data", pch=19, col=as.numeric(iris$Species)+1)
+```{r echo=TRUE, comment=""}
+
+data("iris")
+str(iris); summary(iris[1:4])
+pairs(iris[1:4],main="Iris Data", pch=19, col=as.numeric(iris$Species)+1)
+```
+The colours let us see the data for each species, the plots are the pairwise plotting of each pair of the 4 variables. Do you see any correlations?
+
+If there seem to be some correlations we might use PCA to visualize the 4 dimensional variable space. Let’s rush right in and use the prcomp() function to run a PCA on the numerical data in the iris dataframe.  Save the output from the function to a new variable name so you can look at it when you type that name. The str() function will show you what the output object includes.  If you use the summary() function, R will tell you what proportion of the total variance is explained by each axis. Do you notice anything?
+
+Hmmm, that’s a LOT of variance on axis one. Let’s examine the variance in the raw data. Use the apply() function to quickly calculate the variance in each of the numeric columns of the data as apply(iris[,1:3], 1, var). What do you see? Are the variances of each the columns comparable?
+
+
+
+```{r echo=TRUE, comment=""}
+pca <- prcomp(iris[,1:4])
+summary(pca)
+apply(iris[,1:4], 2, var)
+```
+
+If you look at the help menu, the notes for the use of prcomp() STRONGLY recommend standardizing the data. To do this there is a built in option. We just need to set scale=TRUE. Let’s try again with data standardization. Save your new PCA output to a different name. We’ll compare to the unstandardized data in a moment. Take a look at the summary.
+
+```{r echo=TRUE, comment=""}
+
+pca2 <- prcomp(iris[,1:4], scale=TRUE)
+summary(pca2)
+```
+
+That variance is now a bit more evenly distributed...
+Text about standardization here.
+
+
+Now we need to determine how many axes to use to interpret our analysis. For 4 variables its easy enough to just look that the amount of variance. For larger numbers of variables a plot can be useful. The screeplot() function will output the variance explained by each of the principle component axes, and you can make a decision based on that (e.g., screeplot(pca2, type="lines"))
+
+
+```{r comment=""}
+screeplot(pca2, type="lines")
+```
+
+
+***
+Hate this....
+
+How does this work exactly? The steps are
+1. Standardize the data
+2. Compute the variance-covariance matrix of the standardized data(same as correlation matrix for standardized data)
+3. Calculate the eigenvalues of the variance-covariance matrix
+4. Calculate the associated eigenvectors
+
+Then, the jth eigenvalue is the variance of the jth principle component and the sum of all the eigenvalues is the total variance explained. The proportion of variance explained by each component is the eigenvalue for the component divided by the total variance explained, while the loadings are the eigenvectors
+
+
+
+NB 
