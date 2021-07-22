@@ -10,6 +10,8 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,kableExtra.auto_format = FALSE)
 
+
+
 ```
 
 # Introduction to multivariate analysis
