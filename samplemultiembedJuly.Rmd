@@ -663,10 +663,45 @@ text(x=5, y=-7, "Y2 axis must be orthogonal to Y1 and maximize variation explain
 ```
 
 We can think about this spatially. Objects are represented as a cloud of n points in a multidimensional space with an axis for each of the p variables. So the centroid of the points is defined by the mean of each variable, and 
-the variance of each variable is the average squared deviation of its n values around the mean of that variable (i.e., $V_i= \frac{1}{n-1}\sum_{m=1}^{n}{(X_{im}-\bar{X_i)}^2}$). The degree to which the variables are linearly correlcted is given by their covariances $C_{ij}=\frac{1}{n-1}\sum_{m=1}^n{(X_{im}-\bar{X_i})(X_{jm}-\bar{X_j})}$. The objective of PCA is to rigidly rotate the axes of the p-dimenional space to new positions (principal axes) that have the following properties: they are ordered such that principal axis 1 has the highest variance, axis 2 has the next highest variance etc, and the covariance among each pair of principal axes is zero (the principal axes are uncorrelated) \@ref(fig:varord)
+the variance of each variable is the average squared deviation of its n values around the mean of that variable (i.e., $V_i= \frac{1}{n-1}\sum_{m=1}^{n}{(X_{im}-\bar{X_i)}^2}$). The degree to which the variables are linearly correlated is given by their covariances $C_{ij}=\frac{1}{n-1}\sum_{m=1}^n{(X_{im}-\bar{X_i})(X_{jm}-\bar{X_j})}$. The objective of PCA is to rigidly rotate the axes of the p-dimenional space to new positions (principal axes) that have the following properties: they are ordered such that principal axis 1 has the highest variance, axis 2 has the next highest variance etc, and the covariance among each pair of principal axes is zero (the principal axes are uncorrelated) \@ref(fig:varord)  
 
+<br />
 
-Drafty below
+**$1^{st}$ Principle component**
+
+```{r}
+x1 = c(-15,-12,-13,-15,-13,-14,-10,-9,-12,-10,-10,-9,-10,-9,-7,-6,-5,-8,-9,-8,-7,-5,
+       -3,-3,-2,-1,-9,-3,-2,-1,0,0,1,3,3,2,2,7,2,2,3,3,3,2,5,9,6,5,7,5,7,7,8,10,8,9,
+       10,7,8,7,10,9,10,12,15,16,18,20,19)
+y1 = c(-12,-9,-13,-5,-7,-9,-10,-10,-12,-5,-7,-9,-4,-4,-7,-6,-4,-5,1,0,-2,0,-3,-2,-2,
+       -1,-11,1,1,2,1,2,-3,-4,-3,-1,0,-2,1,2,3,5,6,4,0,0,1,2,1,7,1,3,2,1,12,10,10,
+       7,8,5,7,6,5,5,8,7,6,10,12)
+x2 = seq(-10,12,1)
+y2 = x2*3/5
+x3 = c(-20,-18,-15,-16,-16,-15,-17,-15,-14,-13,-11,-10,-7,-7,-11,-10,-9,-8,-7,-6,-5,
+       -5,-4,-5,-3,-2,-1.5,-1,-0.5,-0.5,0,1,1.5,3,4,5,6,5,7,6.5,8.5,10,10,12,14,13,
+       15,22,21,19,17,16,14,10,10,9,8,5,7,-5,-4,-3,-2,-1.5,-1,0.5,-0.5,-0.5,1,0.5,1,
+       2,3)
+y3 = c(-2,-1,0,0,1,2,2,4,-3,-3.5,-6,-2,-2,0,2,1,2,1.5,1.2,1,0,2,1.5,5,4,2,1.5,2,3,1,
+       2,2,2.5,1,1.5,2,2.5,3,2,5,4,1,3,0.5,1.5,5,4,2,-1,-3,-1,-0.5,-2,-3,-1,0,0,-3,
+       -1,-3,-2,-1,-2,-2.5,0,-4,-4,-5,-5.5,-0.5,0,-2,-1.5)
+x4 = seq(-10,12,1)
+y4 = rep(0,length(x4))
+par(mfrow=c(1,2))
+plot(x1,y1,xlim = c(-30,30),ylim=c(-30,30),ann=FALSE,pch=16, col=rgb(red=0.3, green=0.6, blue=0.3, alpha=0.3))
+points(x2,y2,pch=16,col="blue")
+points(rbind(c(14,14*3/5),c(15,15*3/5),c(17,17*3/5),c(19,19*3/5),c(20,20*3/5),
+             c(-12,-12*3/5),c(-13.5,-13.5*3/5),c(-14,-14*3/5),c(-15,-15*3/5),
+             c(-16,-16*3/5),c(-18,-18*3/5),c(-20,-20*3/5)),pch=16,col="blue")
+plot(x3,y3,xlim = c(-30,30),ylim=c(-30,30),ann=FALSE,pch=16, col=rgb(red=0.3, green=0.6, blue=0.3, alpha=0.3))
+points(x4,y4,pch=16,col="blue")
+points(rbind(c(14,0),c(15,0),c(17,0),c(19,0),c(20,0),c(-12,0),c(-13.5,0),
+             c(-14,0),c(-15,0),c(-16,0),c(-18,0),c(-20,0)),pch=16,col="blue")
+```
+
+PC axes are a rigid rotation of the original variables.  
+
+Dimentionality reduction is the same as first rotating the data with the eigenvalues to be aligned with the principle components, then using only the components with the greatest eigenvalues.  
 
 ***
 Let's try an example. We’re going to use a sample dataset in R and the base R version of PCA to start exploring this data analysis technique. Get the iris dataset into memory by typing “data(“iris”). Take a look at this dataset using the head, str or summary functions.  For a multivariate data set, you would like to take a look at the pairwise correlations. Remember that PCA can’t help us if the variables are not correlated.  Let’s use the pairs() function to do this as: pairs(iris[1:4],main="Iris Data", pch=19, col=as.numeric(iris$Species)+1)
