@@ -1,6 +1,6 @@
 ---
-title: "3 Multivariate"
-author: "Kim Cuddington"
+#title: "3 Multivariate"
+#author: "Kim Cuddington"
 date: "05/07/2021"
 output:
   html_document: default
@@ -476,7 +476,7 @@ While cluster analysis let's us visualize multivariate data by grouping objects 
 
 
 
-```{r dimred, fig.height=5., fig.width=5., echo=FALSE,fig.cap="Ordination as data reduction. We summarize data with many (p) variables by a smaller set of derived or synthetic variables", fig.alt=""}
+```{r dimred, fig.height=3., fig.width=5., echo=FALSE,fig.cap="Ordination as data reduction. We summarize data with many (p) variables by a smaller set of derived or synthetic variables", fig.alt=""}
 par(mar = c(0, 0, 0, 0))
 plot(0,pch = '',ann=FALSE,frame.plot = FALSE,axes = FALSE,
      xlim = c(-40,40),ylim = c(-65,10))
@@ -594,9 +594,9 @@ text(x=5, y=-7, "Y2 axis must be orthogonal to Y1 and maximize variation explain
 ```
 
 We can think about this spatially. Objects are represented as a cloud of n points in a multidimensional space with an axis for each of the p variables. So the centroid of the points is defined by the mean of each variable, and 
-the variance of each variable is the average squared deviation of its n values around the mean of that variable (i.e., $V_i= \frac{1}{n-1}\sum_{m=1}^{n}{(X_{im}-\bar{X_i)}^2}$). The degree to which the variables are linearly correlated is given by their covariances $C_{ij}=\frac{1}{n-1}\sum_{m=1}^n{(X_{im}-\bar{X_i})(X_{jm}-\bar{X_j})}$. The objective of PCA is to rigidly rotate the axes of the p-dimenional space to new positions (principal axes) that have the following properties: they are ordered such that principal axis 1 has the highest variance, axis 2 has the next highest variance etc, and the covariance among each pair of principal axes is zero (the principal axes are uncorrelated) \@ref(fig:varord)  
+the variance of each variable is the average squared deviation of its n values around the mean of that variable (i.e., $V_i= \frac{1}{n-1}\sum_{m=1}^{n}{(X_{im}-\bar{X_i)}^2}$). The degree to which the variables are linearly correlated is given by their covariances $C_{ij}=\frac{1}{n-1}\sum_{m=1}^n{(X_{im}-\bar{X_i})(X_{jm}-\bar{X_j})}$. The objective of PCA is to rigidly rotate the axes of the p-dimenional space to new positions (principal axes) that have the following properties: they are ordered such that principal axis 1 (or the *principal component* has the highest variance, axis 2 has the next highest variance etc, and the covariance among each pair of principal axes is zero (the principal axes are uncorrelated) \@ref(fig:varord)  
 
-Dimentionality reduction is the same as first rotating the data with the eigenvalues to be aligned with the principle components, then using only the components with the greatest eigenvalues.  
+So our steps are to compute the variance-covariance matrix of the data, calculate the eigenvalues of the variance-covariance matrix and then calculate the associated eigenvectors. Then, the jth eigenvalue is the variance of the jth principle component and the sum of all the eigenvalues is the total variance explained. The proportion of variance explained by each component is the eigenvalue for the component divided by the total variance explained, while the loadings are the eigenvectors. Dimentionality reduction is the same as first rotating the data with the eigenvalues to be aligned with the principle components, then using only the components with the greatest eigenvalues.  
 
 ***
 Let's try an example. We’re going to use a sample dataset in R and the base R version of PCA to start exploring this data analysis technique. Get the iris dataset into memory by typing “data(“iris”). Take a look at this dataset using the head, str or summary functions.  For a multivariate data set, you would like to take a look at the pairwise correlations. Remember that PCA can’t help us if the variables are not correlated.  Let’s use the pairs() function to do this as: pairs(iris[1:4],main="Iris Data", pch=19, col=as.numeric(iris$Species)+1)
@@ -606,11 +606,16 @@ data("iris")
 str(iris); summary(iris[1:4])
 pairs(iris[1:4],main="Iris Data", pch=19, col=as.numeric(iris$Species)+1)
 ```
+
 The colours let us see the data for each species, the plots are the pairwise plotting of each pair of the 4 variables. Do you see any correlations?
 
 If there seem to be some correlations we might use PCA to visualize the 4 dimensional variable space. Let’s rush right in and use the prcomp() function to run a PCA on the numerical data in the iris dataframe.  Save the output from the function to a new variable name so you can look at it when you type that name. The str() function will show you what the output object includes.  If you use the summary() function, R will tell you what proportion of the total variance is explained by each axis. Do you notice anything?
 
-Hmmm, that’s a LOT of variance on axis one. Let’s examine the variance in the raw data. Use the apply() function to quickly calculate the variance in each of the numeric columns of the data as apply(iris[,1:3], 1, var). What do you see? Are the variances of each the columns comparable?
+There is a problem thoough, let’s examine the variance in the raw data. Use the apply() function to quickly calculate the variance in each of the numeric columns of the data as apply(iris[,1:3], 1, var). What do you see? Are the variances of each the columns comparable?
+
+Using covariances among variables only makes sense if they are measured in the same units, and even then, variables with high variances will dominate the principal components. These problems are generally avoided by standardizing each variable to unit variance and zero mean as $X_{im}^'=\frac{x_{im}-\bar{X_i}}{sd_i}$ where sd is the standard deviation of variable *i*. After standardizaton, the variance of each variable is 1.0 and the covariances of the standardized variables are correlations.
+
+Fniding the prinicipal components axes involes the eigenanalysis of the variance-covaraince matrix, where the eigenvalues are the variances of the coordinates on each synthetic axis
 
 
 
@@ -624,33 +629,201 @@ If you look at the help menu, the notes for the use of prcomp() STRONGLY recomme
 
 ```{r echo=TRUE, comment=""}
 
-pca2 <- prcomp(iris[,1:4], scale=TRUE)
-summary(pca2)
+p <- prcomp(iris[,1:4], scale=TRUE)
+summary(p)
 ```
 
-That variance is now a bit more evenly distributed...
-Text about standardization here.
+We can see a change in our representation with variance standardization. MORE
 
 
-Now we need to determine how many axes to use to interpret our analysis. For 4 variables its easy enough to just look that the amount of variance. For larger numbers of variables a plot can be useful. The screeplot() function will output the variance explained by each of the principle component axes, and you can make a decision based on that (e.g., screeplot(pca2, type="lines"))
+Now we need to determine how many axes to use to interpret our analysis. For 4 variables its easy enough to just look that the amount of variance. For larger numbers of variables a plot can be useful. The screeplot() function will output the variance explained by each of the principle component axes, and you can make a decision based on that (e.g., screeplot(pca2, type="lines")).
+
+An ideal curve should be steep, then bends at an “elbow” — this is your cutting-off point — and after that flattens out. To deal with a not-so-ideal scree plot curve you can apply the Kaiser rule: pick PCs with eigenvalues of at least 1. Or you can select using the proportion of variance where the PCs should be able to describe at least 80% of the variance.
 
 
-```{r comment=""}
-screeplot(pca2, type="lines")
+
+```{r scree, fig.caption="Screeplot: a display of the variance explained by each of the synthetic axes", fig.alt="",comment=""}
+screeplot(p, type=("lines"),main="")
 ```
+
+It looks like synthetic axes 1 & 2 explain most of the variation. So let's plot those out. A PCA plot displays our samples in terms of their position (or **scores**) on the new axes. We can add information about how much variation each axis explains, and colour our points to match species identity. In this 2D representation of 4 dimensional space, it looks like species versicolor and viriginica group together (Fig. \@ref{fig:pacfirst}). 
+
+
+```{r pacfirst, fig.cap="PCA plot for the iris data", fig.alt=""}
+pvar=round(summary(p)$importance[2,1:2],2)
+
+plot(p$x[,1:2], col=as.numeric(iris$Species)+1,ylim=c(-3,3), cex=0.7, pch=16,
+     xlab=paste0("PC1 (", pvar[1]*100, "%)"),
+     ylab=paste0("PC2 (", pvar[2]*100, "%)"))
+legend("topright", legend=unique(iris$Species), pch=16, col=c(2,3,4), bty="n")
+
+
+```
+
+We can also plot information about influence the various characterisitcs are having on each of the axes. The eigenvectors used for the rotation given us this information. So let's just print that out
+```{r barload, fig.heigh=5.}
+
+kable(p$rotation,digits=2,caption="Eigenvectors (or 'loadings') for each variable and synthetic axis", format="html",table.attr = "style='width:50%;'", align="c")
+```
+
+We can see that a lot of information is coming from the petal variables for PCA1, but less from the sepal variables (Table \@ref{Tab:barload}).    
+
+We can plot this out to show how strongly each variable affects each principle component (or synthetic axis). We can see that petal width and length are aligned along the PC1 axis, while PC2 explains more variation in sepal width (Fig \@ref{fig: loadplot}).
+
+```{r loadplot, fig.caption="Contribituion of each variable to the first two principal component axes", fig.alt=""}
+plot(NA,ylim=c(-5,4), xlim=c(-5,4),
+         xlab=paste0("PC1 (", pvar[1]*100, "%)"),
+     ylab=paste0("PC2 (", pvar[2]*100, "%)"))
+abline(v=0, col="grey90")
+abline(h=0, col="grey90")
+# Get co-ordinates of variables (loadings), and multiply by 10
+    l.x <- p$rotation[,1]*4
+    l.y <- p$rotation[,2]*4
+# Draw arrows
+    arrows(x0=0, x1=l.x, y0=0, y1=l.y, col="purple", length=0.15, lwd=1.5)
+# Label position
+    l.pos <- l.y # Create a vector of y axis coordinates
+    lo <- which(l.y < 0) # Get the variables on the bottom half of the plot
+    hi <- which(l.y > 0) # Get variables on the top half
+# Replace values in the vector
+    l.pos <- replace(l.pos, lo, "1")
+    l.pos <- replace(l.pos, hi, "3")
+    l.pos[4] <- "3"
+    l.x[3:4] <- l.x[3:4]+0.75
+        # Variable labels
+    text(l.x, l.y, labels=row.names(p$rotation), col="purple", pos=l.pos, cex=0.75)
+
+```
+
+
+Another way to portray this imformation is to create a **biplot** which, in addition to the coordinates of our samples on the synthetic axes PC1 and PC2, also provides information about how the variables align along the synthetic axes. I'll multiple by a constant to get a nicer display (Fig \ref{fig:pactwo}). 
+
+To interpret your biplot remember that positively correlated variables are grouped close together. Variables with about a 90 angle are probably not correlated, while negatively correlated variables are positioned on opposite sides of the plot origin (~180 angle; opposed quadrants). However, the direction of the axes is arbitrary! The distance between variables and the origin measures the contribution of the variables to the ordination. A shorter arrow indicates its less importance for the ordination. Variables that are away from the origin are well represented. Avoid the mistake of interpreting the relationships among variables based on the proximities of the apices (tips) of the vector arrows instead of their angles in biplots.
+
+Also, I have used an arbitrary scaling to display the variable loadings on each access. Some of the R packages will use a specific scaling that will emphasize particular parts of the plot, either preserving the Euclidean distances between samples or the correlations/covariances between variables (e.g., vegan).
+
+```{r pactwo, fig.cap="PCA plot for the iris data", fig.alt=""}
+plot(p$x[,1:2], pch=16,col=as.numeric(iris$Species)+1,
+     ylim=c(-5,4), xlim=c(-4,4),
+     cex=0.7,
+     xlab=paste("PC1 (", pvar[1]*100, "%)"),
+     ylab=paste("PC2 (", pvar[2]*100, "%)"))
+legend("topleft", legend=unique(iris$Species), pch=16, col=c(2,3,4), bty="n")
+
+
+
+# Get co-ordinates of variables (loadings), and multiply by 10
+    l.x <- p$rotation[,1]*4
+    l.y <- p$rotation[,2]*4
+# Draw arrows
+    arrows(x0=0, x1=l.x, y0=0, y1=l.y, col="purple", length=0.15, lwd=1.5)
+# Label position
+    l.pos <- l.y # Create a vector of y axis coordinates
+    lo <- which(l.y < 0) # Get the variables on the bottom half of the plot
+    hi <- which(l.y > 0) # Get variables on the top half
+# Replace values in the vector
+    l.pos <- replace(l.pos, lo, "1")
+    l.pos <- replace(l.pos, hi, "3")
+    l.pos[4] <- "3"
+    l.x[3:4] <- l.x[3:4]+0.75
+        # Variable labels
+    text(l.x, l.y, labels=row.names(p$rotation), col="purple", pos=l.pos, cex=0.75)
+
+
+
+
+```
+
+
+It is important to note that principal components analysis assumes the relationships among variables are *linear* so that the cloud of points in p-dimensional space has linear dimensions that can be effectively summarized by the principal axes. If the structure in the data is nonlinear (the cloud of points twists and curves its way through p-dimensional space), the principal axes will not be an efficient and informative summary of the data.
+
+For example, iwn community ecology,e might use PCA to summarize variables whose relationships are approximately linear or at least monotonic (e..g, soil properties might be used to extract a few components that summarize main dimensions of soil variation). However, in general PCA is generally NOT useful for ordinating community data because relationships among species are highly nonlinear.
+
+This nonlinearity can leaad to characterisitc artifacts, where community trends along environmental gradients appear as “horseshoes” in PCA ordinations becuase low species density at opposite extremes of an environmental gradiant appear relatively close together.
 
 
 ***
-Hate this....
+### Principle Coordinates Analysis (PCoA)
+The interest of the PCoA method lies in the fact that it may be used with all types of distance descriptors. A PCoA computed on a Euclidean distance matrix gives the same results as a PCA conducted on the original data
 
-How does this work exactly? The steps are
-1. Standardize the data
-2. Compute the variance-covariance matrix of the standardized data(same as correlation matrix for standardized data)
-3. Calculate the eigenvalues of the variance-covariance matrix
-4. Calculate the associated eigenvectors
+Like PCoA, the method of nonmetric multidimensional scaling (nMDS, produces ordinations of objects from any resemblance matrix. 
+However, NMDS compresses the distances in a non-linear way and its algorithm is computer-intensive, requiring more computing time than PCoA.
+PCoA is faster for large distance matrices.
 
-Then, the jth eigenvalue is the variance of the jth principle component and the sum of all the eigenvalues is the total variance explained. The proportion of variance explained by each component is the eigenvalue for the component divided by the total variance explained, while the loadings are the eigenvectors
+#### R functions for PCoA
+**cmdscale()**(stats) 
+-base R, no package needed
+**smacofSym()** (library smacof)
+**wcmdscale()**(vegan)
+**pco()**(ecodist)
+**pco()**(labdsv)
+**pcoa()**(ape)
+**dudi.pco()**(ade4)
+
+### Nonmetric Multidimensional Scaling (NMDS)
+Does not to preserve the exact dissimilarities among objects in an ordination plot, instead it represent as well as possible the ordering relationships among objects in a small and specified number of axes. Like PCoA, NMDS can produce ordinations of objects from any dissimilarity matrix. 
+The method can cope with missing values, as long as there are enough measures left to position each object with respect to a few others. NMDS is not an eigenvalue technique, and it does not maximise the variability associated with individual axes of the ordination.
+
+In this computational method the steps are 
+* Specify the desired number m of axes (dimensions) of the ordination.
+* Construct an initial configuration of the objects in the m dimensions, to be used as a starting point of an iterative adjustment process. (tricky: end result may depend on this. A PCoA ordination may be a good start. Otherwise, try many independent runs with random initial configurations)
+* Try to position the objects in the requested number of dimensions in such a way as to minimize how far the dissimilarities in the reduced-space configuration are from being monotonic to the original dissimilarities in the association matrix 
+* The adjustment goes on until the stress value cannot be lowered, or until it reaches a predetermined low value (tolerated lack-of-fit). 
+* Most NMDS programs rotate the final solution using PCA, for easier interpretation.
+
+
+NMDS often achieves a less deformed representation of the dissimilarity relationships among objects than a PCoA in the same number of dimensions. We can use a Shephard plot to get information about the distortion of representation.  A Shepard diagram compares how far apart your data points are before and after you transform them (ie: goodness-of-fit) as a scatter plot. On the x-axis, we plot the original distances. On the y-axis, we plot the distances output by a dimension reduction algorithm. A really accurate dimension reduction will produce a straight line. However since information is almost always lost during data reduction, at least on real, high-dimension data, Shepard diagrams rarely look this straight.
+
+In this plot we compare the goodness-of-fit of the ordination as the R2 of either a linear or a non-linear regression of the NMDS distances on the original dissimilarities
+``` {r shep, echo=FALSE, fig.caption="Shepard's plot of an nMDS ordination using 2 axes to represent the varespec data in the vegan package", fig.alt=""}
+library(vegan)
+data(varespec)
+nMDS <- metaMDS(varespec, distance = "bray", k = 2)
+MDS <- cmdscale(vegdist(varespec, method = "bray"), k = 2, eig = T, add = T )
+stressplot(nMDS, pch=16,l.col=NA, las=1)
+```
+
+We can evaluate the quality of the NMDS solution by checking the Shephard plot as : stressplot(nMDS, main = "Shepard plot"). In addition to the original dissimilarity and ordination distance, the plot displays two correlation-like statistics on the goodness of fit. The nonmetric fit is given by $R^2$, while he “linear fit” is the squared correlation between fitted values and ordination distances. 
 
 
 
-NB 
+But NMDS is a computer-intensive iterative technique exposed to the risk of suboptim
+There is no % of variance associated with each axis in nMDS in contrast with other Principal Component Methods like PCA
+
+PCoA finds the optimal solution by eigenvalue decomposition. The PCoA solution is unique. PCoA can be used to find the first ordination axes for a given dissimilarity matrix. These axes are those that maximize the variance of the observations.
+PCoA produces all ordination axes corresponding to a given dissimilarity matrix. The ordination solution is exact.
+
+NMDS often achieves a less deformed representation of the dissimilarity relationships among objects than a PCoA in the same number of dimensions. But NMDS is a computer-intensive iterative technique exposed to the risk of suboptim There is no % of variance associated with each axis in nMDS in contrast with other Principal Component Methods like PCA.
+
+In comparison, PCoA finds the optimal solution by eigenvalue decomposition. The PCoA solution is unique. PCoA can be used to find the first ordination axes for a given dissimilarity matrix. These axes are those that maximize the variance of the observations. PCoA produces all ordination axes corresponding to a given dissimilarity matrix. The ordination solution is exact.
+
+#### R functions for NMDS
+*metaMDS()* (vegan)
+*isoMDS( )* (MASS)
+
+### Ordination exercise
+We are going to use the vegan package, and some built in data with it to run the nMDS. varespec is a data frame of observations of 44 species at 24 sites. We’ll calculate both an NMDS and a PCoA using the (cmdscale() function) on the bray-curtis distance matrix of these data. In each case, we will specify that we want 2 dimensions as our output.  
+
+```{r, echo=TRUE, comments=""}
+library(vegan)
+data(varespec)
+nMDS <- metaMDS(varespec, distance = "bray", k = 2)
+PCoA <- cmdscale(vegdist(varespec, method = "bray"), k = 2, eig = T, add = T )
+```
+
+
+If we look at the object PCoA we see eigenvalues, one for each of the 20 sites, and the new 2-D coordinates for each site. We can plot the results as plot(PCoA$points). In fact, let’s plot the PCoA and the NMDS side by side to see if they differ, using the par(mfrow()) functions.
+
+```{r}
+par(mfrow=c(1,2))
+plot(PCoA$points, main="PCoA", xlim=c(-.6,.6), ylim=c(-.6,.6))
+#text(PCoA$points, labels=c(1:20), cex= 0.7, pos=3)
+spe.wa <- wascores(PCoA$points[, 1:2], varespec)
+shortnames=substr(rownames(spe.wa), start = 5, stop = 8)
+text(spe.wa, shortnames, cex = 0.7, col = "red")
+#abline(h=0, col="grey")
+#abline(v=0, col="grey")
+plot(nMDS)
+shortnamesnM=substr(names(varespec), start = 5, stop = 8)
+text(nMDS$species,shortnamesnM, cex = 0.7, col = "red")
+```
