@@ -398,7 +398,7 @@ One of the best things to do is plot the imported data. Of course, this is not a
 
 library(openxlsx)
 urlj="https://doi.org/10.1371/journal.pone.0093281.s001"
-download.file(urlj, "p.xlsx")
+#download.file(urlj, "p.xlsx")
 iso=read.xlsx("p.xlsx")
 ```
 
