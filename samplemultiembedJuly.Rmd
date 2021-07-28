@@ -14,9 +14,9 @@ knitr::opts_chunk$set(echo = FALSE,kableExtra.auto_format = FALSE)
 ```
 
 # Introduction to multivariate analysis
-In this module we'll be disccusing multivariate quantitative methods. These methods are used for data where there is more than one response or measurement which we are trying to understand by using more than one feature or characteristic of the system. For example we may wish to understand how both precipitation and soil type are related to plant community composition. In this question, we may be tracking the abundance of over a dozen different species and many different sites with different types of soil, precipitation and other environmental factors. You can easily see that this is not a situation that ordinary univariate approaches are designed to handle!
+In this module we'll be disccusing multivariate quantitative methods. Analyses such as linear regression, where we relate a response, *y*, to a predictor variable, *x*, are univariate techniques. If we have multiple responses, $y_1...y_n$, and multiple predictors, $x_1...x_n$, we need multivariate approaches. For example, we may wish to understand how both precipitation and soil type are related to plant community composition. In this question, we may be tracking the abundance of over a dozen different species and many different sites with different types of soil, precipitation and other environmental factors. You can easily see that this is not a situation that ordinary univariate approaches are designed to handle!
 
-
+There are many types of multivariate analysis, and in this module and the next, we will only describe some of the most common ones. We can think of these different types of analysis as laying at different ends of a spectrum of treating the data as discrete vs continuous, and relying on identfying a reponse variable *a priori* versus letting the "data tell us" about explanatory features, i.e., latent variables (Fig. \@ref(fig:f1).
 
 <br>
 <br>
@@ -41,19 +41,20 @@ mtext("Response Variable", side = 3, line = 0.3, at = 0)
 ```
 <br>
 
-There are many types of maultivariate analysis, and in this module we will only describe some of the most common ones. We can think of these different types of anlaysis as laying at different ends of a spectrum of treating the data as discrete vs continuous, and relying on identfying a reponse variable a priori versus letting the "data tell us" about explanatory features, i.e., latent variables (\@ref(fig:f1).
+
 
 <br>
 <br>
 
-## Multivariate distance
+## Multivariate resemblance
 
-### Thinking about resemblence
-
-We are often interested in the question of how similar two things might be and a natural way to quantify similar is to list those characters that are shared. For example, what genetic or morphological features are the sameo or different between two species? A **resemblance measure** quantifies similarity by adding up in some way the similarities and differences between two things. In fact, this type of overall measure of the relationship among objects or attributes is a strating point for most multivariate analyses, and is often the most critical step. We can express the shared characters of objects as either:
+The starting point for a lot of the classic multivariate methods is to find metrics that describe how similar two individuals, samples, sites or species might be. A natural way to quantify similarity is to list those characters that are shared. For example, what genetic or morphological features are the same or different between two species? A **resemblance measure** quantifies similarity by adding up in some way the similarities and differences between two things.  We can express the shared characters of objects as either:
 **similarity (S)**, which quantifies the degree of resemblance or **dissimilarity (D)** which quantifies the degree of difference. 
 
-
+### Binary Similarity metrics
+The simplest similarity metric just tallys the number of shared features. This is called a binary similarity metric, since we are just indicating a yes or no for each characteristic of the two things we wish to compare (Table \@ref(tab:t1)).
+<br>
+<br>
 
 ```{r t1}
 library(knitr)
@@ -61,16 +62,16 @@ my_tbl <- data.frame(Att=c("Attribute 1","Attribute 2", "Attribute 3", "Attribut
 Obj2=c(0,1,0,1,1,0,1,0,1,0)) 
 my_tbl$sim=c("x","x",rep(("✓"),4), "x", rep(("✓"),2), "x")
 
-knitr::kable(my_tbl, digits = 3, row.names = FALSE, caption = "**Table 3.1** List of shared attributes for two things",col.names = c("Attribute","Object 1","Object 2","Similarity"),  format="html",table.attr = "style='width:50%;'", align="c")
+knitr::kable(my_tbl, digits = 3, row.names = FALSE, caption = "List of shared attributes for two things",col.names = c("Attribute","Object 1","Object 2","Similarity"),  format="html",table.attr = "style='width:50%;'", align="c", escape = FALSE)
 
 ```
 
+We could also use a shared *lack* of features as an indicator of similarity. The simple matching coefficient uses both shared features, and shared absent features to quantify similarity as $S_m=\frac{a+d}{a+b+c+d}$, where *a* refers to the number of characteristics that object 1 possesses and *b* is the number that object 2 possesses and so on (see Table \@ref(tab:t2)).
+<br>
+<br>
 <br>
 
-### Binary Similarity metrics
-The simplest similarity metric just tallys the number of shared features. So we just indicate yes or no for each characteristic for each of the two things we wish to compare \@ref(tab:t1).
-<br>
-<br>
+
 
 
 ```{r t2,echo=FALSE}
@@ -81,7 +82,7 @@ dt<-data.frame(stringsAsFactors=TRUE,
                c("a", "c"),
                c("b", "d"))
 colnames(x = dt) <-c("", "", "Present", "Absent")
-xt=kable(dt, caption= "**Table 3.2** Summary of shared and absent atributes",format="html",table.attr = "style='width:50%;'", align="c")
+xt=kable(dt, caption= "Summary of shared and absent atributes",format="html",table.attr = "style='width:50%;'", align="c")
 xt=kable_styling(xt,bootstrap_options = "bordered",
                 full_width = FALSE, position="l")
 xt=add_header_above(xt,c("", "", "Object 1", "Object 2"),
@@ -89,16 +90,11 @@ xt=add_header_above(xt,c("", "", "Object 1", "Object 2"),
 column_spec(xt,column = 1:2, bold = TRUE)
 ```
 
-We could also find a shared lack of features and indicator of similarity. The simple matching coefficient uses both shared features, and shared absent features to quantify similarity as $S_m=\frac{a+d}{a+b+c+d}$, where a refers to the number of characteristics that object 1 possesses and b is the number that object 2 possesses and so on (see \@ref(tab:t2)).
-<br>
-<br>
+We can further categorize similarity metrics as **symmetric**, where we regard both shared presence and shared absence as evidence of similarity, the simple matching coefficient, $S_m$ would be an example of this, or **asymmetric**, where we regard only shared presence as evidence of similarity (that is, we ignore shared absences).Asymmetric measures are most useful in analyzing ecological community data, since it is unlikely to be informative that two temperature zone communities lack tropical data, or that aquatic environments lack terrestrial species.
 
-We can further categorize similarity metrics as **symmetric**, where we regard both shared presence and shared absence as evidence of similarity. the simple matching coefficeint would be an example of this, or **asymmetric**, where
-we regard only shared presence as evidence of similarity (that is, we ignore shared absences). Asymmetric measures are most useful in analyzing ecological community data, since it is unlikely to be informative that two temperature zone communities lack tropical data, or that aquantic environments lack terrestrial species.
+The Jaccard index is an asymmetric binary similarity coefficient calculated as $S_J=\frac{a}{a+b+c}$, while the quite similar Sørenson index is given as $S_S=\frac{2a}{2a+b+c}$, and so gives greater weight to shared similarities. Both metrics range from 0 to 1, where a value of 1 indicates complete similarity.
 
-The Jaccard index is an asymteric binary similarity coefficient calculated as $S_J=\frac{a}{a+b+c}$, while the quite similar Sørenson index is given as $S_S=\frac{2a}{2a+b+c}$, and so gives greater weight to shared similarities.both metrics range from 0 to 1, where a value of 1 indicates complete similarity.
-
-
+Let's try an example. In the 70s, Watson (1974) compared the zooplankton species present in Lake Erie and Lake Ontario. We can use this information to compare how similar the communities in the two lakes were at this time. We can see that they shared a lot of species (Table \@ref(tab:t3))!
 
 ```{r t3, echo=FALSE}
 #manually enter data
@@ -108,12 +104,11 @@ sp=1:24
 lksp=data.frame(species=sp, erie=as.factor(lkerie), ontario=as.factor(lkontario))
 lksp$erie=ordered(lksp$erie, c("1", "0"))
 lksp$ontario=ordered(lksp$ontario, c("1", "0"))
-knitr::kable(lksp, caption="**Table 3.3** Species presence and absence in lake Erie and lake Ontario (data from from Watson 1974)",  table.attr = "style='width:50%;'", align="c")
+knitr::kable(lksp, caption="Species presence and absence in lake Erie and lake Ontario (data from from Watson 1974)",  table.attr = "style='width:50%;'", align="c")
 ```
 <br>
-Let's try an example. In the 70s, Watson (1974) compared the zooplankton species present in Lake Erie and Lake Ontario. We can use this information to compare how similar the communities in the two lakes were at this time. We can see that they shared a lot of species \@ref(tab:t3)!
 
-We can calculate the similarity metrics quite easily using the table() function and the dataframe "lksp" where I have stored the data. 
+We can calculate the similarity metrics quite easily using the **table()** function, where 1 indicates presence and 0 indicates absence. I have stored the information from Table \@ref(tab:t3) in the the dataframe *lksp*. I'm just going grab the presences and absences, since I don't need the species names for my calculation. 
 
 ```{r, echo=TRUE, comment=""}
 tlake=table(lksp[,c("erie","ontario")])
@@ -133,38 +128,43 @@ S_s
 
 ```
 
-
-We can also talk about the dissimilarity between things. When a disimilarity or similarity metric has a finite range,  we can simply convert from one to the other. For example, for similarities that range from 1 (identical) to 0 (completely different), dissimilarity would simply be 1-similarity.
-
+When a disimilarity or similarity metric has a finite range,  we can simply convert from one to the other. For example, for similarities that range from 1 (identical) to 0 (completely different), dissimilarity would simply be 1-similarity.
 
 ### Quantitative similarity & dissimilarity metrics
-While binary similarity metrics are easy to understand, there are a few problems. These metrics work best when we have a small number of characteristics and we have sampled very well (e.g., the zooplankton in Lake Erie and Ontario). The metrics are biased against maximum similarity values when we have lots of charactersitics or species and poor sampling. 
+While binary similarity metrics are easy to understand, there are a few problems. These metrics work best when we have a small number of characteristics and we have sampled very well (e.g., the zooplankton in Lake Erie and Ontario). However, these metrics are biased against maximum similarity values when we have lots of charactersitics (or species) and poor sampling. 
 
-In addition, we sometimes have more information than just a "yes" or "no" which we could use to further charactersitize similarity. Quantiative similarity and dissimularity metrics make use of this information. Problems with Binary similarity coefficients. Work best: small number of items, heavy sampling. Some examples of quantitative similarity metrics you will see are: Percentage similarity (Renkonen index), Morisita’s index of similarity (not dispersion) and Horn’s index. 
+In addition, we sometimes have more information than just a "yes" or "no" which we could use to further characterize similarity. Quantiative similarity and dissimilarity metrics make use of this information. Some examples of quantitative similarity metrics are: Percentage similarity (Renkonen index), Morisita’s index of similarity (not dispersion) and Horn’s index. 
 
-There are also many quantitive dissimilarity metrics. For example, Bray Curtis dissimilarity is frequently used by ecologists to quantify differences between samples based on abundance or count data. This measure is usually applied to raw abundance data, but can be applied to relative abundances. In this case, we often talk about the "distance" between two things. Distances are of two types, either dissimilarity, converted from analogous similarity indices, or specific distance measures, such as Euclidean distance, which doesn't have a counterpart in any similarity index. There are many, many such metrics, and obviously, you should choose the most accurate and meaningful distance measure for a given  application. Legendre & Legendre (2012) offers a key how to select an appropriate measure for given data and problem (check their Tables 7.4-7.6). If you uncertain then choose several distance measures and compare the results.
+Quantitive dissimilarity metrics are perhaps more commonly used. In this case, we often talk about the "distance" between two things. Distances are of two types, either dissimilarity, converted from analogous similarity indices, or specific distance measures, such as Euclidean distance, which doesn't have a counterpart in any similarity index. There are many, many such metrics, and obviously, you should choose the most accurate and meaningful distance measure for a given  application. Legendre & Legendre (2012) offer a key on how to select an appropriate measure for given data and problem (check their Tables 7.4-7.6). If you uncertain, then choose several distance measures and compare the results.
 
 **Euclidean Distance**
 
-Perhaps the mostly commonly used dissimilarity or distance measure is Euclidian distance. This metric is zero for identical sampling units and has no fixed upper bound. 
+Perhaps the mostly commonly used, and easiest to understand, dissimilarity, or distance, measure is Euclidian distance. This metric is zero for identical sampling units and has no fixed upper bound. 
+
+Euclidean distance in multivariate space is derived from our understanding of distance in a Cartesian plane. If we had two species abundances measured in two different samples, we could then plot the abundance of species 1 and species 2 for each sample on a 2D plane, and draw a line between them. This would be our Euclidean distance: the shortest path between the two points (Fig. \@ref(fig:f2)).
 
 ```{r f2, echo=FALSE, fig.cap="Euclidean Distance", fig.alt=""}
 x=c(19, 35)
 y=c(30, 10)
 plot(x,y, xlim = c(0,40), ylim = c(0,40), xlab = "Species 1", ylab = "Species 2",frame.plot = FALSE, box(bty="l"), pch = 19, col = "blue", cex = 2, font.lab = 2, cex.main = 2)
-text(x=19, y=35, labels = "Sample j")
-text(x=35, y=5, labels = "Sample k")
+text(x=19, y=35, labels = "sample j")
+text(x=35, y=5, labels = "sample k")
+text(x=17, y=20, labels = "b", col="blue")
+text(x=25, y=5, labels = "a", col="blue")
+text(x=28, y=23, labels = "c", col="blue")
 lines(x,y, lwd = 3, col = "blue")
 lines(c(19,19), c(29,10), lty = "dotted", lwd = 2)
 lines(c(19,34), c(10,10), lty = "dotted", lwd = 2)
 ```
 
-Eclidean distance in multivariate space is derived from our understanding of distance in a cartesian plane. If we had two species measured in in two different samples, we could then plot the abundance of species 1 and species 2 for each sample, and draw a line between them. This would be our Euclidean distance: the shortest path between the two points \@ref(fig:f2).
+
 
 We know that to calculate this distance we would just use the Pythagorean theorem as $c=\sqrt{a^2+b^2}$. To generalize to n species we can say
-$D^E_{jk}=\sqrt{\sum^n_{i=1}(X_{ij}-X_{ik})^2}$, where Euclidean distance between samples j and k, $D^E_{jk}$, is calculated by summing over the distance in abundance of each of n species in the two samples.
+$D^E_{jk}=\sqrt{\sum^n_{i=1}(X_{ij}-X_{ik})^2}$, where Euclidean distance between samples *j* and *k*, $D^E_{jk}$, is calculated by summing over the distance in abundance of each of n species in the two samples.
 
 
+<br>
+Let's try an example. Given the species abundances in Table \@ref(tab:t4), we can calculate the squared difference in abundance for each species, and sum that quantity. 
 
 ```{r t4}
 library(knitr)
@@ -178,35 +178,31 @@ eu[11,1]="TOTAL"
 eu[11,2:4]=c( sj,sk, sS)
 
 
-knitr::kable(eu, digits = 3, row.names = FALSE, caption = "Species abundance and distance calculations for two samples",col.names = c("","Sample j","Sample k","$(X_j-X_k)^2$" ),  format="html",table.attr = "style='width:50%;'", align="c")
+knitr::kable(eu, digits = 3, row.names = FALSE, caption = "Species abundance and distance calculations for two samples",col.names = c("","sample j","sample k","$(X_j-X_k)^2$" ),  format="html",table.attr = "style='width:50%;'", align="c")
 
 ```
 
-<br>
-Let's try an example. Given the species abundances in \@ref(tab:t4), we can calculate the squared difference in abundance for each species, and sum that quantity. Then all we need is to take the square root to obtain the Euclidean distance. Did you get the correct answer of `r round(sqrt(eu[11,4]),2)`? Of course, R makes this much easier, I can calculate Euclidan distance using the **dist()** function, after creating a matrix of the two columns of species abundance data from my original eu dataframe.
+Then all we need to do is to take the square root of the sum to obtain the Euclidean distance. Did you get the correct answer of `r round(sqrt(eu[11,4]),2)`? Of course, R makes this much easier, I can calculate Euclidan distance using the **dist()** function, after creating a matrix of the two columns of species abundance data from my original *eu* dataframe.
 
 ```{r , echo=TRUE, comment=""}
 dist(rbind(eu$j[1:10], eu$k[1:10]), method = "euclidean")
 ```
+There are many other quantitative dissimilarity metrics. For example, Bray Curtis dissimilarity is frequently used by ecologists to quantify differences between samples based on abundance or count data. This measure is usually applied to raw abundance data, but can be applied to relative abundances. It is calculated as: $BC_{ij}=1-\frac{C_{ij}}{S_{i}+S_{j}}$, where $C_{ij}$ is the sum over the smallest values for only those species in common between both sites, $S_{i}$ and $S_{j}$ are the sum of abundances at the two sites. This metric is directly related to the Sørenson binary similarity metric, and ranges from 0 to 1, with 0 indicating complete similarity. This is not at distance metric, and so, is not appropriate for some types of analysis.
 
 ### Comparing more than two communities/samples/sites/genes/species
 
 What about the situation where we want to compare more than two communtiies, species, samples or genes? We can simply generate a dissimilarity or similarity **matrix**, where each pairwise comparison is given. 
 
-In the species composition matrix below \@ref(tab:t5), sample A and B do not share any species, while sample A and C share all species but differ in abundances (e.g. species 3 = 1 in sample A and 8 in sample C). The calculation of Euclidean distance using the **dist()** function produces a lower triangular matrix with the pairwise comparisons (I've included the distance with the sample itself on the diagonal). 
+In the species composition matrix below (Table \@ref(tab:t5)), sample A and B do not share any species, while sample A and C share all species but differ in abundances (e.g. species 3 = 1 in sample A and 8 in sample C). The calculation of Euclidean distance using the **dist()** function produces a lower triangular matrix with the pairwise comparisons (I've included the distance with the sample itself on the diagonal). 
 
 The Euclidan distance values suggest that A and B are the most similar! Euclidean distance puts more weight on differences in species abundances than on difference in species presences. As a result, two samples not sharing any species could appear more similar (with lower Euclidean distance) than two samples which share species that largely differ in their abundances.
 
-There are other disadvantages as well, and in general, there is simply no perfect metric. For example, you may dislike the fact that Euclidean distance also has no upper bound, and so it becomes difficult to understand **how** similar two things are (i.e., the metric can only be understood in a relative way when comparing many things, Sample A is more similar to Sample B than Sample C, for example). You could use a Pearson correlation coefficient instead, since it has an upper bound of 1.0, but this metric is very senstive to outliers, which is also a disadvantage.
-
-
-
 
 ```{r t5}
-nm=c("Species 1","Species 2", "Species 3")
+nm=c("species 1","species 2", "species 3")
 meu <- data.frame(Att=nm, A=c(0,1,1), B=c(1,0,0),C=c(0,4,8), stringsAsFactors = FALSE) 
 
-knitr::kable(meu, digits = 3, row.names = FALSE, caption = "Species abundance versus species presence and Euclidean distance",col.names = c("","Sample A","Sample B","Sample C" ),  format="html",table.attr = "style='width:50%;'", align="c")
+knitr::kable(meu, digits = 3, row.names = FALSE, caption = "Species abundance versus species presence and Euclidean distance",col.names = c("","sample A","sample B","sample C" ),  format="html",table.attr = "style='width:50%;'", align="c")
 
 ```
 <br>
@@ -214,40 +210,40 @@ knitr::kable(meu, digits = 3, row.names = FALSE, caption = "Species abundance ve
 ```{r, echo=TRUE, comment=""}
 dist(t(meu[2:4]), method="euclidean", diag=TRUE)
 ```
+There are other disadvantages as well, and in general, there is simply no perfect metric. For example, you may dislike the fact that Euclidean distance also has no upper bound, and so it becomes difficult to understand **how** similar two things are (i.e., the metric can only be understood in a relative way when comparing many things, Sample A is more similar to sample B than sample C, for example). You could use a Bray-Curtis dissimilarity metric, which is quite easy to interpret, but this metric will also confound differences in species presences and differences in species counts (Greenacre 2017). The best policy is to be aware of the advantages and disadvantages of the metrics you choose, and interpret your analysis in light of this information.
+
+
 ### R functions 
 
-There are a number of functions in R that can be used to calculate similarity and dissimilarity metrics. Since we are usually NOT just comparing two objects, sites or samples, these functions can help make your calculations much quicker when you are comparing many units.
+There are a number of functions in R that can be used to calculate similarity and dissimilarity metrics. Since we are usually not just comparing two objects, sites or samples, these functions can help make your calculations much quicker when you are comparing many units.
 
-**dist()** offers a number of distance measures - e.g. euclidean,canberra and manhattan. The result is the distance matrix which gives the dissimilarity of each pair of objects, sites or samples. the matrix is an object of the class dist in R.
+**dist()** offers a number of distance measures (e.g. euclidean,canberra and manhattan). The result is the distance matrix which gives the dissimilarity of each pair of objects, sites or samples. the matrix is an object of the class dist in R.
 
-**vegdist()** (library vegan) - default distance used in this function is Bray-Curtis distance, which is (in contrast to Euclidean distance) considered as more suitable for ecological data (it is a quantitative analog of Sørensen dissimilarity).
+**vegdist()** (library vegan). The default distance used in this function is Bray-Curtis distance, which is considered more suitable for ecological data.
 
-**dsvdis()** (library labdsv) - offers some other indices than vegdist, e.g. ruzicka (Růžička, quantitative analogue of Jaccard) and roberts. 
+**dsvdis()** (library labdsv)  Offers some other indices than vegdist (e.g. ruzicka (or Růžička), a quantitative analogue of Jaccard, and roberts. 
 
 For full comparison of dist, vegdist and dsvdis,see http://ecology.msu.montana.edu/labdsv/R/labs/lab8/lab8.html.
 
-**dist.ldc()** (library adespatial) - includes 21 dissimilarity indices described in Legendre & De Cáceres (2013), twelve of which are not readily available in other packages. Note that Bray-Curtis dissimilarity is called percentage difference (method = “percentdiff”). By default this function returns an informative message as to whether the given dissimilarity index is Euclidean or not and whether it becomes Euclidean if square-rooted (as is the case of e.g. Bray-Curtis).
+**dist.ldc()** (library adespatial) Includes 21 dissimilarity indices described in Legendre & De Cáceres (2013), twelve of which are not readily available in other packages. Note that Bray-Curtis dissimilarity is called percentage difference (method = “percentdiff”). 
 
-**designdist()** (library vegan) - allows one to design virtually any distance measure using the formula for their calculation.
+**designdist()** (library vegan) Allows one to design virtually any distance measure using the formula for their calculation.
 
-**daisy()** (library cluster) - offers euclidean, manhattan and gower distance.
+**daisy()** (library cluster) Offers euclidean, manhattan and gower distance.
 
-**distance()** (library ecodist) - contains seven distance measures, but the function is more for demonstration (for larger matrices, the calculation takes rather long).
+**distance()** (library ecodist) Contains seven distance measures, but the function is more for demonstration (for larger matrices, the calculation takes rather long).
 
 ## Cluster Analysis
 
-When we have a large number of things to compare, and examination of a matrix of similarlity or dissimilatiry metrics can be tedious or even impossible to do. One way to visualize the similarity among units is to use some form of cluster analysis. Clustering is the classification of data objects into discrete similarity groups (clusters) according to a defined distance measure.
+When we have a large number of things to compare, an examination of a matrix of similarlity or dissimilatiry metrics can be tedious or even impossible to do. One way to visualize the similarity among units is to use some form of cluster analysis. Clustering is the grouping of data objects into discrete similarity categories according to a defined similarity or dissimilarity measure.
 
-So we can constrast clustering, which assumes that units (e.g., sites, communities, species or genes) can be grouped into discrete categories based on similarity, with ordination,  which treats the similarity between units as a continuous gradient (we'll discuss ordination in section XX). We can use clustering to do things like discern whether there are one or two or three different communities in three or four or five sampling units. It is used in many fields, such as machine learning, data mining, pattern recognition, image analysis, genomics, systems biology, etc. Machine learning typically regards data clustering as a form of unsupervised learning. It is “unsupervised” because we are not guided by a priori ideas of which variables or samples belong in which clusters. “Learning” because the machine algorithm “learns” how to cluster.
+We can contrast clustering, which assumes that units (e.g., sites, communities, species or genes) can be grouped into discrete categories based on similarity, with ordination,  which treats the similarity between units as a continuous gradient (we'll discuss ordination in section 6.3). We can use clustering to do things like discern whether there are one or two or three different communities in three or four or five sampling units. It is used in many fields, such as machine learning, data mining, pattern recognition, image analysis, genomics, systems biology, etc. Machine learning typically regards data clustering as a form of unsupervised learning, or from our figure above (Fig \@ref(fig:f1)), as a technique that uses "latent" variables because we are not guided by *a priori* ideas of which variables or samples belong in which clusters. 
 
 ### Hierarchical clustering: groups are nested within other groups.
 
-Perhaps the most familiar type of clustering is hierarchical. There are two kinds: **divisive** and **agglomerative**. In the divisive method, the entire set of units is dividied into smaller and smaller groups. The agglomerative method starts with small groups of few units, and groups them into larger and larger clusters, until the entire data set is sampled (Pielou, 1984). Of course, once you have more than two units, you need some way to assess similarlity between the clusters. There are a couple of different methods here. Single linkage assigns the similairty between clusters to the most similar units in each cluster. Complete linkage uses the similarity between the most dissmilar units in each cluster, while average linkage aveages over all the units in each cluster (\@ref(fig:f6)). 
+Perhaps the most familiar type of clustering is hierarchical. There are two kinds: **divisive** and **agglomerative**. In the divisive method, the entire set of units is divided into smaller and smaller groups. The agglomerative method starts with small groups of few units, and groups them into larger and larger clusters, until the entire data set is sampled (Pielou, 1984). Of course, once you have more than two units, you need some way to assess similarlity between the clusters. There are a couple of different methods here. Single linkage assigns the similairty between clusters to the most similar units in each cluster. Complete linkage uses the similarity between the most dissmilar units in each cluster, while average linkage averages over all the units in each cluster (Fig. \@ref(fig:f6)). 
 
-
-
-
-```{r f6, fig.cap="Different methods of determining similarity between clusters", fig.alt=""}
+```{r f6, fig.height=6., fig.cap="Different methods of determining similarity between clusters", fig.alt=""}
 library(plotrix)
 plot(rbind(c(-3,9), c(-2,10), c(-2,7), c(1,9), c(2,10), c(2,7), c(-3,1), c(-2,2), c(-2,-1), c(1,1), c(2,2), c(2,-1), c(-3,-7), c(-2,-6), c(-2,-9), c(1,-7), c(2,-6), c(2,-9)), xlim = c(-8,7), ylim = c(-10, 13), xaxt = "n", yaxt = "n", frame.plot = FALSE, ann = FALSE, pch = 16)
 draw.circle(-2.4,8.5,1.3)
@@ -267,24 +263,27 @@ lines(c(-2,2), c(-6,-9), lwd=1.5)
 lines(c(-2,1), c(-9,-7), lwd=1.5)
 lines(c(-2,2), c(-9,-6), lwd=1.5)
 lines(c(-2,2), c(-9,-9), lwd=1.5)
-text(x=-2.5, y=12.7, labels = "Simple Linkage")
-text(x=-2.5, y=4.6, labels = "Complete Linkage")
-text(x=-2.5, y=-3.7, labels = "Average Linkage")
+text(x=-2.5, y=12.7, labels = "Simple Linkage", cex=1.5)
+text(x=-2.5, y=4.6, labels = "Complete Linkage", cex=1.5)
+text(x=-2.5, y=-3.7, labels = "Average Linkage", cex=1.5)
 ```
 
 **Single Linkage Cluster Analysis**
 
 Single linkage cluster analysis is one of the easiest to explain. It is hierarchical, agglomerative technique. We start by creating a matrix of similarity (or dissimilarity) indices between the units we want to compare.
 
-Then we find the most similar pair of samples, and that will form the 1st cluster. Next, we find either: (a) the second most similar pair of samples or (b) highest similarity between a cluster and a sample, or (c) most similar pair of clusters, whichever is greatest. We then continue this process until until there is one big cluster. Remember that in single linkage, similarity between two clusters = similarity between the two nearest members of the clusters. Or if we are comparing a sample to a cluster, the similarity is defined as, the similarity between sample and the nearest member of the cluster.
+Then we find the most similar pair of samples, and that will form the 1st cluster. Next, we find either: (a) the second most similar pair of samples or (b) highest similarity between a cluster and a sample, or (c) most similar pair of clusters, whichever is greatest. We then continue this process until until there is one big cluster. Remember that in single linkage, similarity between two clusters = similarity between the two nearest members of the clusters. Or if we are comparing a sample to a cluster, the similarity is defined as the similarity between sample and the nearest member of the cluster.
 ```{r, echo=TRUE, comment=""}
-cls=data.frame(a=c(5,6,34,1,12),b=c(10,1,2,32,4),  c=c(1,59,32,3,4), d=c(2,63,1,2,45), e=c(4,3,4,90,2))
+cls=data.frame(a=c(5,6,34,1,12),b=c(10,5,2,3,4),  c=c(10,59,32,3,40), d=c(2,63,10,29,45), e=c(44,35,40,12,20))
 clsd=dist(t(cls), method="euclidean")
-clsd
+round(clsd,0)
+
+
+
 ```
 
 
-```{r, echo=FALSE}
+```{r, fig.height=6., fig.cap="Example of using a dissimilarity matrix to construct a single-linkage cluster diagra", fig.alt="",echo=FALSE}
 plot(rbind(c(0,0)), xlim = c(-50,50), ylim = c(-100, 100), frame.plot = FALSE, ann = FALSE, type = "n", xaxt = "n", yaxt = "n")
 text(x=-40, y=75, labels = "a")
 text(x=-20, y=75, labels = "b")
@@ -304,100 +303,71 @@ text(x=40, y=-105, labels = "e")
 lines(c(-40,-40), c(85,100), lwd=2)
 lines(c(-40,-20), c(100,100), lwd=2)
 lines(c(-20,-20), c(100,85), lwd=2)
-text(x=-30, y=90, labels = "0.1")
+text(x=-30, y=90, labels = "33")
 lines(c(-40,-40), c(15,30), lwd=2)
 lines(c(-40,-20), c(30,30), lwd=2)
 lines(c(-20,-20), c(30,15), lwd=2)
-text(x=-30, y=20, labels = "0.1")
+text(x=-30, y=20, labels = "33")
 lines(c(0,0), c(15,55), lwd=2)
 lines(c(0,20), c(55,55), lwd=2)
 lines(c(20,20), c(55,15), lwd=2)
-text(x=10, y=45, labels = "0.4")
+text(x=10, y=45, labels = "36")
 lines(c(-40,-40), c(-90,-75), lwd=2)
 lines(c(-40,-20), c(-75,-75), lwd=2)
 lines(c(-20,-20), c(-75,-90), lwd=2)
-text(x=-30, y=-85, labels = "0.1")
+text(x=-30, y=-85, labels = "33")
 lines(c(0,0), c(-90,-50), lwd=2)
 lines(c(0,20), c(-50,-50), lwd=2)
 lines(c(20,20), c(-50,-90), lwd=2)
-text(x=10, y=-60, labels = "0.4")
+text(x=10, y=-60, labels = "36")
 lines(c(10,10), c(-50,-35), lwd=2)
 lines(c(10,40), c(-35,-35), lwd=2)
 lines(c(40,40), c(-35,-90), lwd=2)
-text(x=25, y=-45, labels = "0.5")
+text(x=25, y=-45, labels = "48")
 lines(c(-30,-30), c(-75,-20), lwd=2)
 lines(c(-30,25), c(-20,-20), lwd=2)
 lines(c(25,25), c(-20,-35), lwd=2)
-text(x=-2.5, y=-30, labels = "0.6")
+text(x=-2.5, y=-30, labels = "51")
 text(x=-50, y=100, labels = "a)")
 text(x=-50, y=55, labels = "b)")
 text(x=-50, y=-20, labels = "c)")
 ```
 
-```{r}
-library(RColorBrewer)
-set.seed(1)
-y <- matrix(rnorm(50), 10, 5, dimnames=list(paste("g", 1:10, sep=""), paste("t", 1:5, sep="")))
-colfunc <- colorRampPalette(c("green", "red"))
-heatmap(y,col=colfunc(15))
-```
-
 ### R functions
-Agglomerative approach (bottom-up)
-**hclust()** calculates hierarchical cluster analysis. Requires at least two arguments: d for distance matrix, and method for agglomerative algorithm, one of ward.D, ward.D2, single, complete, average (= UPGMA), mcquitty (= WPGMA), median (= WPGMC) or centroid (= UPGMC). Has it's own plot function.
+**Agglomerative approach (bottom-up)**
 
-and **agnes()** (library cluster) - contains six agglomerative algorithms, some not included in hclust. 
+**hclust()** calculates hierarchical cluster analysis and has it's own plot function.
 
-Divisive approach (top-down)
+**agnes()** (library cluster) Contains six agglomerative algorithms, some not included in hclust. 
+
+**Divisive approach (top-down)**
 **diana()**
 
 
 
-### How many clusters
-```{r}
-library(plotrix)
-plot(rbind(c(-4,9.5), c(-3.5,10.5), c(-3,9.2), c(-2.7,10), c(-2,8.2), c(-1.2,10.5),
-           c(-2.1,11.9), c(3.1,11.1), c(4,12.5), c(4.5,10.6), c(5,10), c(5.5,11.1), 
-           c(6,10), c(5,7), c(5.7,7.9), c(6.1,6.9), c(6.6,7.3), c(7.1,5.9),c(8,8),
-           c(-4,0.5),c(-3.5,1.5),c(-3,0.5),c(-2.5,1),c(-2,-0.5),c(-1.1,1.6),c(-2,3),
-           c(3.1,2.1),c(4,3.5),c(4.5,1.8),c(5,1),c(5.5,2.1),c(6,1),c(5.6,-1),
-           c(5,-2),c(6.6,-1.6),c(6.1,-2.1),c(7.1,-3.1),c(7.9,-1),c(-2,-7),
-           c(-3.5,-8.5),c(-4,-9.5),c(-3,-9.5),c(-2.5,-9),c(-2,-10.8),
-           c(-1.2,-8.5),c(4,-6.2),c(3.1,-7.9),c(4.5,-8.2),c(5,-9),c(5.5,-7.9),
-           c(6,-9),c(5,-12),c(5.6,-11),c(6.1,-12.1),c(6.6,-11.6),c(7.1,-13.1),c(7.9,-11)), 
-     xlim = c(-25,25), ylim = c(-14,13), xaxt = "n", yaxt = "n", 
-     frame.plot = FALSE, ann = FALSE, pch = 21, bg="red", col="red")
-points(rbind(c(-2,6.7),c(0.5,12.5),c(1,3.5),c(1.7,7.7),c(-2,-3),c(2.5,-1.2),
-             c(-2,-9.2),c(4.8,-7.4),c(7,-12.4)),pch=4)
-draw.circle(-2.5,1.1,2.4)
-draw.circle(4.9,2.5,2.3)
-draw.circle(6.5,-2,2)
-draw.circle(-2.5,-9,2.4)
-draw.circle(4.9,-7.5,2.3)
-draw.circle(6.5,-12,2)
-segments(-2.5,-1.5,-2.1,-2.3)
-segments(2.7,3,1.5,3.5)
-segments(4.6,-1.2,3,-1)
-text(x=-9, y=13, labels = "(a)")
-text(x=-9, y=4, labels = "(b)")
-text(x=-9, y=-6, labels = "(c)")
+### How many clusters?
+The hiearchical methods just keep going until all objects are included (agglomerative methods), or are each in their own group (divisive methods). However, neither endpoint is very useful. How do we select the number of groups? There are metrics and techniques to make this decision more objective, however, in this introduction, we'll just mention that, for hierarchical methods, you can determine the number of groups a given degree of similarity, or set the number of groups and find the degree of similarity that results in that number of groups. Let's try. We'll use the **cutree()** function that works on cluster diagrams produced by the **hclust()** function (Fig. \@ref{fig:hclustfig)).
+
+If we set our dissimilarity threshold at 40, we find that there are three groups: a&b, c&d, and e in its own group.
+
+```{r hclustfig, fig.height=5, fig.width=5, fig.cap="Cluster diagram produced by the function **hclust** with cut-off line at euclidean distance=40 for group membership", fig.alt=""}
+hcl=hclust(clsd, method="single")
+
+
+plot(hcl, main="", hang=0, xlab="")
+abline(h=40, col="red")
+cutree(hcl, h=40)
 ```
-Drafty below
 
 ***
 
 
-### K-Means Clustering
+### Other clustering methods
+There are other means of clustering data of course. Partitional clustering is the division of data objects into non-overlapping subsets, such that each data object is in exactly one subset
 
-Partitional Clustering: A division of data objects into non-overlapping subsets
-
-(clusters) such that each data object is in exactly one subset
-
-Each cluster is associated with a centroid (center point)
-
-Each point is assigned to the cluster with the closest centroid
-
-Number of clusters, K, must be specified
+#### K-means clustering
+In one version of this, k-means clustering, each cluster is associated with a centroid (center point), and each
+data object is assigned to the cluster with the closest centroid. In this method, the number of clusters, K, must be specified in advance. Our method is:
 
 1. Choose the number of K clusters
 2. Select K points as the initial centroids
@@ -407,76 +377,100 @@ Number of clusters, K, must be specified
 6. Repeat from (3) until clusters assignments are stable
 
 
-K-means has problems when clusters are of differing
-– Sizes
-– Densities
-– Non-globular shapes
+K-means has problems when clusters are of differing sizes and densities, or are non-globular shapes. It is also very sensitive to outliers.
 
- K-means has problems when the data contains outliers.
+#### Fuzzy C-Means Clustering
 
-### Fuzzy C-Means Clustering
+In contrast to strict (or hard) clustering approaches, fuzzy (soft) clustering methods allow multiple cluster memberships of the clustered items.
 
+This is commonly achieved by assigning to each item a weight of belonging to each cluster. Thus, items at the edge of a cluster, may be in a cluster to a lesser degree than items at the center of a cluster. Typically, each item has as many coefficients (weights) as there are clusters that sum up for each item to one.
 
-In contrast to strict (hard) clustering approaches, fuzzy (soft) clustering methods allow multiple cluster memberships of the clustered items.
+### Exercise: Cluster analysis of isotope data
 
-This is commonly achieved by assigning to each item a weight of belonging to each cluster. 
+Our first step is to download and import the dataset “Dataset_S1.csv” from Perkins et al. 2014 (see url below). This data contains δ15N and δ13C signatures for species from different food webs. Unfortunately, this data is saved in an .xlsx file. 
 
-Thus, items at the edge of a cluster, may be in a cluster to a lesser degree than items at the center of a cluster.
+To read data into R one of the easiest options is to use the read.csv() function with the argument on a .csv file. These **C**omma **S**eparated **F**iles are one of your best options for reproducible research. They are human readable and easily handled by almost every type of software. In contrast Microsoft Excel uses a propriatory file format, is not fully backwards compatible, and although widely used, is not human readable. As a result, we need special tools to access this file outside of Microsoft software products
 
-Typically, each item has as many coefficients (weights) as there are clusters that sum up for each item to one.
+We'll download the data set using **download.file()**, and read it using the R library *openxlsx* (see example below).Once you have successfully read your data file into R, take a look at it! Type *iso* (or whatever you named your data object) to see if the data file was read in properly. Some datasets will be too large for this approach to be useful (the data will scroll right off the page). In that case, there are a number of commands to look at a portion of the dataset. You could use a command like names(iso). 
 
-## Exercise: Cluster analysis of isotope data
+One of the best things to do is plot the imported data. Of course, this is not always possible with very large datasets, but this set should work. Use the plot() function plotting δ15N vs δ13C to take a quick look.
+```{r, echo=TRUE, comments=""}
+library(openxlsx)
+urlj="https://doi.org/10.1371/journal.pone.0093281.s001"
+download.file(urlj, "p.xlsx")
+iso=read.xlsx("p.xlsx", sheet=1)
+```
 
-we will read data into R. Download and import the dataset “Dataset_S1.csv” from Perkins et al. 2014 on the learn site in the lab folder. This data contains δ15N and δ13C signatures for species from different food webs.
-To read data into R one of the easiest options is to use the read.csv() function with the argument on a .csv file. These Comma Separated Files are one of your best options for reproducible research. They are human readable and easily handled by almost every time of software.
+```{r chkperkins,echo=TRUE, fig.cap="Isotope data from Perkins et al (2014)", fig.alt=""}
+plot(iso$N~iso$C, col=as.numeric(as.factor(iso$Food.Chain)),xlim=c(-35, 0), pch=as.numeric(as.factor(iso$Species)),  xlab="δ13C", ylab="δ15N")
 
-Once you have successfully read your data file into R, take a look at it! Type mydata (or whatever you named your data object) to see if the data file was read in properly. Some datasets will be too large for this approach to be useful (the data will scroll right off the page). In that case, there are a number of commands to look at a portion of the dataset. You could use a command like names(mydata), but it has one obvious shortcoming. What is it?
+legend("topright", legend=unique(as.factor(iso$Food.Chain)),pch=1,
+col=as.numeric(unique(as.factor(iso$Food.Chain))), bty="n", title="Food chain")
 
-One of the best things to do is plot the imported data. Of course, this is not always possible with very large datasets, but this set should work. Use the plot function as plot(iso$N~iso$C, pch=16, xlab="C", ylab="N") to take a quick look.
+legend("bottomright",legend=as.character(unique(as.factor(iso$Species))), pch=as.numeric(unique(as.factor(iso$Species))), bty="n")
+```
+We are going to use this data set to see if a cluster analysis on δ15N and δ13C can identify the foodweb. That is we are going to see if the latent variables identified by our clustering method match up to what we think we know about the data. Our first step is to create a dissimilarity matrix, but even before this, we must select that part of the data that we wish to use, just the δ15N and δ13C data, not the other components of the dataframe. 
 
-We are going to use this data set to see if a cluster analysis on δ15N and δ13C can identify the foodweb and trophic level of different species. That is we are going to “supervise” our unsupervised learning algorithm. Our first step is to create a dissimilarity matrix, but even before this, we must select that part of the data that we wish to use. We’ll be creating the dissimilarity matrix using just the δ15N and δ13C data, not the other components of the dataframe, so you will need to select and save just these two columns.
+In addition, our analysis will be affected by the missing data. So let’s get remove those rows with missing data right now using the **complete.cases()** function. The function returns a value of TRUE for every row in a dataframe that no missing values in any column. So niso=iso[complete.cases(mydata),], will be a new data frame with only complete row entries.
 
-In addition, our analysis will be affected by the missing data. So let’s get remove those rows with missing data right now using the complete.cases() function. The function returns a value of TRUE for every row in a dataframe that no missing values in any column. So newdat=mydata[complete.cases(mydata),], will be a new data frame with only complete row entries.
-Select and save only the C and N columns of this data, and you should be set to create a dissimilarity matrix.
+The function **dist()** will generate a matrix of the pairwise Euclidean distances between pairs of observations. Now that you have a dissimilarity matrix, you complete a cluster analysis. The function **hclust()** will produce a data frame that can be sent to the **plot()** function plotted to visualize the recommended clustering. The method used to complete the analysis is indicated below the graph. Please adjust the arguments of the function to complete a single linkage analysis (look at help(hclust)) to determine the method to do this).
 
-3. Create a dissimilarity matrix using dist()
-The function dist() will generate a matrix of the pairwise Euclidean distances between pairs of observations. Instead of “euclidean”, you can also use these distance measures of the dist() function "maximum", "manhattan", "canberra", "binary" or "minkowski". Check the help file for dist() by typing ?dist.
+```{r perkclust, echo=TRUE, comments="", fig.cap="Cluster figure of isotope data from Perkins et al. 2014)", fig.alt=""}
+str(iso)
+diso<-dist((iso[,c("C","N")]), method="euclidean")
+p=hclust(diso,method="single")
+plot(p, cex=0.5,main="")
 
-4. Complete a hierarchical cluster analysis
-Now that you have a dissimilarity matrix, you complete a cluster analysis. The function hclust() will produce a data.frame that can be sent to the plot() function plotted to visualize the recommended clustering. The method used to complete the analysis is indicated below the graph.
-Please adjust the arguments of the function to complete a single linkage analysis (look at help(hclust)) to determine the method to do this).
+```
 
-When you graph your cluster using plot(), you notice that there are many individual measurements, but there are only a few large groups. Does it look like there is an outlier? If so, you may want to remove this point from the data set, and then rerun the analysis. Remember to remove the point from the dataframe that has all the food chain info in it, otherwise you will have problems plotting later.
+When you graph your cluster using plot(), you notice that there are many individual measurements, but there are only a few large groups. Does it look like there is an outlier?  If so, you may want to remove this point from the data set, and then rerun the analysis. The row numbers are used as labels by default, so this is easy to do (niso=niso[-5,]). Remember to remove the point from the dataframe that has all the food chain info in it, otherwise you will have problems plotting later.
 
-When you examine the data set, you noted that there are 4 Food.chain designations. We will use the cutree() function to cut our cluster tree to get the desired number of groups, and then save
-the group numbers to a new column in our original dataframe. For example, newdata$clust<- cutree(p,4).
+When you examine the data set, you noted that there are 4 Food.chain designations. We will use the cutree() function to cut our cluster tree to get the desired number of groups (4), and then save the group numbers to a new column in our original dataframe. For example, iso$clust<- cutree(p,4).We can then plot the data using colours and symbols to see how well our clustering works
+```{r clust, echo=TRUE, fig.cap="Single linkage clustering on Perkins et al (2014) data with outlier removed", fig.alt=""}
+niso=iso[complete.cases(iso),]
+niso=niso[-5,]
 
-We can then plot the data using colours and symbols to see how well our clustering works
-plot(ndata$N~ndata$C, pch=as.numeric(ndata$Food.Chain), col=ndata$clust,xlab="C", ylab="N",main="Four clusters") legend("topright", legend=c(1:4),pch=1,col=c(1:4), bty="n") legend("bottom", legend=as.character(levels(iso$Food.Chain)[2:5]), pch=c(2:5), bty="n")
-If you are not happy with the success of this clustering algorithm you could try other variants. For example the “complete” linkage variant.
+net=niso[,c("C","N")]
+diso<-dist((net), method="euclidean")
+p=hclust(diso, method="single")
+plot(p,labels=FALSE, main="")
+```
 
-BTW If you are feeling bored try a heatmap() display of the cluster analysis. This function works on the raw N and C data, but we have to send the data as a matrix rather than a dataframe, and we have to transpose it using the t() function as heatmap(as.matrix(t(net))).
+```{r clustdata, echo=TRUE, fig.cap="Data from Perkins et al (2014) data with grouping from single linkage clustering superimposed", fig.alt=""}
+niso$clust<-cutree(p,k=4)
 
-5. Clustering with kmeans()
-Let’s try a non-hierarchical cluster analysis on the same data. The kmeans() function requires that we select the required number of clusters ahead of time (4) as kclust=kmeans(ndata, 4), we can then save the assigned clusters to our dataframe as ndata$kclust=kclust$cluster, and plot in a similar way
-You can compare your clustering methods with a side by side plot. Just enter the command par(mfrow=c(1,2)), and then each plot statement. You can also compare by generating a table of the Food.chain and cluster designations for each method (e.g., table(ndata$Food.Chain, ndata $clust)
+plot(iso$N~iso$C, col=as.numeric(as.factor(niso$clust)),xlim=c(-35, 0), pch=as.numeric(as.factor(niso$Species)),  xlab="δ13C", ylab="δ15N")
 
-6. Fuzzy clustering with the package cluster and fanny()
-To compete a fuzzy cluster analysis, you will need to install the package “cluster” on your computer, read the library into memory and then use the fanny() function
+legend("topright", legend=unique(as.factor(niso$clust)),pch=1,
+col=as.numeric(unique(as.factor(niso$clust))), bty="n", title="cluster")
 
+legend("bottomright",legend=as.character(unique(as.factor(niso$Species))), pch=as.numeric(unique(as.factor(niso$Species))), bty="n",title="Species")
+```
 
+It doesn't look like our cluster algorithm is matching up with our Food.chain data categories very well. Wheat- and Nettle-based distinguished, which makes sense when you consider that both of these plants use a C3 photosynthesis system. If you are not happy with the success of this clustering algorithm you could try other variants(.g.,  “complete” linkage) and a different number of groups. 
 
-Perkins, M.J., McDonald, R.A., van Veen, F.F., Kelly, S.D., Rees, G. and Bearhop, S., 2014. Application of nitrogen and carbon stable isotopes (δ15N and δ13C) to quantify food chain length and trophic structure. PloS one, 9(3), p.e93281.
+Let’s try a non-hierarchical cluster analysis on the same data to see if it works better. The **kmeans()** function requires that we select the required number of clusters ahead of time (we want 4, so kclust=kmeans(niso[,c("C", "N")], 4)), we can then save the assigned clusters to our dataframe and plot in a similar way
+```{r kclust, echo=FALSE, fig.cap="K means clustering on Perkins et al (2014) data", fig.alt=""}
+kclust=kmeans(niso[,c("C", "N")], 4)
+niso$kclust=kclust$cluster
 
-***
+plot(iso$N~iso$C, col=as.numeric(as.factor(niso$clust)),xlim=c(-35, 0), pch=as.numeric(as.factor(niso$Species)),  xlab="δ13C", ylab="δ15N")
+
+legend("topright", legend=unique(as.factor(niso$kclust)),pch=1,
+col=as.numeric(unique(as.factor(niso$kclust))), bty="n", title="kcluster")
+
+legend("bottomright",legend=as.character(unique(as.factor(niso$Species))), pch=as.numeric(unique(as.factor(niso$Species))), bty="n",title="Species")
+```
+It looks like kmeans has the same problem with distinguishing C3 plant-based foodwebs. But we still get three groups that roughly map onto our information about the data. 
 
 ## Ordination
 
-While cluster analysis let's us visualize multivariate data by grouping objects into dscrete categories, ordination uses continuous axes to help us accomplish the same task. While physicists grumble if space exceeds four dimensions, biologists typically grapple with dozens of dimensions (species and/or samples). In effect, we  “order” this multivariate data in order to produce a low dimensional picture (i.e., a graph in 1-3 dimensions). Just like cluster analysis, we wil use similarity metrics to accomplish this. Also like cluster anlaysis, simple ordination is not a statistical test: it is a method of visualizing data. 
+While cluster analysis let's us visualize multivariate data by grouping objects into dscrete categories, ordination uses continuous axes to help us accomplish the same task. Physicists grumble if space exceeds four dimensions, while biologists typically grapple with dozens of dimensions (species and/or samples). In effect, we  “order” this multivariate data in order to produce a low dimensional picture (i.e., a graph in 1-3 dimensions). Just like cluster analysis, we will use similarity metrics to accomplish this. Also like cluster anlaysis, simple ordination is not a statistical test: it is a method of visualizing data. 
+
+Essentially, we find axes in the data that explain a lot of variation, and rotate so we can use that axis as one of our dimensions of visual representation(Fig. \@ref(fig:dummy1)). Another way to think about it, is that we are going to summarize the raw data, which has many variables, p, by a smaller set of synthetic variables, k (Fig. \@ref(fig:dimred)). If the ordination is informative, it reduces a large number of original correlated variables to a small number of new uncorrelated variables. But it really is a bit of a balancing act between clarity of representation, ease of understanding, and oversimiplication. We will lose information in this data reduction, and if that information is important, then we can make the multivariate data harder to understand! Also note that if the original variables are not correlated, then we won't gain anything with ordinaton.
 
 
-
-```{r dimred, fig.height=3., fig.width=5., echo=FALSE,fig.cap="Ordination as data reduction. We summarize data with many (p) variables by a smaller set of derived or synthetic variables", fig.alt=""}
+```{r dimred, fig.height=3., fig.width=5., echo=FALSE,fig.cap="Ordination as data reduction. We summarize data with many variables (p) by a smaller set of derived or synthetic variables (k)", fig.alt=""}
 par(mar = c(0, 0, 0, 0))
 plot(0,pch = '',ann=FALSE,frame.plot = FALSE,axes = FALSE,
      xlim = c(-40,40),ylim = c(-65,10))
@@ -534,10 +528,9 @@ plot(x1,y2,
 lines(x1, rep(0, length(x1)), col = "blue", lwd=2) 
 
 ```
-Essentially, we find axes in the data that explain a lot of variation, and rotate so we can use that axis as one of our dimensions of visual representation \@ref(fig:dummy1). Another way to think about it, is that we are going to summarize the raw data, which has many variables (p) byt a smaller set of derived (or synthetic or composite) variables, k \@ref(fig:dimred). If the ordination is informative, it reduces a large number of original correlated variables to a small number of new uncorrelated variables. But it really is a bit of a balancing act between clarity of representation (and ease of understanding), and oversimiplication. We will lose information in this data reduction, and if that information is important, then we can make the multivariate data harder to understand! Also note that if the original variables are not correlated, then we won't gain anything with ordinaton.
 
 
-There are lots of different ways to perform an ordination, but most methods are based on extracting the eigenvalues of a similarity matrix. The four most commonly used methods are: *Principle Component Analysis (PCA)*, which is the main eigenvector-based method, *Correspondence Analysis (CA)* which is used used on frequency data, *Principle Coordinate Analysis (PCoA)* which works on dissimilarity matrices, and *Non Metric Multidimensional Scaling (NMDS)* which is NOT an eigenvector method, instead it represents objects along a predetermined number of axes. 
+There are lots of different ways to perform an ordination, but most methods are based on extracting the eigenvalues of a similarity matrix. The four most commonly used methods are: *Principle Component Analysis (PCA)*, which is the main eigenvector-based method, *Correspondence Analysis (CA)* which is used used on frequency data, *Principle Coordinate Analysis (PCoA)* which works on dissimilarity matrices, and *Non Metric Multidimensional Scaling (NMDS)* which is not an eigenvector method, instead it represents objects along a predetermined number of axes. 
 
 
 ```{r tord}
@@ -547,19 +540,21 @@ dt<-data.frame(stringsAsFactors = FALSE,
                c("Euclidean", "X^2", "Any", "Any"),
                c("Quantitative data", "Non-negative, quantitiative or binary data; species frequencies or presence/absence data", "Quantitative, semiquantitative, qualitative, or mixed", "Quantitative, semiquantitative, qualitative, or mixed"))
 colnames(x = dt) <-c("Method", "Distance", "Variables")
-knitr::kable(dt, caption= "Domains of Application of Ordination Methods (adpated from Legnedre & Lengendre 2012) ",  align="l", padding=10)
+knitr::kable(dt, caption= "Domains of Application of Ordination Methods (adpated from Legendre & Legendre 2012) ",  align="l", padding=10)
 #xt=kable_classic(xt, full_width = F, table.attr = "style='width:50%;'", align="c")
 
 #column_spec(xt, column = 1:3, extra_css = "vertical- align:bottom;")
 ```
 
 
-Legendre & Legendre (2012) provide a nice summary of when you should use each method \@ref(tab:tord)
+Legendre & Legendre (2012) provide a nice summary of when you should use each method Table \@ref(tab:tord) 
 
 ### Principal Components Analysis (PCA)
 
-Principal Components Analusis is probably the most widely-used and well-known of the “standard” multivariate methods. It was invented by Pearson (1901) and Hotelling (1933), and first applied in ecology by Goodall (1954) under the name “factor analysis” (NB “principal factor analysis” is a synonym of PCA). Like most ordination methods, PCA takes a data matrix of n objects by p variables, which may be correlated, and summarizes it by uncorrelated axes (principal components or principal axes) that are linear combinations of the original p variables. The first k components display as much as possible of the variation among objects. PCA uses Euclidean distance calculated from the p variables as the measure of dissimilarity among the n objects, and derives the best possible k dimensional (k < p) representation of the Euclidean distances among objects. 
+Principal Components Analysis is probably the most widely-used and well-known of the standard multivariate methods. It was invented by Pearson (1901) and Hotelling (1933), and first applied in ecology by Goodall (1954) under the name "factor analysis” (NB “principal factor analysis” is also a synonym of PCA). Like most ordination methods, PCA takes a data matrix of *n* objects by *p* variables, which may be correlated, and summarizes it by uncorrelated axes (principal components or principal axes) that are linear combinations of the original *p* variables. The first *k* components display as much as possible of the variation among objects. PCA uses Euclidean distance calculated from the *p* variables as the measure of dissimilarity among the *n* objects, and derives the best possible k-dimensional representation of the Euclidean distances among objects, where $k < p$ . 
 
+We can think about this spatially. Objects are represented as a cloud of n points in a multidimensional space with an axis for each of the p variables. So the centroid of the points is defined by the mean of each variable, and 
+the variance of each variable is the average squared deviation of its n values around the mean of that variable (i.e., $V_i= \frac{1}{n-1}\sum_{m=1}^{n}{(X_{im}-\bar{X_i)}^2}$). The degree to which the variables are linearly correlated is given by their covariances $C_{ij}=\frac{1}{n-1}\sum_{m=1}^n{(X_{im}-\bar{X_i})(X_{jm}-\bar{X_j})}$. The objective of PCA is to rigidly rotate the axes of the p-dimenional space to new positions (principal axes) that have the following properties: they are ordered such that principal axis 1 (or the *principal component* has the highest variance, axis 2 has the next highest variance etc, and the covariance among each pair of principal axes is zero (the principal axes are uncorrelated) (Fig. \@ref(fig:varord)). 
 
 ```{r varord, fig.cap="Selecting the synthetic axes in ordination", fig.alt="" }
 ctlns<-list(structure(list(level = 10, x = c(-0.8,0,1,2,2.5,3,3.1,2.8,2.3,2,1.8), 
@@ -593,30 +588,22 @@ text(x=5, y=-5, "Y1 axis selected to maximize variation explained")
 text(x=5, y=-7, "Y2 axis must be orthogonal to Y1 and maximize variation explained")
 ```
 
-We can think about this spatially. Objects are represented as a cloud of n points in a multidimensional space with an axis for each of the p variables. So the centroid of the points is defined by the mean of each variable, and 
-the variance of each variable is the average squared deviation of its n values around the mean of that variable (i.e., $V_i= \frac{1}{n-1}\sum_{m=1}^{n}{(X_{im}-\bar{X_i)}^2}$). The degree to which the variables are linearly correlated is given by their covariances $C_{ij}=\frac{1}{n-1}\sum_{m=1}^n{(X_{im}-\bar{X_i})(X_{jm}-\bar{X_j})}$. The objective of PCA is to rigidly rotate the axes of the p-dimenional space to new positions (principal axes) that have the following properties: they are ordered such that principal axis 1 (or the *principal component* has the highest variance, axis 2 has the next highest variance etc, and the covariance among each pair of principal axes is zero (the principal axes are uncorrelated) \@ref(fig:varord)  
+So our steps are to compute the variance-covariance matrix of the data, calculate the eigenvalues of this matrix and then calculate the associated eigenvectors. Then, the jth eigenvalue is the variance of the jth principle component and the sum of all the eigenvalues is the total variance explained. The proportion of variance explained by each component is the eigenvalue for the component divided by the total variance explained, while the loadings are the eigenvectors. Dimensionality reduction is the same as first rotating the data with the eigenvalues to be aligned with the principle components, then using only the components with the greatest eigenvalues.  
 
-So our steps are to compute the variance-covariance matrix of the data, calculate the eigenvalues of the variance-covariance matrix and then calculate the associated eigenvectors. Then, the jth eigenvalue is the variance of the jth principle component and the sum of all the eigenvalues is the total variance explained. The proportion of variance explained by each component is the eigenvalue for the component divided by the total variance explained, while the loadings are the eigenvectors. Dimentionality reduction is the same as first rotating the data with the eigenvalues to be aligned with the principle components, then using only the components with the greatest eigenvalues.  
-
-***
-Let's try an example. We’re going to use a sample dataset in R and the base R version of PCA to start exploring this data analysis technique. Get the iris dataset into memory by typing “data(“iris”). Take a look at this dataset using the head, str or summary functions.  For a multivariate data set, you would like to take a look at the pairwise correlations. Remember that PCA can’t help us if the variables are not correlated.  Let’s use the pairs() function to do this as: pairs(iris[1:4],main="Iris Data", pch=19, col=as.numeric(iris$Species)+1)
-```{r echo=TRUE, comment=""}
+### Exercise: PCA on the iris data
+Let's try an example. We’re going to use a sample dataset in R and the base R version of PCA to start exploring this data analysis technique. Get the iris dataset into memory by typing “data(“iris”). Take a look at this dataset using the **head()**, **str()** or **summary()** functions. For a multivariate data set, you would like to take a look at the pairwise correlations. Remember that PCA can’t help us if the variables are not correlated.  Let’s use the **pairs()** function to do this
+```{r coriris, echo=TRUE, comment="", fig.cap="correlation atrix for the iris data", fig.alt=""}
 
 data("iris")
 str(iris); summary(iris[1:4])
 pairs(iris[1:4],main="Iris Data", pch=19, col=as.numeric(iris$Species)+1)
 ```
 
-The colours let us see the data for each species, the plots are the pairwise plotting of each pair of the 4 variables. Do you see any correlations?
+The colours let us see the data for each species, the plots are the pairwise plotting of each pair of the 4 variables (Fig. \@ref(fig:coriris)). Do you see any correlations?
 
-If there seem to be some correlations we might use PCA to visualize the 4 dimensional variable space. Let’s rush right in and use the prcomp() function to run a PCA on the numerical data in the iris dataframe.  Save the output from the function to a new variable name so you can look at it when you type that name. The str() function will show you what the output object includes.  If you use the summary() function, R will tell you what proportion of the total variance is explained by each axis. Do you notice anything?
+If there seem to be some correlations we might use PCA to visualize the 4 dimensional variable space. Let’s rush right in and use the **prcomp()** function to run a PCA on the numerical data in the iris dataframe.  Save the output from the function to a new variable name so you can look at it when you type that name. The **str()** function will show you what the output object includes.  If you use the **summary()** function, R will tell you what proportion of the total variance is explained by each axis. 
 
-There is a problem thoough, let’s examine the variance in the raw data. Use the apply() function to quickly calculate the variance in each of the numeric columns of the data as apply(iris[,1:3], 1, var). What do you see? Are the variances of each the columns comparable?
-
-Using covariances among variables only makes sense if they are measured in the same units, and even then, variables with high variances will dominate the principal components. These problems are generally avoided by standardizing each variable to unit variance and zero mean as $X_{im}^'=\frac{x_{im}-\bar{X_i}}{sd_i}$ where sd is the standard deviation of variable *i*. After standardizaton, the variance of each variable is 1.0 and the covariances of the standardized variables are correlations.
-
-Fniding the prinicipal components axes involes the eigenanalysis of the variance-covaraince matrix, where the eigenvalues are the variances of the coordinates on each synthetic axis
-
+There is a problem though, let’s examine the variance in the raw data. Use the **apply()** function to quickly calculate the variance in each of the numeric columns of the data as apply(iris[,1:3], 1, var). What do you see? Are the variances of each the columns comparable?
 
 
 ```{r echo=TRUE, comment=""}
@@ -624,6 +611,8 @@ pca <- prcomp(iris[,1:4])
 summary(pca)
 apply(iris[,1:4], 2, var)
 ```
+
+Using covariances among variables only makes sense if they are measured in the same units, and even then, variables with high variances will dominate the principal components. These problems are generally avoided by standardizing each variable to unit variance and zero mean as $X_{im}^{'}=\frac{x_{im}-\bar{X_i}}{sd_i}$ where sd is the standard deviation of variable *i*. After standardizaton, the variance of each variable is 1 and the covariances of the standardized variables are correlations.
 
 If you look at the help menu, the notes for the use of prcomp() STRONGLY recommend standardizing the data. To do this there is a built in option. We just need to set scale=TRUE. Let’s try again with data standardization. Save your new PCA output to a different name. We’ll compare to the unstandardized data in a moment. Take a look at the summary.
 
@@ -633,12 +622,9 @@ p <- prcomp(iris[,1:4], scale=TRUE)
 summary(p)
 ```
 
-We can see a change in our representation with variance standardization. MORE
+Now we need to determine how many axes to use to interpret our analysis. For 4 variables it is easy enough to just look that the amount of variance. For larger numbers of variables a plot can be useful. The screeplot() function will output the variance explained by each of the principle component axes, and you can make a decision based on that (e.g., screeplot(pca2, type="lines")).
 
-
-Now we need to determine how many axes to use to interpret our analysis. For 4 variables its easy enough to just look that the amount of variance. For larger numbers of variables a plot can be useful. The screeplot() function will output the variance explained by each of the principle component axes, and you can make a decision based on that (e.g., screeplot(pca2, type="lines")).
-
-An ideal curve should be steep, then bends at an “elbow” — this is your cutting-off point — and after that flattens out. To deal with a not-so-ideal scree plot curve you can apply the Kaiser rule: pick PCs with eigenvalues of at least 1. Or you can select using the proportion of variance where the PCs should be able to describe at least 80% of the variance.
+An ideal curve should be steep, then bend at an “elbow” — this is your cutting-off point — and after that flattens out. To deal with a not-so-ideal scree plot curve you can apply the Kaiser rule: pick PCs with eigenvalues of at least 1. Or you can select using the proportion of variance where the PCs should be able to describe at least 80% of the variance.
 
 
 
@@ -646,7 +632,7 @@ An ideal curve should be steep, then bends at an “elbow” — this is your cu
 screeplot(p, type=("lines"),main="")
 ```
 
-It looks like synthetic axes 1 & 2 explain most of the variation. So let's plot those out. A PCA plot displays our samples in terms of their position (or **scores**) on the new axes. We can add information about how much variation each axis explains, and colour our points to match species identity. In this 2D representation of 4 dimensional space, it looks like species versicolor and viriginica group together (Fig. \@ref{fig:pacfirst}). 
+It looks like synthetic axes 1 & 2 explain most of the variation. So let's plot those out. A PCA plot displays our samples in terms of their position (or **scores**) on the new axes. We can add information about how much variation each axis explains, and colour our points to match species identity. In this 2D representation of 4 dimensional space, it looks like species versicolor and viriginica group together (Fig. \@ref(fig:pacfirst)). 
 
 
 ```{r pacfirst, fig.cap="PCA plot for the iris data", fig.alt=""}
@@ -656,19 +642,17 @@ plot(p$x[,1:2], col=as.numeric(iris$Species)+1,ylim=c(-3,3), cex=0.7, pch=16,
      xlab=paste0("PC1 (", pvar[1]*100, "%)"),
      ylab=paste0("PC2 (", pvar[2]*100, "%)"))
 legend("topright", legend=unique(iris$Species), pch=16, col=c(2,3,4), bty="n")
-
-
 ```
 
-We can also plot information about influence the various characterisitcs are having on each of the axes. The eigenvectors used for the rotation given us this information. So let's just print that out
+We can also plot information about influence the various characterisitics are having on each of the axes. The eigenvectors used for the rotation give us this information. So let's just print that out
 ```{r barload, fig.heigh=5.}
 
 kable(p$rotation,digits=2,caption="Eigenvectors (or 'loadings') for each variable and synthetic axis", format="html",table.attr = "style='width:50%;'", align="c")
 ```
 
-We can see that a lot of information is coming from the petal variables for PCA1, but less from the sepal variables (Table \@ref{Tab:barload}).    
+We can see that a lot of information is coming from the petal variables for PC1, but less from the sepal variables (Table \@ref(Tab:barload)).    
 
-We can plot this out to show how strongly each variable affects each principle component (or synthetic axis). We can see that petal width and length are aligned along the PC1 axis, while PC2 explains more variation in sepal width (Fig \@ref{fig: loadplot}).
+We can plot this out to show how strongly each variable affects each principle component (or synthetic axis). We can see that petal width and length are aligned along the PC1 axis, while PC2 explains more variation in sepal width (Fig \@ref(fig: loadplot)).
 
 ```{r loadplot, fig.caption="Contribituion of each variable to the first two principal component axes", fig.alt=""}
 plot(NA,ylim=c(-5,4), xlim=c(-5,4),
@@ -696,11 +680,11 @@ abline(h=0, col="grey90")
 ```
 
 
-Another way to portray this imformation is to create a **biplot** which, in addition to the coordinates of our samples on the synthetic axes PC1 and PC2, also provides information about how the variables align along the synthetic axes. I'll multiple by a constant to get a nicer display (Fig \ref{fig:pactwo}). 
+To interpret the variable plot remember that positively correlated variables are grouped close together (e.g., petal length and width). Variables with about a 90 angle are probably not correlated, while negatively correlated variables are positioned on opposite sides of the plot origin (~180 angle; opposed quadrants). However, the direction of the axes is arbitrary! The distance between variables and the origin measures the contribution of the variables to the ordination. A shorter arrow indicates its less importance for the ordination. Variables that are away from the origin are well represented. Avoid the mistake of interpreting the relationships among variables based on the proximities of the apices (tips) of the vector arrows instead of their angles in biplots.
 
-To interpret your biplot remember that positively correlated variables are grouped close together. Variables with about a 90 angle are probably not correlated, while negatively correlated variables are positioned on opposite sides of the plot origin (~180 angle; opposed quadrants). However, the direction of the axes is arbitrary! The distance between variables and the origin measures the contribution of the variables to the ordination. A shorter arrow indicates its less importance for the ordination. Variables that are away from the origin are well represented. Avoid the mistake of interpreting the relationships among variables based on the proximities of the apices (tips) of the vector arrows instead of their angles in biplots.
+Another way to portray this imformation is to create a **biplot** which, in addition to the coordinates of our samples on the synthetic axes PC1 and PC2, also provides information about how the variables align along the synthetic axes. (Fig \ref(fig:pactwo). 
 
-Also, I have used an arbitrary scaling to display the variable loadings on each access. Some of the R packages will use a specific scaling that will emphasize particular parts of the plot, either preserving the Euclidean distances between samples or the correlations/covariances between variables (e.g., vegan).
+I should note that I have used an arbitrary scaling to display the variable loadings on each axis. Some of the R packages will use a specific scaling that will emphasize particular parts of the plot, either preserving the Euclidean distances between samples or the correlations/covariances between variables (e.g., vegan).
 
 ```{r pactwo, fig.cap="PCA plot for the iris data", fig.alt=""}
 plot(p$x[,1:2], pch=16,col=as.numeric(iris$Species)+1,
@@ -729,101 +713,99 @@ legend("topleft", legend=unique(iris$Species), pch=16, col=c(2,3,4), bty="n")
         # Variable labels
     text(l.x, l.y, labels=row.names(p$rotation), col="purple", pos=l.pos, cex=0.75)
 
-
-
-
 ```
 
 
-It is important to note that principal components analysis assumes the relationships among variables are *linear* so that the cloud of points in p-dimensional space has linear dimensions that can be effectively summarized by the principal axes. If the structure in the data is nonlinear (the cloud of points twists and curves its way through p-dimensional space), the principal axes will not be an efficient and informative summary of the data.
+Principal components analysis assumes the relationships among variables are *linear*, so that the cloud of points in p-dimensional space has linear dimensions that can be effectively summarized by the principal axes. If the structure in the data is nonlinear (i.e., the cloud of points twists and curves its way through p-dimensional space), the principal axes will not be an efficient and informative summary of the data.
 
-For example, iwn community ecology,e might use PCA to summarize variables whose relationships are approximately linear or at least monotonic (e..g, soil properties might be used to extract a few components that summarize main dimensions of soil variation). However, in general PCA is generally NOT useful for ordinating community data because relationships among species are highly nonlinear.
+For example, in community ecology, we might use PCA to summarize variables whose relationships are approximately linear or at least monotonic (e..g, soil properties might be used to extract a few components that summarize main dimensions of soil variation). However, in general PCA is generally not useful for ordinating community data because relationships among species are highly nonlinear.
 
-This nonlinearity can leaad to characterisitc artifacts, where community trends along environmental gradients appear as “horseshoes” in PCA ordinations becuase low species density at opposite extremes of an environmental gradiant appear relatively close together.
+This nonlinearity can leaad to characterisitc artifacts, where, for example, community trends along environmental gradients appear as “horseshoes” in PCA ordinations because low species density at opposite extremes of an environmental gradiant appear relatively close together.
 
-
-***
 ### Principle Coordinates Analysis (PCoA)
-The interest of the PCoA method lies in the fact that it may be used with all types of distance descriptors. A PCoA computed on a Euclidean distance matrix gives the same results as a PCA conducted on the original data
+The PCoA method may be used with all types of distance descriptors, and so might be able to avoid sum problems of PCA. Although, a PCoA computed on a Euclidean distance matrix gives the same results as a PCA conducted on the original data
 
-Like PCoA, the method of nonmetric multidimensional scaling (nMDS, produces ordinations of objects from any resemblance matrix. 
-However, NMDS compresses the distances in a non-linear way and its algorithm is computer-intensive, requiring more computing time than PCoA.
-PCoA is faster for large distance matrices.
 
 #### R functions for PCoA
-**cmdscale()**(stats) 
+* **cmdscale()**(stats) 
 -base R, no package needed
-**smacofSym()** (library smacof)
-**wcmdscale()**(vegan)
-**pco()**(ecodist)
-**pco()**(labdsv)
-**pcoa()**(ape)
-**dudi.pco()**(ade4)
+* **smacofSym()** (library smacof)
+* **wcmdscale()**(vegan)
+* **pco()**(ecodist)
+* **pco()**(labdsv)
+* **pcoa()**(ape)
+* **dudi.pco()**(ade4)
 
 ### Nonmetric Multidimensional Scaling (NMDS)
-Does not to preserve the exact dissimilarities among objects in an ordination plot, instead it represent as well as possible the ordering relationships among objects in a small and specified number of axes. Like PCoA, NMDS can produce ordinations of objects from any dissimilarity matrix. 
-The method can cope with missing values, as long as there are enough measures left to position each object with respect to a few others. NMDS is not an eigenvalue technique, and it does not maximise the variability associated with individual axes of the ordination.
+Like PCoA, the method of nonmetric multidimensional scaling (nMDS), produces ordinations of objects from any resemblance matrix. However, nMDS compresses the distances in a non-linear way and its algorithm is computer-intensive, requiring more computing time than PCoA. PCoA is faster for large distance matrices.
 
-In this computational method the steps are 
+This ordinaton method does not to preserve the exact dissimilarities among objects in an ordination plot, instead it represent as well as possible the ordering relationships among objects in a small and specified number of axes. Like PCoA, nMDS can produce ordinations of objects from any dissimilarity matrix.The method can also cope with missing values, as long as there are enough measures left to position each object with respect to a few others. nMDS is not an eigenvalue technique, and it does not maximise the variability associated with individual axes of the ordination.
+
+In this computational method the steps are:
+
 * Specify the desired number m of axes (dimensions) of the ordination.
+
 * Construct an initial configuration of the objects in the m dimensions, to be used as a starting point of an iterative adjustment process. (tricky: end result may depend on this. A PCoA ordination may be a good start. Otherwise, try many independent runs with random initial configurations)
+
 * Try to position the objects in the requested number of dimensions in such a way as to minimize how far the dissimilarities in the reduced-space configuration are from being monotonic to the original dissimilarities in the association matrix 
 * The adjustment goes on until the stress value cannot be lowered, or until it reaches a predetermined low value (tolerated lack-of-fit). 
+
 * Most NMDS programs rotate the final solution using PCA, for easier interpretation.
 
 
-NMDS often achieves a less deformed representation of the dissimilarity relationships among objects than a PCoA in the same number of dimensions. We can use a Shephard plot to get information about the distortion of representation.  A Shepard diagram compares how far apart your data points are before and after you transform them (ie: goodness-of-fit) as a scatter plot. On the x-axis, we plot the original distances. On the y-axis, we plot the distances output by a dimension reduction algorithm. A really accurate dimension reduction will produce a straight line. However since information is almost always lost during data reduction, at least on real, high-dimension data, Shepard diagrams rarely look this straight.
+NMDS often achieves a less deformed representation of the dissimilarity relationships among objects than a PCoA in the same number of dimensions. We can use a Shephard plot to get information about the distortion of representation.  A Shepard diagram compares how far apart your data points are before and after you transform them (ie: goodness-of-fit) as a scatter plot. On the x-axis, we plot the original distances. On the y-axis, we plot the distances output by a dimension reduction algorithm. A really accurate dimension reduction will produce a straight line. However since information is almost always lost during data reduction, at least on real, high-dimension data, so Shepard diagrams rarely look this straight.
 
-In this plot we compare the goodness-of-fit of the ordination as the R2 of either a linear or a non-linear regression of the NMDS distances on the original dissimilarities
+Let's try this for the iris data. We can evaluate the quality of the NMDS solution by checking the Shephard plot as : stressplot(nMDS, main = "Shepard plot"). In addition to the original dissimilarity and ordination distance, the plot displays two correlation-like statistics on the goodness of fit. The nonmetric fit is given by $R^2$, while he “linear fit” is the squared correlation between fitted values and ordination distances (Fig. \@ref(fig:shep)). There is some deformation here, but in general the representation is not so bad.
+
 ``` {r shep, echo=FALSE, fig.caption="Shepard's plot of an nMDS ordination using 2 axes to represent the varespec data in the vegan package", fig.alt=""}
 library(vegan)
 data(varespec)
-nMDS <- metaMDS(varespec, distance = "bray", k = 2)
-MDS <- cmdscale(vegdist(varespec, method = "bray"), k = 2, eig = T, add = T )
+nMDS <- metaMDS(iris[,-5], distance = "bray", k = 2)
+#MDS <- cmdscale(vegdist(varespec, method = "bray"), k = 2, eig = T, add = T )
+par(mfrow=c(1,2))
 stressplot(nMDS, pch=16,l.col=NA, las=1)
+plot(nMDS, ylim=c(-.2, .2))
+shortnamesnM=names(iris[-5])
+text(nMDS$species,shortnamesnM, cex = 0.7, col = "red", pos=1)
+
+#plot(nMDS$points, main="nMDS", asp=1, pch=16, col=iris$Species, xlim=c(-.8, .8),
+ #    ylim=c(-0.5,0.5))
+#shortnamesnM=substr(names(iris[-5]), start = 5, stop = 8)
+#shortnamesnM=names(iris[-5])
+#text(nMDS$species,shortnamesnM, cex = 0.7, col = "red")
 ```
 
-We can evaluate the quality of the NMDS solution by checking the Shephard plot as : stressplot(nMDS, main = "Shepard plot"). In addition to the original dissimilarity and ordination distance, the plot displays two correlation-like statistics on the goodness of fit. The nonmetric fit is given by $R^2$, while he “linear fit” is the squared correlation between fitted values and ordination distances. 
-
-
-
-But NMDS is a computer-intensive iterative technique exposed to the risk of suboptim
-There is no % of variance associated with each axis in nMDS in contrast with other Principal Component Methods like PCA
-
-PCoA finds the optimal solution by eigenvalue decomposition. The PCoA solution is unique. PCoA can be used to find the first ordination axes for a given dissimilarity matrix. These axes are those that maximize the variance of the observations.
-PCoA produces all ordination axes corresponding to a given dissimilarity matrix. The ordination solution is exact.
-
-NMDS often achieves a less deformed representation of the dissimilarity relationships among objects than a PCoA in the same number of dimensions. But NMDS is a computer-intensive iterative technique exposed to the risk of suboptim There is no % of variance associated with each axis in nMDS in contrast with other Principal Component Methods like PCA.
-
-In comparison, PCoA finds the optimal solution by eigenvalue decomposition. The PCoA solution is unique. PCoA can be used to find the first ordination axes for a given dissimilarity matrix. These axes are those that maximize the variance of the observations. PCoA produces all ordination axes corresponding to a given dissimilarity matrix. The ordination solution is exact.
+nMDS often achieves a less deformed representation of the dissimilarity relationships among objects than a PCoA in the same number of dimensions. But nMDS is a computer-intensive iterative technique exposed to the risk of suboptimum solutions. In comparison, PCoA finds the optimal solution by eigenvalue decomposition. 
 
 #### R functions for NMDS
-*metaMDS()* (vegan)
-*isoMDS( )* (MASS)
+* **metaMDS()** (vegan)
 
-### Ordination exercise
+* **isoMDS( )** (MASS)
+
+### Exercise: Ordination
 We are going to use the vegan package, and some built in data with it to run the nMDS. varespec is a data frame of observations of 44 species at 24 sites. We’ll calculate both an NMDS and a PCoA using the (cmdscale() function) on the bray-curtis distance matrix of these data. In each case, we will specify that we want 2 dimensions as our output.  
 
 ```{r, echo=TRUE, comments=""}
 library(vegan)
 data(varespec)
-nMDS <- metaMDS(varespec, distance = "bray", k = 2)
-PCoA <- cmdscale(vegdist(varespec, method = "bray"), k = 2, eig = T, add = T )
+disimvar=vegdist(varespec, method = "bray")
+nMDS <- metaMDS(varespec, distance="bray", k=2)
+PCoA <- cmdscale(disimvar, k = 2, eig = T, add = T )
 ```
 
 
-If we look at the object PCoA we see eigenvalues, one for each of the 20 sites, and the new 2-D coordinates for each site. We can plot the results as plot(PCoA$points). In fact, let’s plot the PCoA and the NMDS side by side to see if they differ, using the par(mfrow()) functions.
+If we look at the object PCoA we see eigenvalues, one for each of the 20 sites, and the new 2-D coordinates for each site. We can plot the results as plot(PCoA$points). In fact, let’s plot the PCoA and the NMDS side by side to see if they differ, using the par(mfrow()) functions. In this case, our species are the variables and our sites/samples are the objects of our attention. There's a lot of species, so we won't draw the arrows, we'll just show their position on the biplot.
 
 ```{r}
 par(mfrow=c(1,2))
-plot(PCoA$points, main="PCoA", xlim=c(-.6,.6), ylim=c(-.6,.6))
+plot(PCoA$points, main="PCoA", xlim=c(-.6,.6), ylim=c(-.6,.6), xlab="PCoA1", ylab="PCoA2", asp=1)
 #text(PCoA$points, labels=c(1:20), cex= 0.7, pos=3)
 spe.wa <- wascores(PCoA$points[, 1:2], varespec)
 shortnames=substr(rownames(spe.wa), start = 5, stop = 8)
 text(spe.wa, shortnames, cex = 0.7, col = "red")
 #abline(h=0, col="grey")
 #abline(v=0, col="grey")
-plot(nMDS)
+plot(nMDS$points, main="nMDS", asp=1, xlim=c(-.6,.6))
 shortnamesnM=substr(names(varespec), start = 5, stop = 8)
 text(nMDS$species,shortnamesnM, cex = 0.7, col = "red")
 ```
