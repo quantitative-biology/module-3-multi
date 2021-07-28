@@ -143,7 +143,7 @@ Perhaps the mostly commonly used, and easiest to understand, dissimilarity, or d
 
 Euclidean distance in multivariate space is derived from our understanding of distance in a Cartesian plane. If we had two species abundances measured in two different samples, we could then plot the abundance of species 1 and species 2 for each sample on a 2D plane, and draw a line between them. This would be our Euclidean distance: the shortest path between the two points (Fig. \@ref(fig:f2)).
 
-```{r f2, echo=FALSE, fig.cap="Euclidean Distance", fig.alt=""}
+```{r f2, echo=FALSE, fig.cap="Euclidean Distance", fig.alt="The graph shows a line between two sample points k and j, representing the abundance between species 1 and species 2. Two new lines perpendicular to x and y axes starting from points k and j are constructed."}
 x=c(19, 35)
 y=c(30, 10)
 plot(x,y, xlim = c(0,40), ylim = c(0,40), xlab = "Species 1", ylab = "Species 2",frame.plot = FALSE, box(bty="l"), pch = 19, col = "blue", cex = 2, font.lab = 2, cex.main = 2)
@@ -157,7 +157,11 @@ lines(c(19,19), c(29,10), lty = "dotted", lwd = 2)
 lines(c(19,34), c(10,10), lty = "dotted", lwd = 2)
 ```
 
+<<<<<<< HEAD
 
+=======
+Euclidean distance in multivariate space is derived from our understanding of distance in a cartesian plane. If we had two species measured in in two different samples, we could then plot the abundance of species 1 and species 2 for each sample, and draw a line between them. This would be our Euclidean distance: the shortest path between the two points \@ref(fig:f2).
+>>>>>>> 00f509be89dc92044f48111c1052aae2b38baa60
 
 We know that to calculate this distance we would just use the Pythagorean theorem as $c=\sqrt{a^2+b^2}$. To generalize to n species we can say
 $D^E_{jk}=\sqrt{\sum^n_{i=1}(X_{ij}-X_{ik})^2}$, where Euclidean distance between samples *j* and *k*, $D^E_{jk}$, is calculated by summing over the distance in abundance of each of n species in the two samples.
@@ -518,7 +522,6 @@ plot(x1,y1,
      xlim = c(-20,20),ylim=c(-20,20),
      pch=16, col=rgb(red=0.3, green=0.6, blue=0.3, alpha=0.3),
      xlab="x", ylab="y")
-#points(x2,y2,pch=16,col="blue")
 lines(x1, fitted(lm(y1 ~ x1)), col = "blue", lwd=2) 
 
 plot(x1,y2,
@@ -556,7 +559,7 @@ Principal Components Analysis is probably the most widely-used and well-known of
 We can think about this spatially. Objects are represented as a cloud of n points in a multidimensional space with an axis for each of the p variables. So the centroid of the points is defined by the mean of each variable, and 
 the variance of each variable is the average squared deviation of its n values around the mean of that variable (i.e., $V_i= \frac{1}{n-1}\sum_{m=1}^{n}{(X_{im}-\bar{X_i)}^2}$). The degree to which the variables are linearly correlated is given by their covariances $C_{ij}=\frac{1}{n-1}\sum_{m=1}^n{(X_{im}-\bar{X_i})(X_{jm}-\bar{X_j})}$. The objective of PCA is to rigidly rotate the axes of the p-dimenional space to new positions (principal axes) that have the following properties: they are ordered such that principal axis 1 (or the *principal component* has the highest variance, axis 2 has the next highest variance etc, and the covariance among each pair of principal axes is zero (the principal axes are uncorrelated) (Fig. \@ref(fig:varord)). 
 
-```{r varord, fig.cap="Selecting the synthetic axes in ordination", fig.alt="" }
+```{r varord, fig.cap="Selecting the synthetic axes in ordination", fig.alt=""}
 ctlns<-list(structure(list(level = 10, x = c(-0.8,0,1,2,2.5,3,3.1,2.8,2.3,2,1.8), 
                            y = c(2.7,2.3,2.5,2.7,2.5,2,1.5,0,-1,-2,-3)),
                       .Names = c("level", "x", "y")))
@@ -565,8 +568,6 @@ ctlns2<-list(structure(list(level = 10, x = c(4,5.4,5.7,6,6.5,7,7.5,8,9,10.5,11.
                       .Names = c("level", "x", "y")))
 x <- seq(0, 40, length=1000)
 y <- dnorm(x, mean=3, sd=0.3)*-cosh(60)+2
-#plot(x,y,type="l", xlab="time", ylab="Sine wave",frame.plot = FALSE,ann=FALSE,
- #    xlim = c(-6,20),ylim = c(-6,12),axes = FALSE)
 plot(rbind(c(2.6,3),c(3,4),c(3.5,4.6),c(3.6,5.2),c(3.5,2),c(4,2.8),c(4.5,2),
            c(5,3.2),c(5.2,4),c(6,2.5),c(6,5),c(6.5,4),c(7,2),c(7,3),c(7,6.5),
            c(7,5),c(8,4),c(8,5.5),c(8.5,4.5),c(9,6),c(9,7.2),c(9.5,5),c(10,7.5),
@@ -590,10 +591,16 @@ text(x=5, y=-7, "Y2 axis must be orthogonal to Y1 and maximize variation explain
 
 So our steps are to compute the variance-covariance matrix of the data, calculate the eigenvalues of this matrix and then calculate the associated eigenvectors. Then, the jth eigenvalue is the variance of the jth principle component and the sum of all the eigenvalues is the total variance explained. The proportion of variance explained by each component is the eigenvalue for the component divided by the total variance explained, while the loadings are the eigenvectors. Dimensionality reduction is the same as first rotating the data with the eigenvalues to be aligned with the principle components, then using only the components with the greatest eigenvalues.  
 
+<<<<<<< HEAD
 ### Exercise: PCA on the iris data
 Let's try an example. We’re going to use a sample dataset in R and the base R version of PCA to start exploring this data analysis technique. Get the iris dataset into memory by typing “data(“iris”). Take a look at this dataset using the **head()**, **str()** or **summary()** functions. For a multivariate data set, you would like to take a look at the pairwise correlations. Remember that PCA can’t help us if the variables are not correlated.  Let’s use the **pairs()** function to do this
 ```{r coriris, echo=TRUE, comment="", fig.cap="correlation atrix for the iris data", fig.alt=""}
 
+=======
+***
+Let's try an example. We’re going to use a sample dataset in R and the base R version of PCA to start exploring this data analysis technique. Get the iris dataset into memory by typing “data(“iris”). Take a look at this dataset using the head, str or summary functions.  For a multivariate data set, you would like to take a look at the pairwise correlations. Remember that PCA can’t help us if the variables are not correlated.  Let’s use the pairs() function to do this as: pairs(iris[1:4],main="Iris Data", pch=19, col=as.numeric(iris$Species)+1)
+```{r echo=TRUE, comment=""}
+>>>>>>> 00f509be89dc92044f48111c1052aae2b38baa60
 data("iris")
 str(iris); summary(iris[1:4])
 pairs(iris[1:4],main="Iris Data", pch=19, col=as.numeric(iris$Species)+1)
@@ -617,9 +624,14 @@ Using covariances among variables only makes sense if they are measured in the s
 If you look at the help menu, the notes for the use of prcomp() STRONGLY recommend standardizing the data. To do this there is a built in option. We just need to set scale=TRUE. Let’s try again with data standardization. Save your new PCA output to a different name. We’ll compare to the unstandardized data in a moment. Take a look at the summary.
 
 ```{r echo=TRUE, comment=""}
+<<<<<<< HEAD
 
 p <- prcomp(iris[,1:4], scale=TRUE)
 summary(p)
+=======
+pca2 <- prcomp(iris[,1:4], scale=TRUE)
+summary(pca2)
+>>>>>>> 00f509be89dc92044f48111c1052aae2b38baa60
 ```
 
 Now we need to determine how many axes to use to interpret our analysis. For 4 variables it is easy enough to just look that the amount of variance. For larger numbers of variables a plot can be useful. The screeplot() function will output the variance explained by each of the principle component axes, and you can make a decision based on that (e.g., screeplot(pca2, type="lines")).
