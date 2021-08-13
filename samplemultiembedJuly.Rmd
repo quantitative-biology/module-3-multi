@@ -825,7 +825,7 @@ Simple (or unconstrained) ordination is done on one data set, and we try to expl
 
 In contrast, constrained ordination associates two or more data sets in the ordination and explicitly explores the relationships between two matrices: a response matrix and an explanatory matrix (Fig @ref(fig:ordreg)). Both matrices are used in the production of the ordination. In this method, we can formally test statistical hypotheses about the significance of these relationships. The constrained ordination axes correspond to the directions of the greatest variability of the data set that can be explained by the environmental variables
 
-```{r ordreg, fig.wdith=7,fig.cap="Diagram showing the differences between uncontrained ordination, multiple regression and constrained ordination", fig.alt=""}
+```{r ordreg, fig.wdith=7,fig.cap="Diagram showing the differences between uncontrained ordination, multiple regression and constrained ordination", fig.alt="This figure shows the differences between unconstrained ordination, multiple regression and constrained ordination. The top left of the figure has title 'Simple ordination:PCA/CA' and is represented by a box with label 'matrix Y' in the middle. The box has label 'Variables y1...yp' at the top and 'Objects 1 to n' on the left. The top right of the figure has title 'Multiple regression' and is represented by two boxes placed side by side and a double sided arrow that connects them. The left rectangle has text 'y' in the middle with label 'Variable y' at the top of the box and 'Objects 1 to n' on the left. The right triangle is labelled 'Matrix X' with 'Variables x1 ... xm' at the top. The bottom of the figure has title 'Ordination under constraint:RDA/CCA' and is represented by two boxes placed side by side and a double sided arrow that connects them. The left box has label 'matrix Y' in the middle of the box with 'Variables y1 ... yp' at the top and 'Objects 1 to n' to the left. The right box has label 'matrix X' at the center and 'Variables x1 ... xm' at the top."}
 par(mar=c(0,0,0,0))
 plot(1,pch = '',ann=FALSE,frame.plot = FALSE,axes = FALSE,
      xlim = c(-36,36),ylim = c(-35,35))
@@ -923,7 +923,7 @@ data("varechem")
 
 Remember that the environmental data can be inspected using commands str which shows the structure of any object in a compact form, and by asking for a summary of a data frame (e.g., str(varechem) or summary(varechem)). We can also plot the data to get a sense of how correlated the various predictors might be.
 
-```{r lichenCOR, echo=TRUE, fig.caption="Correlations between environmental variables", fig.alt=""}
+```{r lichenCOR, echo=TRUE, fig.caption="Correlations between environmental variables", fig.alt="This figure shows a plot of the varechem dataset. The dataset contains chemical measurements, denoted by their chemical element names as well as variables 'Baresoil' which gives the estimated cover of bare soil, 'Humdepth' which provides the thickenss of the humus layer and 'pH'."}
 plot(varechem, gap=0, panel=panel.smooth, cex.lab=1.2, lwd=2, pch=16, cex=.75, col=rgb(.5,.5,.7,.8))
 
 ```
@@ -1018,14 +1018,14 @@ Plotting an ordination is not as simple as it sounds, as I mentioned above, one 
 
 Howver, for this brief introduction to ordination, we will plot our results very simply, using symmetric scaling..
 
-```{r triplots, echo=TRUE, comment=""}
+```{r triplots, echo=TRUE, comment="", fig.alt="This figure shows a plot with y-axis labelled 'RDA2' and x-axis labelled 'RDA1'. The plot contains the variable names of the 44 species in the varaspec dataset scattered throughout the plot. There are three blue arrows that emerge from the point (0,0). One arrow points towards the top left of the plot and has label 'P'. Another arrow points towards the right and has label 'Fe'. The last arrow points slightly towards the bottom left of the plot and has label 'Mn'. There are 22 numbers scaterred near the center of the plot."}
 # Triplots of the parsimonious RDA (scaling=1)
 
 # Scaling 1
 
 plot(optm, scaling=1)
 ```
-```{r triplotscale2, echo=TRUE, comment=""}
+```{r triplotscale2, echo=TRUE, comment="", fig.alt="This figure shows a plot with y-axis labelled 'RDA2' and x-axis labelled 'RDA1'. The plot contains the variable names of the 44 species in the varaspec dataset clumped at the center of the plot. There are three blue arrows that emerge from the point (0,0). One arrow points towards the top left of the plot and has label 'P'. Another arrow points towards the right and has label 'Fe'. The last arrow points slightly towards the bottom left of the plot and has label 'Mn'. There are 22 numbers scaterred throughout the plot."}
 # Triplots of the parsimonious RDA (scaling=2)
 
 # Scaling 2
@@ -1033,7 +1033,7 @@ plot(optm, scaling=1)
 plot(optm, scaling="species")
 ```
 
-```{r triplotscale0, echo=TRUE, comment=""}
+```{r triplotscale0, echo=TRUE, comment="", fig.alt="This figure shows a plot with y-axis labelled 'RDA2' and x-axis labelled 'RDA1'. The plot contains the variable names of the 44 species in the varaspec dataset grouped near the center of the plot. There are three blue arrows that emerge from the point (0,0). One arrow points towards the top left of the plot and has label 'P'. Another arrow points towards the right and has label 'Fe'. The last arrow points slightly towards the bottom left of the plot and has label 'Mn'. There are 22 numbers scaterred throughout the plot."}
 # Triplots of the parsimonious RDA (scaling=2)
 
 # Scaling 0
