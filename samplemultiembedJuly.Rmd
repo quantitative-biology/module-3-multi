@@ -6,7 +6,7 @@ output:
   html_document: default
 ---
 
-```{r setup, include=FALSE}
+```{r setup1, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,kableExtra.auto_format = FALSE)
 
 
