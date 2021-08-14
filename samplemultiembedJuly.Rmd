@@ -7,8 +7,8 @@ output:
 ---
 
 ```{r setup1, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE,kableExtra.auto_format = FALSE,comment="")
-knitr::opts_chunk$set(tidy=TRUE,tidy.opts=list(width.cutoff=60))
+knitr::opts_chunk$set(echo = FALSE,kableExtra.auto_format = FALSE,tidy=TRUE,tidy.opts=list(width.cutoff=60))
+#knitr::opts_chunk$set(tidy=TRUE,tidy.opts=list(width.cutoff=60))
 
 
 
@@ -678,9 +678,9 @@ abline(h=0, col="grey90")
 
 ```
 
- We can see that petal width and length are aligned along the PC1 axis, while PC2 explains more variation in sepal width (Fig \@ref(fig: loadplot)).  That is, petal length and petal width variables are the most important contributors to the first PC. Sepal width variable is the most important contributor to the second PC. To interpret the variable plot remember that positively correlated variables are grouped close together (e.g., petal length and width). Variables with about a 90 angle are probably not correlated (sepal width is not correlated with the other variables), while negatively correlated variables are positioned on opposite sides of the plot origin (~180 angle; opposed quadrants). However, the direction of the axes is arbitrary! The distance between variables and the origin measures the contribution of the variables to the ordination. A shorter arrow indicates its less importance for the ordination. Variables that are away from the origin are well represented. Avoid the mistake of interpreting the relationships among variables based on the proximities of the apices (tips) of the vector arrows instead of their angles in biplots.
+ We can see that petal width and length are aligned along the PC1 axis, while PC2 explains more variation in sepal width (Fig. \@ref(fig:loadplot)).  That is, petal length and petal width variables are the most important contributors to the first PC. Sepal width variable is the most important contributor to the second PC. To interpret the variable plot remember that positively correlated variables are grouped close together (e.g., petal length and width). Variables with about a 90 angle are probably not correlated (sepal width is not correlated with the other variables), while negatively correlated variables are positioned on opposite sides of the plot origin (~180 angle; opposed quadrants). However, the direction of the axes is arbitrary! The distance between variables and the origin measures the contribution of the variables to the ordination. A shorter arrow indicates its less importance for the ordination. Variables that are away from the origin are well represented. Avoid the mistake of interpreting the relationships among variables based on the proximities of the apices (tips) of the vector arrows instead of their angles in biplots.
 
-Another way to portray this imformation is to create a **biplot** which, in addition to the coordinates of our samples on the synthetic axes PC1 and PC2, also provides information about how the variables align along the synthetic axes. (Fig \ref(fig:pactwo). According to the plot, *I. versicolor* and *I. virginica* have similar petal length and width, but not that the axis direction is arbitrary and coud not be interpreted as suggesting that these two species have longer petal widths than *I.setosa*. 
+Another way to portray this imformation is to create a **biplot** which, in addition to the coordinates of our samples on the synthetic axes PC1 and PC2, also provides information about how the variables align along the synthetic axes. (Fig.  \@ref(fig:pactwo)). According to the plot, *I. versicolor* and *I. virginica* have similar petal length and width, but not that the axis direction is arbitrary and coud not be interpreted as suggesting that these two species have longer petal widths than *I.setosa*. 
 
 I should note that I have used an arbitrary scaling to display the variable loadings on each axis. Some of the R packages will use a specific scaling that will emphasize particular parts of the plot, either preserving the Euclidean distances between samples or the correlations/covariances between variables (e.g., the vegan package can do this for you, see section \@ref(tri)).
 
@@ -758,12 +758,15 @@ In this computational method the steps are:
 
 We can use a Shephard plot to get information about the distortion of representation.  A Shepard diagram compares how far apart your data points are before and after you transform them (ie: goodness-of-fit) as a scatter plot. On the x-axis, we plot the original distances. On the y-axis, we plot the distances output by a dimension reduction algorithm. A really accurate dimension reduction will produce a straight line. However since information is almost always lost during data reduction, at least on real, high-dimension data, so Shepard diagrams rarely look this straight.
 
-Let's try this for the iris data. We can evaluate the quality of the nMDS solution by checking the Shephard plot as : stressplot(nMDS, main = "Shepard plot"). In addition to the original dissimilarity and ordination distance, the plot displays two correlation-like statistics on the goodness of fit. The nonmetric fit is given by $R^2$, while the “linear fit” is the squared correlation between fitted values and ordination distances (Fig. \@ref(fig:shep)). There is some deformation here, but in general the representation is really quite good.
+Let's try this for the iris data. We can evaluate the quality of the nMDS solution by checking the Shephard plot as : stressplot(nMDS, main = "Shepard plot"). 
 
-``` {r shep, echo=FALSE, message=FALSE, comment="",fig.width=8., fig.caption="Shepard's plot of an nMDS ordination using 2 axes to represent the varespec data in the vegan package", fig.alt="This figure shows two plots placed side by side. The left plot has x-axis labelled 'Observed Dissimilarity' that scales from 0.0 to 0.4 and a y-axis with label 'Ordination Distance' that scales from 0.0 to 0.8. The left plot shows a cluster of blue points that form a thickened line that trends upwards. The top of the plot also has text with label 'Non-metric fit, R^2^ = 0.999' and 'Linear fit, R^2^ = 0.995'. The right plot has x-axis labelled 'nMDS1' y-axis labelled 'nMDS2'.  The plot shows two clusters of points beside each other near the center of the plot. There are 4 arrows originating from the (0,0) point. From left to right, they are labeled 'Sepal.Width', 'Sepal.Length', 'Petal.Length' and 'Petal.Width'."}
+``` {r, echo=FALSE, message=FALSE, comment=""}
 library(vegan)
 data(varespec)
 nMDS <- metaMDS(iris[,-5], distance = "bray", k = 2, trace=FALSE)
+```
+
+``` {r sheptwo,  echo=FALSE, message=FALSE, comment="",fig.width=8., fig.caption="Shepard's plot of an nMDS ordination using 2 axes to represent the varespec data in the vegan package", , fig.alt="This figure shows two plots placed side by side. The left plot has x-axis labelled 'Observed Dissimilarity' that scales from 0.0 to 0.4 and a y-axis with label 'Ordination Distance' that scales from 0.0 to 0.8. The left plot shows a cluster of blue points that form a thickened line that trends upwards. The top of the plot also has text with label 'Non-metric fit, R^2^ = 0.999' and 'Linear fit, R^2^ = 0.995'. The right plot has x-axis labelled 'nMDS1' y-axis labelled 'nMDS2'.  The plot shows two clusters of points beside each other near the center of the plot. There are 4 arrows originating from the (0,0) point. From left to right, they are labeled 'Sepal.Width', 'Sepal.Length', 'Petal.Length' and 'Petal.Width'."}
 par(mfrow=c(1,2))
 stressplot(nMDS, pch=16,l.col=NA, las=1)
 plot(nMDS$points, pch=16,col=as.numeric(iris$Species)+1,
@@ -785,6 +788,8 @@ legend("bottomleft", legend=unique(iris$Species), pch=16, col=c(2,3,4), bty="n",
 
 
 ```
+
+In addition to the original dissimilarity and ordination distance, the plot displays two correlation-like statistics on the goodness of fit. The nonmetric fit is given by $R^2$, while the “linear fit” is the squared correlation between fitted values and ordination distances (Fig. \@ref(fig:sheptwo) ). There is some deformation here, but in general the representation is really quite good. 
 
 nMDS often achieves a less deformed representation of the dissimilarity relationships among objects than a PCoA in the same number of dimensions. But nMDS is a computer-intensive iterative technique exposed to the risk of suboptimum solutions. In comparison, PCoA finds the optimal solution by eigenvalue decomposition. 
 
@@ -934,14 +939,18 @@ data("varespec")
 data("varechem")
 ```
 
-Remember that the environmental data can be inspected using commands str which shows the structure of any object in a compact form, and by asking for a summary of a data frame (e.g., str(varechem) or summary(varechem)). We can also plot the data to get a sense of how correlated the various predictors might be.
+Remember that the environmental data can be inspected using commands str which shows the structure of any object in a compact form, and by asking for a summary of a data frame (e.g., str(varechem) or summary(varechem)). We can also plot the data to get a sense of how correlated the various predictors might be (Fig. \@ref(fig:lichCOR))
 
-```{r lichenCOR, echo=TRUE, fig.caption="Correlations between environmental variables", fig.alt="This figure shows a plot of the varechem dataset. The dataset contains chemical measurements, denoted by their chemical element names as well as variables 'Baresoil' which gives the estimated cover of bare soil, 'Humdepth' which provides the thickenss of the humus layer and 'pH'."}
+
+```{r lichCOR, echo=TRUE, fig.caption="Correlations between environmental variables", fig.alt="This figure shows a plot of the varechem dataset. The dataset contains chemical measurements, denoted by their chemical element names as well as variables 'Baresoil' which gives the estimated cover of bare soil, 'Humdepth' which provides the thickenss of the humus layer and 'pH'."}
 plot(varechem, gap=0, panel=panel.smooth, cex.lab=1.2, lwd=2, pch=16, cex=.75, col=rgb(.5,.5,.7,.8))
 
 ```
 
-We will use a forumla interface to constrain the ordination. The shortcut "~." indicates that we want to use all the variables in the environmental dataset. We will of course remember to standardize and scale our data. The output shows the eigenvalues for both the constrained and unconstrained ordination axes. In particular, see how the inertia and rank (number of axes) are decomposed in constrained ordination.
+
+
+
+We will use a formula interface to constrain the ordination. The shortcut "~." indicates that we want to use all the variables in the environmental dataset. We will of course remember to standardize and scale our data. The output shows the eigenvalues for both the constrained and unconstrained ordination axes. In particular, see how the inertia and rank (number of axes) are decomposed in constrained ordination.
 
 ```{r, echo=TRUE, comment=""}
 stvarespec=wisconsin(varespec)
@@ -950,7 +959,7 @@ constr <- rda(stvarespec~., data=scvarechem)
 constr
 ```
 
-However, it is not recommended to perform a constrained ordination with all the environmental variables you happen to have: adding a large number of constraints means slacker constraint, and eventually you end up with solution similar to unconstrained. Moreover, collinearity in the explanatory variables will cause instability in the estimation of regression coefficients (see Fig \@ref(fig:lichenCOR)). 
+However, it is not recommended to perform a constrained ordination with all the environmental variables you happen to have: adding a large number of constraints means slacker constraint, and eventually you end up with solution similar to unconstrained. Moreover, collinearity in the explanatory variables will cause instability in the estimation of regression coefficients (see Fig \@ref(fig:lichCOR)). 
 
 Instead, let’s use the formula interface to select particular constraining variables
 
@@ -1077,8 +1086,6 @@ text(sp.scores, row.names(sp.scores), col=2, cex=.6, pos=3)
 text(optm, display="bp", scaling=2,cex=.7,lwd=1.5,
 row.names(scores(optm, display="bp")), col="blue")
 text(optm,display=c("sites"),scaling=2, cex=1)
-```
-
 ```
 
 Okay, let's figure out how to interpret these plots. In the site scaling option (Fig \@ref(fig:triplotscale3)), dissimilarity distances between data objects are preserved. So that sites which are closer together on the ordination are more similar. In addition, the projection of a data object (site) onto the line of a response variable (species) at right angle approximates the position of the corresponding object along the corresponding variable. Angles between lines of response variables (species) and lines of explanatory variables are a two-dimensional approximation of correlations. But other angles between lines are meaningless (e.g., angles between response vectors don't mean anything).
