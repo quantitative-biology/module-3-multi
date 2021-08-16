@@ -7,7 +7,7 @@ output:
   pdf_document: default
 ---
 
-```{r setup, include=FALSE}
+```{r setupmultivariate, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,kableExtra.auto_format = FALSE)
 
 ```
@@ -50,14 +50,14 @@ There are many types of maultivariate analysis, and in this module we will only 
 ## Thinking about resemblence
 
 We are often interested in the question of how similar two things might be and a natural way to quantify similar is to list those characters that are shared. For example, what genetic or morphological features are the sameo or different between two species? A **resemblance measure** quantifies similarity by adding up in some way the similarities and differences between two things. In fact, this type of overall measure of the relationship among objects or attributes is a strating point for most multivariate analyses, and is often the most critical step. We can express the shared characters of objects as either:
-**similarity (S)**, which quantifies the degree of resemblance or **dissimilarity (D)** which quantifies the degree of difference. 
+**similarity (S)**, which quantifies the degree of resemblance or **dissimilarity (D)** which quantifies the degree of difference.
 
 
 
 ```{r t1}
 library(knitr)
 my_tbl <- data.frame(Att=c("Attribute 1","Attribute 2", "Attribute 3", "Attribute 4", "Attribute 5", "Attribute 6",  "Attribute 7", "Attribute 8", "Attribute 9","Attribute 10"), Obj1=c(1,0,0,1,1,0,0,0,1,1),
-Obj2=c(0,1,0,1,1,0,1,0,1,0)) 
+Obj2=c(0,1,0,1,1,0,1,0,1,0))
 my_tbl$sim=c("x","x",rep(("✓"),4), "x", rep(("✓"),2), "x")
 
 knitr::kable(my_tbl, digits = 3, row.names = FALSE, caption = "**Table 3.1** List of shared attributes for two things",col.names = c("Attribute","Object 1","Object 2","Similarity"),  format="html",table.attr = "style='width:50%;'", align="c")
@@ -84,7 +84,7 @@ xt=kable(dt, caption= "**Table 3.2** Summary of shared and absent atributes",for
 xt=kable_styling(xt,bootstrap_options = "bordered",
                 full_width = FALSE, position="l")
 xt=add_header_above(xt,c("", "", "Object 1", "Object 2"),
-                   bold = FALSE) 
+                   bold = FALSE)
 column_spec(xt,column = 1:2, bold = TRUE)
 ```
 
@@ -112,7 +112,7 @@ knitr::kable(lksp, caption="**Table 3.3** Species presence and absence in lake E
 <br>
 Let's try an example. In the 70s, Watson (1974) compared the zooplankton species present in Lake Erie and Lake Ontario. We can use this information to compare how similar the communities in the two lakes were at this time. We can see that they shared a lot of species \@ref(tab:t3)!
 
-We can calculate the similarity metrics quite easily using the table() function and the dataframe "lksp" where I have stored the data. 
+We can calculate the similarity metrics quite easily using the table() function and the dataframe "lksp" where I have stored the data.
 
 ```{r, echo=TRUE, comment=""}
 tlake=table(lksp[,c("erie","ontario")])
@@ -137,15 +137,15 @@ We can also talk about the dissimilarity between things. When a disimilarity or 
 
 
 ## Quantitative similarity & dissimilarity metrics
-While binary similarity metrics are easy to understand, there are a few problems. These metrics work best when we have a small number of characteristics and we have sampled very well (e.g., the zooplankton in Lake Erie and Ontario). The metrics are biased against maximum similarity values when we have lots of charactersitics or species and poor sampling. 
+While binary similarity metrics are easy to understand, there are a few problems. These metrics work best when we have a small number of characteristics and we have sampled very well (e.g., the zooplankton in Lake Erie and Ontario). The metrics are biased against maximum similarity values when we have lots of charactersitics or species and poor sampling.
 
-In addition, we sometimes have more information than just a "yes" or "no" which we could use to further charactersitize similarity. Quantiative similarity and dissimularity metrics make use of this information. Problems with Binary similarity coefficients. Work best: small number of items, heavy sampling. Some examples of quantitative similarity metrics you will see are: Percentage similarity (Renkonen index), Morisita’s index of similarity (not dispersion) and Horn’s index. 
+In addition, we sometimes have more information than just a "yes" or "no" which we could use to further charactersitize similarity. Quantiative similarity and dissimularity metrics make use of this information. Problems with Binary similarity coefficients. Work best: small number of items, heavy sampling. Some examples of quantitative similarity metrics you will see are: Percentage similarity (Renkonen index), Morisita’s index of similarity (not dispersion) and Horn’s index.
 
 There are also many quantitive dissimilarity metrics. For example, Bray Curtis dissimilarity is frequently used by ecologists to quantify differences between samples based on abundance or count data. This measure is usually applied to raw abundance data, but can be applied to relative abundances. In this case, we often talk about the "distance" between two things. Distances are of two types, either dissimilarity, converted from analogous similarity indices, or specific distance measures, such as Euclidean distance, which doesn't have a counterpart in any similarity index. There are many, many such metrics, and obviously, you should choose the most accurate and meaningful distance measure for a given  application. Legendre & Legendre (2012) offers a key how to select an appropriate measure for given data and problem (check their Tables 7.4-7.6). If you uncertain then choose several distance measures and compare the results.
 
 ### Euclidean Distance
 
-Perhaps the mostly commonly used dissimilarity or distance measure is Euclidian distance. This metric is zero for identical sampling units and has no fixed upper bound. 
+Perhaps the mostly commonly used dissimilarity or distance measure is Euclidian distance. This metric is zero for identical sampling units and has no fixed upper bound.
 
 ```{r f2, echo=FALSE, fig.cap="Euclidean Distance", fig.alt=""}
 x=c(19, 35)
@@ -168,7 +168,7 @@ $D^E_{jk}=\sqrt{\sum^n_{i=1}(X_{ij}-X_{ik})^2}$, where Euclidean distance betwee
 ```{r t4}
 library(knitr)
 nm=c("Species 1","Species 2", "Species 3", "Species 4", "Species 5", "Species 6",  "Species 7", "Species 8", "Species 9","Species 10")
-eu <- data.frame(Att=nm, j=c(19,35,0,35,10,0,0,0,30,2), k=c(35,10,0,5,50,0,3,0,10,0), stringsAsFactors = FALSE) 
+eu <- data.frame(Att=nm, j=c(19,35,0,35,10,0,0,0,30,2), k=c(35,10,0,5,50,0,3,0,10,0), stringsAsFactors = FALSE)
 eu$X2=(eu$j-eu$k)^2
 sj=sum(eu$j)
 sk=sum(eu$k)
@@ -190,9 +190,9 @@ dist(rbind(eu$j[1:10], eu$k[1:10]), method = "euclidean")
 
 ### Comparing more than two communities/samples/sites/genes/species
 
-What about the situation where we want to compare more than two communtiies, species, samples or genes? We can simply generate a dissimilarity or similarity **matrix**, where each pairwise comparison is given. 
+What about the situation where we want to compare more than two communtiies, species, samples or genes? We can simply generate a dissimilarity or similarity **matrix**, where each pairwise comparison is given.
 
-In the species composition matrix below \@ref(tab:t5), sample A and B do not share any species, while sample A and C share all species but differ in abundances (e.g. species 3 = 1 in sample A and 8 in sample C). The calculation of Euclidean distance using the **dist()** function produces a lower triangular matrix with the pairwise comparisons (I've included the distance with the sample itself on the diagonal). 
+In the species composition matrix below \@ref(tab:t5), sample A and B do not share any species, while sample A and C share all species but differ in abundances (e.g. species 3 = 1 in sample A and 8 in sample C). The calculation of Euclidean distance using the **dist()** function produces a lower triangular matrix with the pairwise comparisons (I've included the distance with the sample itself on the diagonal).
 
 The Euclidan distance values suggest that A and B are the most similar! Euclidean distance puts more weight on differences in species abundances than on difference in species presences. As a result, two samples not sharing any species could appear more similar (with lower Euclidean distance) than two samples which share species that largely differ in their abundances.
 
@@ -203,7 +203,7 @@ There are other disadvantages as well, and in general, there is simply no perfec
 
 ```{r t5}
 nm=c("Species 1","Species 2", "Species 3")
-meu <- data.frame(Att=nm, A=c(0,1,1), B=c(1,0,0),C=c(0,4,8), stringsAsFactors = FALSE) 
+meu <- data.frame(Att=nm, A=c(0,1,1), B=c(1,0,0),C=c(0,4,8), stringsAsFactors = FALSE)
 
 knitr::kable(meu, digits = 3, row.names = FALSE, caption = "Species abundance versus species presence and Euclidean distance",col.names = c("","Sample A","Sample B","Sample C" ),  format="html",table.attr = "style='width:50%;'", align="c")
 
@@ -213,7 +213,7 @@ knitr::kable(meu, digits = 3, row.names = FALSE, caption = "Species abundance ve
 ```{r, echo=TRUE, comment=""}
 dist(t(meu[2:4]), method="euclidean", diag=TRUE)
 ```
-### R functions 
+### R functions
 
 There are a number of functions in R that can be used to calculate similarity and dissimilarity metrics. Since we are usually NOT just comparing two objects, sites or samples, these functions can help make your calculations much quicker when you are comparing many units.
 
@@ -221,7 +221,7 @@ There are a number of functions in R that can be used to calculate similarity an
 
 **vegdist()** (library vegan) - default distance used in this function is Bray-Curtis distance, which is (in contrast to Euclidean distance) considered as more suitable for ecological data (it is a quantitative analog of Sørensen dissimilarity).
 
-**dsvdis()** (library labdsv) - offers some other indices than vegdist, e.g. ruzicka (Růžička, quantitative analogue of Jaccard) and roberts. 
+**dsvdis()** (library labdsv) - offers some other indices than vegdist, e.g. ruzicka (Růžička, quantitative analogue of Jaccard) and roberts.
 
 For full comparison of dist, vegdist and dsvdis,see http://ecology.msu.montana.edu/labdsv/R/labs/lab8/lab8.html.
 
@@ -241,7 +241,7 @@ So we can constrast clustering, which assumes that units (e.g., sites, communiti
 
 ### Hierarchical clustering: groups are nested within other groups.
 
-Perhaps the most familiar type of clustering is hierarchical. There are two kinds: **divisive** and **agglomerative**. In the divisive method, the entire set of units is dividied into smaller and smaller groups. The agglomerative method starts with small groups of few units, and groups them into larger and larger clusters, until the entire data set is sampled (Pielou, 1984). Of course, once you have more than two units, you need some way to assess similarlity between the clusters. There are a couple of different methods here. Single linkage assigns the similairty between clusters to the most similar units in each cluster. Complete linkage uses the similarity between the most dissmilar units in each cluster, while average linkage aveages over all the units in each cluster (\@ref(fig:f6)). 
+Perhaps the most familiar type of clustering is hierarchical. There are two kinds: **divisive** and **agglomerative**. In the divisive method, the entire set of units is dividied into smaller and smaller groups. The agglomerative method starts with small groups of few units, and groups them into larger and larger clusters, until the entire data set is sampled (Pielou, 1984). Of course, once you have more than two units, you need some way to assess similarlity between the clusters. There are a couple of different methods here. Single linkage assigns the similairty between clusters to the most similar units in each cluster. Complete linkage uses the similarity between the most dissmilar units in each cluster, while average linkage aveages over all the units in each cluster (\@ref(fig:f6)).
 
 
 
@@ -345,7 +345,7 @@ heatmap(y,col=colfunc(15))
 Agglomerative approach (bottom-up)
 **hclust()** calculates hierarchical cluster analysis. Requires at least two arguments: d for distance matrix, and method for agglomerative algorithm, one of ward.D, ward.D2, single, complete, average (= UPGMA), mcquitty (= WPGMA), median (= WPGMC) or centroid (= UPGMC). Has it's own plot function.
 
-and **agnes()** (library cluster) - contains six agglomerative algorithms, some not included in hclust. 
+and **agnes()** (library cluster) - contains six agglomerative algorithms, some not included in hclust.
 
 Divisive approach (top-down)
 **diana()**
@@ -356,15 +356,15 @@ Divisive approach (top-down)
 ```{r}
 library(plotrix)
 plot(rbind(c(-4,9.5), c(-3.5,10.5), c(-3,9.2), c(-2.7,10), c(-2,8.2), c(-1.2,10.5),
-           c(-2.1,11.9), c(3.1,11.1), c(4,12.5), c(4.5,10.6), c(5,10), c(5.5,11.1), 
+           c(-2.1,11.9), c(3.1,11.1), c(4,12.5), c(4.5,10.6), c(5,10), c(5.5,11.1),
            c(6,10), c(5,7), c(5.7,7.9), c(6.1,6.9), c(6.6,7.3), c(7.1,5.9),c(8,8),
            c(-4,0.5),c(-3.5,1.5),c(-3,0.5),c(-2.5,1),c(-2,-0.5),c(-1.1,1.6),c(-2,3),
            c(3.1,2.1),c(4,3.5),c(4.5,1.8),c(5,1),c(5.5,2.1),c(6,1),c(5.6,-1),
            c(5,-2),c(6.6,-1.6),c(6.1,-2.1),c(7.1,-3.1),c(7.9,-1),c(-2,-7),
            c(-3.5,-8.5),c(-4,-9.5),c(-3,-9.5),c(-2.5,-9),c(-2,-10.8),
            c(-1.2,-8.5),c(4,-6.2),c(3.1,-7.9),c(4.5,-8.2),c(5,-9),c(5.5,-7.9),
-           c(6,-9),c(5,-12),c(5.6,-11),c(6.1,-12.1),c(6.6,-11.6),c(7.1,-13.1),c(7.9,-11)), 
-     xlim = c(-25,25), ylim = c(-14,13), xaxt = "n", yaxt = "n", 
+           c(6,-9),c(5,-12),c(5.6,-11),c(6.1,-12.1),c(6.6,-11.6),c(7.1,-13.1),c(7.9,-11)),
+     xlim = c(-25,25), ylim = c(-14,13), xaxt = "n", yaxt = "n",
      frame.plot = FALSE, ann = FALSE, pch = 21, bg="red", col="red")
 points(rbind(c(-2,6.7),c(0.5,12.5),c(1,3.5),c(1.7,7.7),c(-2,-3),c(2.5,-1.2),
              c(-2,-9.2),c(4.8,-7.4),c(7,-12.4)),pch=4)
@@ -418,7 +418,7 @@ K-means has problems when clusters are of differing
 
 In contrast to strict (hard) clustering approaches, fuzzy (soft) clustering methods allow multiple cluster memberships of the clustered items.
 
-This is commonly achieved by assigning to each item a weight of belonging to each cluster. 
+This is commonly achieved by assigning to each item a weight of belonging to each cluster.
 
 Thus, items at the edge of a cluster, may be in a cluster to a lesser degree than items at the center of a cluster.
 
@@ -471,7 +471,7 @@ Perkins, M.J., McDonald, R.A., van Veen, F.F., Kelly, S.D., Rees, G. and Bearhop
 
 # Ordination
 
-While cluster analysis let's us visualize multivariate data by grouping objects into dscrete categories, ordination uses continuous axes to help us accomplish the same task. While physicists grumble if space exceeds four dimensions, biologists typically grapple with dozens of dimensions (species and/or samples). In effect, we  “order” this multivariate data in order to produce a low dimensional picture (i.e., a graph in 1-3 dimensions). Just like cluster analysis, we wil use similarity metrics to accomplish this. Also like cluster anlaysis, simple ordination is not a statistical test: it is a method of visualizing data. 
+While cluster analysis let's us visualize multivariate data by grouping objects into dscrete categories, ordination uses continuous axes to help us accomplish the same task. While physicists grumble if space exceeds four dimensions, biologists typically grapple with dozens of dimensions (species and/or samples). In effect, we  “order” this multivariate data in order to produce a low dimensional picture (i.e., a graph in 1-3 dimensions). Just like cluster analysis, we wil use similarity metrics to accomplish this. Also like cluster anlaysis, simple ordination is not a statistical test: it is a method of visualizing data.
 
 ```{r dummy1, fig.cap="Synthetic axis rotation in ordination", fig.alt=""}
 x1 = c(-15,-12,-13,-15,-13,-14,-10,-9,-12,-10,-10,-9,-10,-9,-7,-6,-5,-8,-9,-8,-7,-5,
@@ -606,7 +606,7 @@ Essentially, we find axes in the data that explain a lot of variation, and rotat
 ## Methods of Ordination
 
 
-There are lots of different ways to perform an ordination, but most methods are based on extracting the eigenvalues of a similarity matrix. The four most commonly used methods are: *Principle Component Analysis (PCA)*, which is the main eigenvector-based method, *Correspondence Analysis (CA)* which is used used on frequency data, *Principle Coordinate Analysis (PCoA)* which works on dissimilarity matrices, and *Non Metric Multidimensional Scaling (NMDS)* which is NOT an eigenvector method, instead it represents objects along a predetermined number of axes. 
+There are lots of different ways to perform an ordination, but most methods are based on extracting the eigenvalues of a similarity matrix. The four most commonly used methods are: *Principle Component Analysis (PCA)*, which is the main eigenvector-based method, *Correspondence Analysis (CA)* which is used used on frequency data, *Principle Coordinate Analysis (PCoA)* which works on dissimilarity matrices, and *Non Metric Multidimensional Scaling (NMDS)* which is NOT an eigenvector method, instead it represents objects along a predetermined number of axes.
 
 
 ```{r tord}
@@ -627,14 +627,14 @@ Legendre & Legendre (2012) provide a nice summary of when you should use each me
 
 ## Principal Components Analysis (PCA)
 
-Principal Components Analusis is probably the most widely-used and well-known of the “standard” multivariate methods. It was invented by Pearson (1901) and Hotelling (1933), and first applied in ecology by Goodall (1954) under the name “factor analysis” (NB “principal factor analysis” is a synonym of PCA). Like most ordination methods, PCA takes a data matrix of n objects by p variables, which may be correlated, and summarizes it by uncorrelated axes (principal components or principal axes) that are linear combinations of the original p variables. The first k components display as much as possible of the variation among objects. PCA uses Euclidean distance calculated from the p variables as the measure of dissimilarity among the n objects, and derives the best possible k dimensional (k < p) representation of the Euclidean distances among objects. 
+Principal Components Analusis is probably the most widely-used and well-known of the “standard” multivariate methods. It was invented by Pearson (1901) and Hotelling (1933), and first applied in ecology by Goodall (1954) under the name “factor analysis” (NB “principal factor analysis” is a synonym of PCA). Like most ordination methods, PCA takes a data matrix of n objects by p variables, which may be correlated, and summarizes it by uncorrelated axes (principal components or principal axes) that are linear combinations of the original p variables. The first k components display as much as possible of the variation among objects. PCA uses Euclidean distance calculated from the p variables as the measure of dissimilarity among the n objects, and derives the best possible k dimensional (k < p) representation of the Euclidean distances among objects.
 
 
 ```{r varord, fig.cap="Selecting the synthetic axes in ordination", fig.alt="" }
-ctlns<-list(structure(list(level = 10, x = c(-0.8,0,1,2,2.5,3,3.1,2.8,2.3,2,1.8), 
+ctlns<-list(structure(list(level = 10, x = c(-0.8,0,1,2,2.5,3,3.1,2.8,2.3,2,1.8),
                            y = c(2.7,2.3,2.5,2.7,2.5,2,1.5,0,-1,-2,-3)),
                       .Names = c("level", "x", "y")))
-ctlns2<-list(structure(list(level = 10, x = c(4,5.4,5.7,6,6.5,7,7.5,8,9,10.5,11.5,12.5,13.5), 
+ctlns2<-list(structure(list(level = 10, x = c(4,5.4,5.7,6,6.5,7,7.5,8,9,10.5,11.5,12.5,13.5),
                            y = c(-1.5,-0.1,0.7,2,3.2,4,4.5,4.7,4.6,4.3,4.2,4.5,5)),
                       .Names = c("level", "x", "y")))
 x <- seq(0, 40, length=1000)
@@ -662,7 +662,7 @@ text(x=5, y=-5, "Y1 axis selected to maximize variation explained")
 text(x=5, y=-7, "Y2 axis must be orthogonal to Y1 and maximize variation explained")
 ```
 
-We can think about this spatially. Objects are represented as a cloud of n points in a multidimensional space with an axis for each of the p variables. So the centroid of the points is defined by the mean of each variable, and 
+We can think about this spatially. Objects are represented as a cloud of n points in a multidimensional space with an axis for each of the p variables. So the centroid of the points is defined by the mean of each variable, and
 the variance of each variable is the average squared deviation of its n values around the mean of that variable (i.e., $V_i= \frac{1}{n-1}\sum_{m=1}^{n}{(X_{im}-\bar{X_i)}^2}$). The degree to which the variables are linearly correlcted is given by their covariances $C_{ij}=\frac{1}{n-1}\sum_{m=1}^n{(X_{im}-\bar{X_i})(X_{jm}-\bar{X_j})}$. The objective of PCA is to rigidly rotate the axes of the p-dimenional space to new positions (principal axes) that have the following properties: they are ordered such that principal axis 1 has the highest variance, axis 2 has the next highest variance etc, and the covariance among each pair of principal axes is zero (the principal axes are uncorrelated) \@ref(fig:varord)
 
 
@@ -723,4 +723,4 @@ Then, the jth eigenvalue is the variance of the jth principle component and the 
 
 
 
-NB 
+NB
