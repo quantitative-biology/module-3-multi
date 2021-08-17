@@ -1,10 +1,3 @@
----
-#title: "3 Multivariate"
-#author: "Kim Cuddington"
-date: "05/07/2021"
-output:
-  html_document: default
----
 
 ```{r setup1, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,kableExtra.auto_format = FALSE,tidy=TRUE,tidy.opts=list(width.cutoff=60))
@@ -624,7 +617,7 @@ An ideal curve should be steep, then bend at an “elbow” — this is your cut
 
 
 
-```{r scree, fig.caption="Screeplot: a display of the variance explained by each of the synthetic axes", fig.alt="The graph shows the relationship between variances and the number of axes that explain the dataset. As the number of axes increasing from 1 to 4, the variances decrease from 3 to 0.",comment=""}
+```{r scree, fig.cap="Screeplot: a display of the variance explained by each of the synthetic axes", fig.alt="The graph shows the relationship between variances and the number of axes that explain the dataset. As the number of axes increasing from 1 to 4, the variances decrease from 3 to 0.",comment=""}
 screeplot(p, type=("lines"),main="")
 ```
 
@@ -653,7 +646,7 @@ kable(p$rotation,digits=2,caption="Eigenvectors for each variable and synthetic 
 
 We can see that a lot of information is coming from the petal variables for PC1, but less from the sepal variables (Table \@ref(tab:barload)).  We can plot this out to show how strongly each variable affects each principle component (or synthetic axis).
 
-```{r loadplot, fig.caption="Contribituion of each variable to the first two principal component axes", fig.alt="This figure shows a plot with x-axis labelled 'PC1 (73%)' that scales from -4 to 4 and y-axis labelled 'PC2 (23%)' that scales from -4 to 4. 4 purple arrowed lines emerge from the coordinate (0,0). One line ends at the coordinate (-1,-4) and has label 'Sepal.Width'. Another line ends at coordinate (2.2,-2) and has label 'Sepal.Length'. Another line ends at coordinate (2.4,0.2) and has label 'Petal.Length'. The last line ends at coordinate (2.5,0.1) and has label 'Petal.Width'."}
+```{r loadplot, fig.cap="Contribituion of each variable to the first two principal component axes", fig.alt="This figure shows a plot with x-axis labelled 'PC1 (73%)' that scales from -4 to 4 and y-axis labelled 'PC2 (23%)' that scales from -4 to 4. 4 purple arrowed lines emerge from the coordinate (0,0). One line ends at the coordinate (-1,-4) and has label 'Sepal.Width'. Another line ends at coordinate (2.2,-2) and has label 'Sepal.Length'. Another line ends at coordinate (2.4,0.2) and has label 'Petal.Length'. The last line ends at coordinate (2.5,0.1) and has label 'Petal.Width'."}
 plot(NA,ylim=c(-5,4), xlim=c(-5,4),
          xlab=paste0("PC1 (", pvar[1]*100, "%)"),
      ylab=paste0("PC2 (", pvar[2]*100, "%)"))
@@ -766,7 +759,7 @@ data(varespec)
 nMDS <- metaMDS(iris[,-5], distance = "bray", k = 2, trace=FALSE)
 ```
 
-``` {r sheptwo,  echo=FALSE, message=FALSE, comment="",fig.width=8., fig.caption="Shepard's plot of an nMDS ordination using 2 axes to represent the varespec data in the vegan package", , fig.alt="This figure shows two plots placed side by side. The left plot has x-axis labelled 'Observed Dissimilarity' that scales from 0.0 to 0.4 and a y-axis with label 'Ordination Distance' that scales from 0.0 to 0.8. The left plot shows a cluster of blue points that form a thickened line that trends upwards. The top of the plot also has text with label 'Non-metric fit, R^2^ = 0.999' and 'Linear fit, R^2^ = 0.995'. The right plot has x-axis labelled 'nMDS1' y-axis labelled 'nMDS2'.  The plot shows two clusters of points beside each other near the center of the plot. There are 4 arrows originating from the (0,0) point. From left to right, they are labeled 'Sepal.Width', 'Sepal.Length', 'Petal.Length' and 'Petal.Width'."}
+``` {r sheptwo,  echo=FALSE, message=FALSE, comment="",fig.width=8., fig.cap="Shepard's plot of an nMDS ordination using 2 axes to represent the varespec data in the vegan package", , fig.alt="This figure shows two plots placed side by side. The left plot has x-axis labelled 'Observed Dissimilarity' that scales from 0.0 to 0.4 and a y-axis with label 'Ordination Distance' that scales from 0.0 to 0.8. The left plot shows a cluster of blue points that form a thickened line that trends upwards. The top of the plot also has text with label 'Non-metric fit, R^2^ = 0.999' and 'Linear fit, R^2^ = 0.995'. The right plot has x-axis labelled 'nMDS1' y-axis labelled 'nMDS2'.  The plot shows two clusters of points beside each other near the center of the plot. There are 4 arrows originating from the (0,0) point. From left to right, they are labeled 'Sepal.Width', 'Sepal.Length', 'Petal.Length' and 'Petal.Width'."}
 par(mfrow=c(1,2))
 stressplot(nMDS, pch=16,l.col=NA, las=1)
 plot(nMDS$points, pch=16,col=as.numeric(iris$Species)+1,
@@ -942,7 +935,7 @@ data("varechem")
 Remember that the environmental data can be inspected using commands str which shows the structure of any object in a compact form, and by asking for a summary of a data frame (e.g., str(varechem) or summary(varechem)). We can also plot the data to get a sense of how correlated the various predictors might be (Fig. \@ref(fig:lichCOR))
 
 
-```{r lichCOR, echo=TRUE, fig.caption="Correlations between environmental variables", fig.alt="This figure shows a plot of the varechem dataset. The dataset contains chemical measurements, denoted by their chemical element names as well as variables 'Baresoil' which gives the estimated cover of bare soil, 'Humdepth' which provides the thickenss of the humus layer and 'pH'."}
+```{r lichCOR, echo=TRUE, fig.cap="Correlations between environmental variables", fig.alt="This figure shows a plot of the varechem dataset. The dataset contains chemical measurements, denoted by their chemical element names as well as variables 'Baresoil' which gives the estimated cover of bare soil, 'Humdepth' which provides the thickenss of the humus layer and 'pH'."}
 plot(varechem, gap=0, panel=panel.smooth, cex.lab=1.2, lwd=2, pch=16, cex=.75, col=rgb(.5,.5,.7,.8))
 
 ```
