@@ -170,7 +170,7 @@ knitr::kable(eu, digits = 3, row.names = FALSE, caption = "Species abundance and
 ```
 
 
-#### Exercise 1
+**Exercise 1** 
 Finish the calculation the euclidean distance for this data.
 
 Of course, R makes this much easier, I also can calculate Euclidean distance using the **dist()** function, after creating a matrix of the two columns of species abundance data from my original *eu* dataframe.
@@ -430,7 +430,7 @@ legend("bottomright",legend=as.character(unique(as.factor(niso$Species))), pch=a
 
 It doesn't look like our cluster algorithm is matching up with our Food.chain data categories very well. Wheat- and Nettle-based food chains cannot be distinguished, which makes sense when you consider that both of these plants are terrestrial and use a C3 photosynthesis system. If you are not happy with the success of this clustering algorithm you could try other variants (e.g.,  “complete” linkage) and a different number of groups. 
 
-#### Exercise #2
+**Exercise 2**
 Try a non-hierarchical cluster analysis on the same data to see if it works better. Use the **kmeans()** function, which requires that we select the required number of clusters (4) ahead of time. Once you have your clustering, plot your results. 
 
 ## Ordination{#Ord}
@@ -820,7 +820,7 @@ abline(v=0, col="grey")
 
 ```
 
-#### Exercise # 3
+**Exercise 3**
 Provide an interpretation of these plots
 
 
@@ -902,7 +902,7 @@ So our steps for an RDA are a combination of the things we would do for a multip
 
 #### R functions for RDA
 
-BEWARE: many things are called rda in R that have nothing to do with ordination!!
+BEWARE: many things are called rda in R that have nothing to do with ordination!! You will see that we specify the vegan package when calling rda in the code in order to avoid confusion.
 
 **rda** (vegan package)- this function calculates RDA if a matrix of environmental variables is supplied (if not, it calculates PCA). Two types of syntax are available: matrix syntax - rda (Y, X, W), where Y is the response matrix (species composition), X is the explanatory matrix (environmental factors) and W is the matrix of covariables, or formula syntax (e.g., RDA = rda (Y ~ var1 + factorA + var2*var3 + Condition (var4), data = XW, where var1 is quantitative, factorA is  categorical, there is an interaction term between var2 and var3, while var4 is used as covariable and hence partialled out).
 
@@ -938,9 +938,9 @@ plot(varechem, gap=0, panel=panel.smooth, cex.lab=1.2, lwd=2, pch=16, cex=.75, c
 We will use a formula interface to constrain the ordination. The shortcut "~." indicates that we want to use all the variables in the environmental dataset. We will of course remember to standardize and scale our data. The output shows the eigenvalues for both the constrained and unconstrained ordination axes. In particular, see how the inertia and rank (number of axes) are decomposed in constrained ordination.
 
 ```{r, echo=TRUE, comment=""}
-stvarespec=wisconsin(varespec)
+stvarespec=as.data.frame(wisconsin(varespec))
 scvarechem=as.data.frame(scale(varechem))
-constr <- rda(stvarespec~., data=scvarechem)
+constr <- vegan::rda(stvarespec~., data=scvarechem)
 constr
 ```
 
@@ -949,7 +949,7 @@ However, it is not recommended to perform a constrained ordination with all the 
 Instead, let’s use the formula interface to select particular constraining variables
 
 ```{r, echo=TRUE, comment=""}
-ord3=rda(stvarespec~N+K+Al, data=scvarechem)
+ord3=vegan::rda(stvarespec~N+K+Al, data=scvarechem)
 ord3
 ```
 
@@ -977,14 +977,14 @@ NB It is also possible to analyze the significance of marginal effects (“Type 
 You may wonder if you have selected the correct variables! We can use the **ordiR2step()** function to perform forward selection (and backwards selection or both directions) on a null model.  In automatic model building we usually need two extreme models: the smallest and the largest model considered. First we specify a full model with all the environmental variables, and then a minimal model with intercept only, where both are defined using a formula so that terms can be added or removed from the model. Then we allow an automated model selection function to move between these extremes, trying to minimze a metric of model fit, such as $R^2$. We will then use ordiR2step() to find an optimal model based on both permutation and adjusted R2 values. If you switch the trace=FALSE option to trace=TRUE you can watch the function doing its work.
 
 ```{r, echo=TRUE, comment=""}
-mfull <- rda(stvarespec~., data=scvarechem)
-m0 <- rda(stvarespec~1, data=scvarechem)
+mfull <- vegan::rda(stvarespec~., data=scvarechem)
+m0 <- vegan::rda(stvarespec~1, data=scvarechem)
 
 optm <- ordiR2step(m0, scope = formula(mfull), trace=FALSE)
 optm$anova 
 ```
 
-#### Exercise #4
+**Exercise 4**
 Examine the significance test. How does this automatically selected model differ from the full model and your manually selected version? 
 
 Next check the variance (i.e., inertia). If the variance explained by the constrained model is not much higher than your unconstrained variance, then it may be that the rda is not really needed.
@@ -1083,7 +1083,12 @@ So, looking at our first plot, sites 2, 28 and perhaps 3 seem quite different fr
 
 In this short introduction we have not demonstrated how to completed an interpret other forms of constrained ordination such as **C**anonical **C**orrespondence **A**nalysis, partial RDA (which would allow you to control for well-known linear effects), or analysis designed for qualiticative variables, such as **M**ultiple **C**orrespondence **A**nalysis (MCA). There are functions in the vegan and FactoMineR packages to do many of these things. 
 
-### Other literature cited
+### Feedback
+
+We value your input! Please take the time to let us know how we might improve these materials. [Survey](https://forms.gle/vLkcZq7NxPb2ajTQ6)
+
+
+## References
 
 Goodall, D. W. (1954). Objective methods for the classification of vegetation. III. An essay in the use of factor analysis. Australian Journal of Botany, 2(3), 304–324. https://doi.org/10.1071/bt9540304
 
@@ -1106,14 +1111,14 @@ Watson, N. H. F., & Carpenter, G. F. (1974). Seasonal Abundance of Crustacean Zo
 van den Wollenberg, A. L. (1977). Redundancy analysis an alternative for canonical correlation analysis. Psychometrika, 42(2), 207–219. https://doi.org/10.1007/BF02294050
 
 
-### Answer Key
+## Answer Key
 
-**1\.** All we need to do is to take the square root of the sum of the squared differences to obtain the Euclidean distance as
+**Exercise 1\.** All we need to do is to take the square root of the sum of the squared differences to obtain the Euclidean distance as
 ```{r, echo=TRUE, comment=""}
 round(sqrt(eu[11,4]),2)
 ```
 
-**2\.** We use the **kmeans()** function with 4 clusters to find groups in the isotope data. We can then save the assigned clusters to our dataframe and plot in a similar way
+**Exercise  2\.** We use the **kmeans()** function with 4 clusters to find groups in the isotope data. We can then save the assigned clusters to our dataframe and plot in a similar way
 ```{r kclust, echo=FALSE, fig.cap="K means clustering on Perkins et al (2014) data", fig.alt="This figure shows a plot of the Isotope dataset. The plot has x-axis with label 'δ13C' that scales from -35 to 0, and y-axis with label 'δ15N' that scales from -6 to 8. The right side of the plot contains two legends. The top right legend has label 'kcluster' and contains 4 circles of varying colors as symbols. The symbols from top to bottom have labels '1' with a black circle, '2', with a red circle, '3' with a green circle and '4' with a blue circle. The bottom right legend is labelled 'Species' and has symbols 'X' for 'Plant, circle for 'Aphid', plus sign for 'Hoverfly' and triangle for 'Diplazon. There is a cluster of black symbols of varying species where 'δ13C' is between -32 to -25 and 'δ15N' is between -6 to 8, blue symbols with varying species where 'δ13C' is between -23 to -20 and 'δ15N' is between 0 to 4, and red symbols with varying species where 'δ13C' is between -14 to -11 and 'δ15N' is between -3 to 5."}
 kclust=kmeans(niso[,c("C", "N")], 4)
 niso$kclust=kclust$cluster
@@ -1127,8 +1132,8 @@ legend("bottomright",legend=as.character(unique(as.factor(niso$Species))), pch=a
 ```
 It looks like kmeans has the same problem with distinguishing C3 plant-based foodwebs. But we still get three groups that roughly map onto our information about the data. 
 
-**3\.** Interpretation of the PCoA and the nMDS oridination plots of the varespec data is straightforward: sites ordinated closer to one another are more similar than those ordinated further away. We can interpret the nMDS, remembering that the first ordination axis corresponds to the most variance in our data and so on. Looking at the plot, it seems that sites 28, 27 and possibly 21 are pretty similar to each other, and different from other sites, possibly due to the species aligned in that direction on the x-axis such as *Betupube*. Sites 2 and 5 might be rather different from other sites. This might be due species like *Cladcerv* for site 2. Some sites (e.g., 6, 13, 20) are not well distinguished by the ordination. Others like 9, 10, 11, and 12 might group together.
+**Exercise  3\.** Interpretation of the PCoA and the nMDS oridination plots of the varespec data is straightforward: sites ordinated closer to one another are more similar than those ordinated further away. We can interpret the nMDS, remembering that the first ordination axis corresponds to the most variance in our data and so on. Looking at the plot, it seems that sites 28, 27 and possibly 21 are pretty similar to each other, and different from other sites, possibly due to the species aligned in that direction on the x-axis such as *Betupube*. Sites 2 and 5 might be rather different from other sites. This might be due species like *Cladcerv* for site 2. Some sites (e.g., 6, 13, 20) are not well distinguished by the ordination. Others like 9, 10, 11, and 12 might group together.
 
 PCoA gives us broadly the same information and also suggests that sites 21, 28, 27 are similar to each other and different from other sites. This visualization also agrees that sites 2 and 5 might be different from the others, and that 9, 10, 11, and 12 might be similar.
 
-**4\.** The automatically selected rda model of the lichen data includes three significant predictors: Fe, P and Mn, while the full model has 14 potential predictors. Our manually selected model of three predictors N, K and Al don't even appear in the automatically selected model.
+**Exercise 4\.** The automatically selected rda model of the lichen data includes three significant predictors: Fe, P and Mn, while the full model has 14 potential predictors. Our manually selected model of three predictors N, K and Al don't even appear in the automatically selected model.
