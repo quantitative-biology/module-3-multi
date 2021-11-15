@@ -7,7 +7,7 @@ knitr::opts_chunk$set(echo = FALSE,kableExtra.auto_format = FALSE,tidy=TRUE,tidy
 
 ```
 
-# Introduction to multivariate analysis
+# Introduction to multivariate analysis: Clustering and Ordination
 In this module we'll be disccusing multivariate quantitative methods. Analyses such as linear regression, where we relate a response, *y*, to a predictor variable, *x*, are univariate techniques. If we have multiple responses, $y_1...y_n$, and multiple predictors, $x_1...x_n$, we need multivariate approaches. For example, we may wish to understand how both precipitation and soil type are related to plant community composition. In this question, we may be tracking the abundance of over a dozen different species and many different sites with different types of soil, precipitation and other environmental factors. You can easily see that this is not a situation that ordinary univariate approaches are designed to handle!
 
 There are many types of multivariate analysis, and in this module and the next, we will only describe some of the most common ones. We can think of these different types of analysis as laying at different ends of a spectrum of treating the data as discrete vs continuous, and relying on identifying a reponse variable *a priori* versus letting the "data tell us" about explanatory features, i.e., latent variables (Fig. \@ref(fig:f1).
@@ -81,7 +81,7 @@ We can further categorize similarity metrics as **symmetric**, where we regard b
 
 The Jaccard index is an asymmetric binary similarity coefficient calculated as $S_J=\frac{a}{a+b+c}$, while the quite similar Sørenson index is given as $S_S=\frac{2a}{2a+b+c}$, and so gives greater weight to shared similarities. Both metrics range from 0 to 1, where a value of 1 indicates complete similarity. Notice that both metrics exclude cell $d$ - the shared absences.
 
-Let's try an example. In the 70s, Watson (1974) compared the zooplankton species present in Lake Erie and Lake Ontario. We can use this information to compare how similar the communities in the two lakes were at this time. We can see that they shared a lot of species (Table \@ref(tab:t3))!
+Let's try an example. In the 70s, Watson & Carpenter (1974) compared the zooplankton species present in Lake Erie and Lake Ontario. We can use this information to compare how similar the communities in the two lakes were at this time. We can see that they shared a lot of species (Table \@ref(tab:t3))!
 
 ```{r t3, echo=FALSE}
 #manually enter data
@@ -91,7 +91,7 @@ sp=1:24
 lksp=data.frame(species=sp, erie=as.factor(lkerie), ontario=as.factor(lkontario))
 lksp$erie=ordered(lksp$erie, c("1", "0"))
 lksp$ontario=ordered(lksp$ontario, c("1", "0"))
-knitr::kable(lksp, caption="Species presence and absence in lake Erie and lake Ontario (data from from Watson 1974)",  table.attr = "style='width:60%;'", align="c", padding=0)
+knitr::kable(lksp, caption="Species presence and absence in lake Erie and lake Ontario (data from from Watson & Carpenter 1974)",  table.attr = "style='width:60%;'", align="c", padding=0)
 ```
 <br>
 
@@ -124,7 +124,7 @@ While binary similarity metrics are easy to understand, there are a few problems
 
 In addition, we sometimes have more information than just a "yes" or "no" which we could use to further characterize similarity. Quantiative similarity and dissimilarity metrics make use of this information. Some examples of quantitative similarity metrics are: Percentage similarity (Renkonen index), Morisita’s index of similarity (not dispersion) and Horn’s index. However, quantitative dissimilarity metrics are perhaps more commonly used. In this case, we often talk about the "distance" between two things. Distances are of two types, either dissimilarity, converted from analogous similarity indices, or specific distance measures, such as Euclidean distance, which doesn't have a counterpart in any similarity index. There are many, many such metrics, and obviously, you should choose the most accurate and meaningful distance measure for a given  application. Legendre & Legendre (2012) offer a key on how to select an appropriate measure for given data and problem (check their Tables 7.4-7.6). If you are uncertain, then choose several distance measures and compare the results.
 
-**Euclidean Distance**
+#### Euclidean Distance
 
 Perhaps the mostly commonly used, and easiest to understand, dissimilarity, or distance, measure is Euclidian distance. This metric is zero for identical sampling units and has no fixed upper bound. 
 
@@ -146,8 +146,7 @@ lines(c(19,34), c(10,10), lty = "dotted", lwd = 2)
 
 
 
-We know that to calculate this distance we would just use the Pythagorean theorem as $c=\sqrt{a^2+b^2}$. To generalize to $n$ species we can say
-$D^E_{jk}=\sqrt{\sum^n_{i=1}(X_{ij}-X_{ik})^2}$, where Euclidean distance between samples *j* and *k*, $D^E_{jk}$, is calculated by summing over the distance in abundance of each of n species in the two samples.
+We know that to calculate this distance we would just use the Pythagorean theorem as $c=\sqrt{a^2+b^2}$. To generalize to $n$ species we can say $D^E_{jk}=\sqrt{\sum^n_{i=1}(X_{ij}-X_{ik})^2}$, where Euclidean distance between samples *j* and *k*, $D^E_{jk}$, is calculated by summing over the distance in abundance of each of n species in the two samples.
 
 
 Let's try an example. Given the species abundances in Table \@ref(tab:t4), we can calculate the squared difference in abundance for each species, and sum that quantity. 
@@ -171,9 +170,12 @@ knitr::kable(eu, digits = 3, row.names = FALSE, caption = "Species abundance and
 ```
 
 
-Then all we need to do is to take the square root of the sum to obtain the Euclidean distance. Did you get the correct answer of `r round(sqrt(eu[11,4]),2)`? Of course, R makes this much easier, I can calculate Euclidean distance using the **dist()** function, after creating a matrix of the two columns of species abundance data from my original *eu* dataframe.
+#### Exercise 1
+Finish the calculation the euclidean distance for this data.
 
-```{r , echo=TRUE, comment=""}
+Of course, R makes this much easier, I also can calculate Euclidean distance using the **dist()** function, after creating a matrix of the two columns of species abundance data from my original *eu* dataframe.
+
+```{r , echo=TRUE, eval=FALSE, comment=""}
 dist(rbind(j, k), method = "euclidean")
 ```
 There are many other quantitative dissimilarity metrics. For example, Bray Curtis dissimilarity is frequently used by ecologists to quantify differences between samples based on abundance or count data. This measure is usually applied to raw abundance data, but can be applied to relative abundances. It is calculated as: $BC_{ij}=1-\frac{C_{ij}}{S_{i}+S_{j}}$, where $C_{ij}$ is the sum over the smallest values for only those species in common between both sites, $S_{i}$ and $S_{j}$ are the sum of abundances at the two sites. This metric is directly related to the Sørenson binary similarity metric, and ranges from 0 to 1, with 0 indicating complete similarity. This is not at distance metric, and so, is not appropriate for some types of analysis.
@@ -198,20 +200,20 @@ spmatrix=meu[2:4]
 ```{r, echo=TRUE, comment=""}
 dist(t(spmatrix), method="euclidean", diag=TRUE)
 ```
-There are other disadvantages as well, and in general, there is simply no perfect metric. For example, you may dislike the fact that Euclidean distance also has no upper bound, and so it becomes difficult to understand **how** similar two things are (i.e., the metric can only be understood in a relative way when comparing many things, Sample A is more similar to sample B than sample C, for example). You could use a Bray-Curtis dissimilarity metric, which is quite easy to interpret, but this metric will also confound differences in species presences and differences in species counts (Greenacre 2017). The best policy is to be aware of the advantages and disadvantages of the metrics you choose, and interpret your analysis in light of this information.
+There are other disadvantages as well, and in general, there is simply no perfect metric. For example, you may dislike the fact that Euclidean distance also has no upper bound, and so it becomes difficult to understand how similar two things are (i.e., the metric can only be understood in a relative way when comparing many things, Sample A is more similar to sample B than sample C, for example). You could use a Bray-Curtis dissimilarity metric, which is quite easy to interpret, but this metric will also confound differences in species presences and differences in species counts (Greenacre 2017). The best policy is to be aware of the advantages and disadvantages of the metrics you choose, and interpret your analysis in light of this information.
 
 
 ### R functions 
 
 There are a number of functions in R that can be used to calculate similarity and dissimilarity metrics. Since we are usually not just comparing two objects, sites or samples, these functions can help make your calculations much quicker when you are comparing many units.
 
-**dist()** offers a number of quantitative distance measures (e.g. euclidean,canberra and manhattan). The result is the distance matrix which gives the dissimilarity of each pair of objects, sites or samples. the matrix is an object of the class dist in R.
+**dist()** (base R, no package needed) offers a number of quantitative distance measures (e.g. euclidean,canberra and manhattan). The result is the distance matrix which gives the dissimilarity of each pair of objects, sites or samples. the matrix is an object of the class dist in R.
 
 **vegdist()** (library vegan). The default distance used in this function is Bray-Curtis distance, which is considered more suitable for ecological data.
 
 **dsvdis()** (library labdsv)  Offers some other indices than vegdist (e.g. ruzicka (or Růžička), a quantitative analogue of Jaccard, and Roberts. 
 
-For full comparison of dist, vegdist and dsvdis,see http://ecology.msu.montana.edu/labdsv/R/labs/lab8/lab8.html.
+For full comparison of dist, vegdist and dsvdis, see http://ecology.msu.montana.edu/labdsv/R/labs/lab8/lab8.html.
 
 **dist.ldc()** (library adespatial) Includes 21 dissimilarity indices described in Legendre & De Cáceres (2013), twelve of which are not readily available in other packages. Note that Bray-Curtis dissimilarity is called percentage difference (method = “percentdiff”). 
 
@@ -231,15 +233,15 @@ We can contrast clustering, which assumes that units (e.g., sites, communities, 
 
 Perhaps the most familiar type of clustering is hierarchical. There are two kinds: **divisive** and **agglomerative**. In the divisive method, the entire set of units is divided into smaller and smaller groups. The agglomerative method starts with small groups of few units, and groups them into larger and larger clusters, until the entire data set is sampled (Pielou, 1984). Of course, once you have more than two units, you need some way to assess similarity between the clusters. There are a couple of different methods here. Single linkage assigns the similarity between clusters to the most similar units in each cluster. Complete linkage uses the similarity between the most dissimilar units in each cluster, while average linkage averages over all the units in each cluster (Fig. \@ref(fig:f6)). 
 
-```{r f6, fig.height=6., fig.cap="Different methods of determining similarity between clusters", fig.alt="This figure shows six circles arranged in three rows and two columns. Each circle contains three black dots. The first two circles in the first row are labelled 'Simple Linkage' and a single dot from each circle of this row is connected by a black line. The two circles in the second row are labelled 'Complete Linkage' and a single dot in each circle of this row is connected by a black line. The two circles in the last row are labelled 'Average Linkage' and all the dots in each circle make connections to each other through black lines."}
+```{r f6, fig.height=6., fig.width=8., fig.cap="Different methods of determining similarity between clusters", fig.alt="This figure shows six circles arranged in three rows and two columns. Each circle contains three black dots. The first two circles in the first row are labelled 'Simple Linkage' and a single dot from each circle of this row is connected by a black line. The two circles in the second row are labelled 'Complete Linkage' and a single dot in each circle of this row is connected by a black line. The two circles in the last row are labelled 'Average Linkage' and all the dots in each circle make connections to each other through black lines."}
 library(plotrix)
 plot(rbind(c(-3,9), c(-2,10), c(-2,7), c(1,9), c(2,10), c(2,7), c(-3,1), c(-2,2), c(-2,-1), c(1,1), c(2,2), c(2,-1), c(-3,-7), c(-2,-6), c(-2,-9), c(1,-7), c(2,-6), c(2,-9)), xlim = c(-8,7), ylim = c(-10, 13), xaxt = "n", yaxt = "n", frame.plot = FALSE, ann = FALSE, pch = 16)
-draw.circle(-2.4,8.5,1.3)
-draw.circle(1.6,8.5,1.3)
-draw.circle(-2.4,0.5,1.3)
-draw.circle(1.6,0.5,1.3)
-draw.circle(-2.4,-7.5,1.3)
-draw.circle(1.6,-7.5,1.3)
+draw.ellipse(-2.4,8.5,1.8,3.)
+draw.ellipse(1.6,8.5,1.8,3.)
+draw.ellipse(-2.4,0.5,1.8,3.)
+draw.ellipse(1.6,0.5,1.8,3.)
+draw.ellipse(-2.4,-7.5,1.8,3.)
+draw.ellipse(1.6,-7.5,1.8,3.)
 lines(c(-2,1), c(10,9), lwd=1.5)
 lines(c(-3,2), c(1,-1), lwd=1.5)
 lines(c(-3,1), c(-7,-7), lwd=1.5)
@@ -256,7 +258,7 @@ text(x=-2.5, y=4.6, labels = "Complete Linkage", cex=1.5)
 text(x=-2.5, y=-3.7, labels = "Average Linkage", cex=1.5)
 ```
 
-**Single Linkage Cluster Analysis**
+#### Single Linkage Cluster Analysis
 
 Single linkage cluster analysis is one of the easiest to explain. It is hierarchical, agglomerative technique. We start by creating a matrix of similarity (or dissimilarity) indices between the units we want to compare.
 
@@ -324,8 +326,8 @@ text(x=-50, y=-20, labels = "c)")
 
 
 
-### How many clusters?
-These hierarchical methods just keep going until all objects are included (agglomerative methods), or are each in their own group (divisive methods). However, neither endpoint is very useful. How do we select the number of groups? There are metrics and techniques to make this decision more objective (see the [NbClust package](https://www.jstatsoft.org/article/view/v061i06). In this brief introduction, we'll just mention that for hierarchical methods, you can determine the number of groups a given degree of similarity, or set the number of groups and find the degree of similarity that results in that number of groups. Let's try. We'll use the **cutree()** function that works on cluster diagrams produced by the **hclust()** function (Fig. \@ref(fig:hclustfig)).
+#### How many clusters?
+These hierarchical methods just keep going until all objects are included (agglomerative methods), or are each in their own group (divisive methods). However, neither endpoint is very useful. How do we select the number of groups? There are metrics and techniques to make this decision more objective (see the [NbClust package](https://www.jstatsoft.org/article/view/v061i06)). In this brief introduction, we'll just mention that for hierarchical methods, you can determine the number of groups a given degree of similarity, or set the number of groups and find the degree of similarity that results in that number of groups. Let's try. We'll use the **cutree()** function that works on cluster diagrams produced by the **hclust()** function (Fig. \@ref(fig:hclustfig)).
 
 If we set our dissimilarity threshold at 40, we find that there are three groups: a&b, c&d, and e in its own group.
 
@@ -355,7 +357,7 @@ In contrast to strict (or hard) clustering approaches, fuzzy (or soft) clusterin
 
 ### R functions for clustering
 
-**hclust()** calculates hierarchical, agglomerative clusters and has it's own plot function.
+**hclust()** (base R, no basic needed) calculates hierarchical, agglomerative clusters and has its own plot function.
 
 **agnes()** (library cluster) Contains six agglomerative algorithms, some not included in hclust. 
 
@@ -365,7 +367,7 @@ In contrast to strict (or hard) clustering approaches, fuzzy (or soft) clusterin
 
 **fanny()**(cluster package) - fuzzy clustering
 
-### Exercise: Cluster analysis of isotope data
+### Example: Cluster analysis of isotope data
 
 Let's try some of these methods on some ecological data. Try to work through the exercise semi-independently. Our first step is to download and import the dataset “Dataset_S1.csv” from Perkins et al. 2014 (see url below). This data contains δ15N and δ13C signatures for species from different food webs. Unfortunately, this data is saved in an .xlsx file. 
 
@@ -428,23 +430,12 @@ legend("bottomright",legend=as.character(unique(as.factor(niso$Species))), pch=a
 
 It doesn't look like our cluster algorithm is matching up with our Food.chain data categories very well. Wheat- and Nettle-based food chains cannot be distinguished, which makes sense when you consider that both of these plants are terrestrial and use a C3 photosynthesis system. If you are not happy with the success of this clustering algorithm you could try other variants (e.g.,  “complete” linkage) and a different number of groups. 
 
-Let’s try a non-hierarchical cluster analysis on the same data to see if it works better. The **kmeans()** function requires that we select the required number of clusters ahead of time (we want 4, so kclust=kmeans(niso[,c("C", "N")], 4)), we can then save the assigned clusters to our dataframe and plot in a similar way
-```{r kclust, echo=FALSE, fig.cap="K means clustering on Perkins et al (2014) data", fig.alt="This figure shows a plot of the Isotope dataset. The plot has x-axis with label 'δ13C' that scales from -35 to 0, and y-axis with label 'δ15N' that scales from -6 to 8. The right side of the plot contains two legends. The top right legend has label 'kcluster' and contains 4 circles of varying colors as symbols. The symbols from top to bottom have labels '1' with a black circle, '2', with a red circle, '3' with a green circle and '4' with a blue circle. The bottom right legend is labelled 'Species' and has symbols 'X' for 'Plant, circle for 'Aphid', plus sign for 'Hoverfly' and triangle for 'Diplazon. There is a cluster of black symbols of varying species where 'δ13C' is between -32 to -25 and 'δ15N' is between -6 to 8, blue symbols with varying species where 'δ13C' is between -23 to -20 and 'δ15N' is between 0 to 4, and red symbols with varying species where 'δ13C' is between -14 to -11 and 'δ15N' is between -3 to 5."}
-kclust=kmeans(niso[,c("C", "N")], 4)
-niso$kclust=kclust$cluster
-
-plot(iso$N~iso$C, col=as.numeric(as.factor(niso$clust)),xlim=c(-35, 0), pch=as.numeric(as.factor(niso$Species)),  xlab="δ13C", ylab="δ15N")
-
-legend("topright", legend=unique(as.factor(niso$kclust)),pch=1,
-col=as.numeric(unique(as.factor(niso$kclust))), bty="n", title="kcluster")
-
-legend("bottomright",legend=as.character(unique(as.factor(niso$Species))), pch=as.numeric(unique(as.factor(niso$Species))), bty="n",title="Species")
-```
-It looks like kmeans has the same problem with distinguishing C3 plant-based foodwebs. But we still get three groups that roughly map onto our information about the data. Were you able to produce the same graph?
+#### Exercise #2
+Try a non-hierarchical cluster analysis on the same data to see if it works better. Use the **kmeans()** function, which requires that we select the required number of clusters (4) ahead of time. Once you have your clustering, plot your results. 
 
 ## Ordination{#Ord}
 
-While cluster analysis let's us visualize multivariate data by grouping objects into discrete categories, ordination uses continuous axes to help us accomplish the same task. Physicists grumble if space exceeds four dimensions, while biologists typically grapple with dozens of dimensions. We can  “order” this multivariate data in order to produce a low dimensional picture (i.e., a graph in 1-3 dimensions). Just like cluster analysis, we will use similarity metrics to accomplish this. Also like cluster anlaysis, simple ordination is not a statistical test: it is a method of visualizing data. 
+While cluster analysis lets us visualize multivariate data by grouping objects into discrete categories, ordination uses continuous axes to help us accomplish the same task. Physicists grumble if space exceeds four dimensions, while biologists typically grapple with dozens of dimensions. We can  “order” this multivariate data in order to produce a low dimensional picture (i.e., a graph in 1-3 dimensions). Just like cluster analysis, we will use similarity metrics to accomplish this. Also like cluster anlaysis, simple ordination is not a statistical test: it is a method of visualizing data. 
 
 Essentially, we find axes in the data that explain a lot of variation, and rotate so we can use the axes as our dimensions of visual representation (Fig. \@ref(fig:dummy1)). 
 
@@ -571,7 +562,7 @@ text(x=5, y=-7, "Y2 axis must be orthogonal to Y1 and maximize variation explain
 
 So our steps are to compute the variance-covariance matrix of the data, calculate the eigenvalues of this matrix and then calculate the associated eigenvectors. Then, the jth eigenvalue is the variance of the jth principle component and the sum of all the eigenvalues is the total variance explained. The proportion of variance explained by each component, or synthetic axis, is the eigenvalue for the component divided by the total variance explained, while the rotations are the eigenvectors. Dimensionality reduction is the same as first rotating the data with the eigenvalues to be aligned with the principle components, then display using only the components with the greatest eigenvalues.  
 
-### Exercise: PCA on the iris data
+#### Example: PCA on the iris data
 We’re going to use a sample dataset in R and the base R version of PCA to start exploring this data analysis technique. Get the iris dataset into memory by typing “data(“iris”). Take a look at this dataset using the **head()**, **str()** or **summary()** functions. For a multivariate data set, you would like to take a look at the pairwise correlations. Remember that PCA can’t help us if the variables are not correlated.  Let’s use the **pairs()** function to do this
 ```{r coriris, echo=TRUE, comment="", fig.cap="Correlation matrix for the iris data", fig.alt="The graph shows a total of twelve pairwise correlation plots given four dimensions in iris dataset: speal length, sepal width, petal length, and petal width. In each pairwise correlation plot, one of the four dimensions is selected as x axis and one is selected as y axis. Data points are colored in red, green and blue based on  species."}
 
@@ -599,7 +590,7 @@ apply(iris[,1:4], 2, var)
 
 Using covariances among variables only makes sense if they are measured in the same units, and even then, variables with high variances will dominate the principal components. These problems are generally avoided by standardizing each variable to unit variance and zero mean as $X_{im}^{'}=\frac{x_{im}-\bar{X_i}}{sd_i}$ where sd is the standard deviation of variable *i*. After standardizaton, the variance of each variable is 1 and the covariances of the standardized variables are correlations.
 
-If you look at the help menu, the notes for the use of prcomp() STRONGLY recommend standardizing the data. To do this there is a built in option. We just need to set scale=TRUE. Let’s try again with data standardization. Save your new PCA output to a different name. Take a look at the summary. 
+If you look at the help menu, the notes for the use of **prcomp()** STRONGLY recommend standardizing the data. To do this there is a built in option. We just need to set scale=TRUE. Let’s try again with data standardization. Save your new PCA output to a different name. Take a look at the summary. 
 
 ```{r echo=TRUE, comment=""}
 
@@ -611,17 +602,16 @@ We now have less variance explained by axis 1. This makes sense, because, as we 
 
 #### Choose your axes
 
-Now we need to determine how many axes to use to interpret our analysis. For 4 variables it is easy enough to just look that the amount of variance, as we just did. For larger numbers of variables a plot can be useful. The **screeplot()** function will output the variance explained by each of the principle component axes, and you can make a decision based on that (e.g., screeplot(pca2, type="lines")).
-
-An ideal curve should be steep, then bend at an “elbow” — this is your cutting-off point — and after that flattens out. To deal with a not-so-ideal scree plot curve you can apply the Kaiser rule: pick PCs with eigenvalues of at least 1. Or you can select using the proportion of variance where the PCs should be able to describe at least 80% of the variance.
+Now we need to determine how many axes to use to interpret our analysis. For 4 variables it is easy enough to just look that the amount of variance, as we just did. For larger numbers of variables a plot can be useful. The **screeplot()** function will output the variance explained by each of the principle component axes, and you can make a decision based on that.
 
 
 
-```{r scree, fig.cap="Screeplot: a display of the variance explained by each of the synthetic axes", fig.alt="The graph shows the relationship between variances and the number of axes that explain the dataset. As the number of axes increasing from 1 to 4, the variances decrease from 3 to 0.",comment=""}
+```{r scree, echo=TRUE, fig.cap="Screeplot: a display of the variance explained by each of the synthetic axes", fig.alt="The graph shows the relationship between variances and the number of axes that explain the dataset. As the number of axes increasing from 1 to 4, the variances decrease from 3 to 0.",comment=""}
 screeplot(p, type=("lines"),main="")
 ```
+An ideal curve should be steep, then bend at an “elbow” — this is your cutting-off point — and after that flattens out. To deal with a not-so-ideal scree plot curve you can apply the Kaiser rule: pick PCs with eigenvalues of at least 1. Or you can select using the proportion of variance where the PCs should be able to describe at least 80% of the variance.
 
-It looks like synthetic axes 1 & 2 explain most of the variation. This is, of course, always true, but in this case only a very small proportion of the variance is explanaed by axes 3 & 4, so we don't need to consider them any further. So let's plot those out. 
+It looks like synthetic axes 1 & 2 explain most of the variation. This is, of course, always true, but in this case only a very small proportion of the variance is explained by axes 3 & 4, so we don't need to consider them any further. So let's plot those out. 
 
 #### Plot your ordination
 
@@ -644,9 +634,11 @@ We can also plot information about influence the various characteristics are hav
 kable(p$rotation,digits=2,caption="Eigenvectors for each variable and synthetic axis", format="html",table.attr = "style='width:50%;'", align="c")
 ```
 
+<br>
+<br>
 We can see that a lot of information is coming from the petal variables for PC1, but less from the sepal variables (Table \@ref(tab:barload)).  We can plot this out to show how strongly each variable affects each principle component (or synthetic axis).
 
-```{r loadplot, fig.cap="Contribituion of each variable to the first two principal component axes", fig.alt="This figure shows a plot with x-axis labelled 'PC1 (73%)' that scales from -4 to 4 and y-axis labelled 'PC2 (23%)' that scales from -4 to 4. 4 purple arrowed lines emerge from the coordinate (0,0). One line ends at the coordinate (-1,-4) and has label 'Sepal.Width'. Another line ends at coordinate (2.2,-2) and has label 'Sepal.Length'. Another line ends at coordinate (2.4,0.2) and has label 'Petal.Length'. The last line ends at coordinate (2.5,0.1) and has label 'Petal.Width'."}
+```{r loadplot, fig.cap="Contribution of each variable to the first two principal component axes", fig.alt="This figure shows a plot with x-axis labelled 'PC1 (73%)' that scales from -4 to 4 and y-axis labelled 'PC2 (23%)' that scales from -4 to 4. 4 purple arrowed lines emerge from the coordinate (0,0). One line ends at the coordinate (-1,-4) and has label 'Sepal.Width'. Another line ends at coordinate (2.2,-2) and has label 'Sepal.Length'. Another line ends at coordinate (2.4,0.2) and has label 'Petal.Length'. The last line ends at coordinate (2.5,0.1) and has label 'Petal.Width'."}
 plot(NA,ylim=c(-5,4), xlim=c(-5,4),
          xlab=paste0("PC1 (", pvar[1]*100, "%)"),
      ylab=paste0("PC2 (", pvar[2]*100, "%)"))
@@ -671,9 +663,9 @@ abline(h=0, col="grey90")
 
 ```
 
- We can see that petal width and length are aligned along the PC1 axis, while PC2 explains more variation in sepal width (Fig. \@ref(fig:loadplot)).  That is, petal length and petal width variables are the most important contributors to the first PC. Sepal width variable is the most important contributor to the second PC. To interpret the variable plot remember that positively correlated variables are grouped close together (e.g., petal length and width). Variables with about a 90 angle are probably not correlated (sepal width is not correlated with the other variables), while negatively correlated variables are positioned on opposite sides of the plot origin (~180 angle; opposed quadrants). However, the direction of the axes is arbitrary! The distance between variables and the origin measures the contribution of the variables to the ordination. A shorter arrow indicates its less importance for the ordination. Variables that are away from the origin are well represented. Avoid the mistake of interpreting the relationships among variables based on the proximities of the apices (tips) of the vector arrows instead of their angles in biplots.
+We can see that petal width and length are aligned along the PC1 axis, while PC2 explains more variation in sepal width (Fig. \@ref(fig:loadplot)).  That is, petal length and petal width variables are the most important contributors to the first PC. Sepal width variable is the most important contributor to the second PC. To interpret the variable plot remember that positively correlated variables are grouped close together (e.g., petal length and width). Variables with about a 90 angle are probably not correlated (sepal width is not correlated with the other variables), while negatively correlated variables are positioned on opposite sides of the plot origin (~180 angle; opposed quadrants). However, the direction of the axes is arbitrary! The distance between variables and the origin measures the contribution of the variables to the ordination. A shorter arrow indicates its less importance for the ordination. Variables that are away from the origin are well represented. Avoid the mistake of interpreting the relationships among variables based on the proximities of the apices (tips) of the vector arrows instead of their angles in biplots.
 
-Another way to portray this imformation is to create a **biplot** which, in addition to the coordinates of our samples on the synthetic axes PC1 and PC2, also provides information about how the variables align along the synthetic axes. (Fig.  \@ref(fig:pactwo)). According to the plot, *I. versicolor* and *I. virginica* have similar petal length and width, but not that the axis direction is arbitrary and coud not be interpreted as suggesting that these two species have longer petal widths than *I.setosa*. 
+Another way to portray this information is to create a **biplot** which, in addition to the coordinates of our samples on the synthetic axes PC1 and PC2, also provides information about how the variables align along the synthetic axes. (Fig.  \@ref(fig:pactwo)). According to the plot, *I. versicolor* and *I. virginica* have similar petal length and width, but not that the axis direction is arbitrary and coud not be interpreted as suggesting that these two species have longer petal widths than *I.setosa*. 
 
 I should note that I have used an arbitrary scaling to display the variable loadings on each axis. Some of the R packages will use a specific scaling that will emphasize particular parts of the plot, either preserving the Euclidean distances between samples or the correlations/covariances between variables (e.g., the vegan package can do this for you, see section \@ref(tri)).
 
@@ -713,7 +705,7 @@ This nonlinearity can lead to characteristic artifacts, where, for example, comm
 
 #### R functions for PCA
 
-* **prcomp()** - base R
+* **prcomp()** (base R, no library needed)
 * **PCA()** (FactoMineR library)
 * **dudi.pca()** (ade4)
 * **acp()** (amap)
@@ -725,7 +717,7 @@ The PCoA method may be used with all types of distance descriptors, and so might
 
 #### R functions for PCoA
 * **cmdscale()** 
--base R, no package needed
+(base R, no package needed)
 * **smacofSym()** (library smacof)
 * **pco()**(ecodist)
 * **pco()**(labdsv)
@@ -751,30 +743,34 @@ In this computational method the steps are:
 
 We can use a Shephard plot to get information about the distortion of representation.  A Shepard diagram compares how far apart your data points are before and after you transform them (ie: goodness-of-fit) as a scatter plot. On the x-axis, we plot the original distances. On the y-axis, we plot the distances output by a dimension reduction algorithm. A really accurate dimension reduction will produce a straight line. However since information is almost always lost during data reduction, at least on real, high-dimension data, so Shepard diagrams rarely look this straight.
 
-Let's try this for the iris data. We can evaluate the quality of the nMDS solution by checking the Shephard plot as : stressplot(nMDS, main = "Shepard plot"). 
+Let's try this for the iris data. We can evaluate the quality of the nMDS solution by checking the Shephard plot. 
 
-``` {r, echo=FALSE, message=FALSE, comment=""}
+``` {r, echo=TRUE, message=FALSE, comment=""}
 library(vegan)
-data(varespec)
 nMDS <- metaMDS(iris[,-5], distance = "bray", k = 2, trace=FALSE)
 ```
 
-``` {r sheptwo,  echo=FALSE, message=FALSE, comment="",fig.width=8., fig.cap="Shepard's plot of an nMDS ordination using 2 axes to represent the varespec data in the vegan package", , fig.alt="This figure shows two plots placed side by side. The left plot has x-axis labelled 'Observed Dissimilarity' that scales from 0.0 to 0.4 and a y-axis with label 'Ordination Distance' that scales from 0.0 to 0.8. The left plot shows a cluster of blue points that form a thickened line that trends upwards. The top of the plot also has text with label 'Non-metric fit, R^2^ = 0.999' and 'Linear fit, R^2^ = 0.995'. The right plot has x-axis labelled 'nMDS1' y-axis labelled 'nMDS2'.  The plot shows two clusters of points beside each other near the center of the plot. There are 4 arrows originating from the (0,0) point. From left to right, they are labeled 'Sepal.Width', 'Sepal.Length', 'Petal.Length' and 'Petal.Width'."}
+``` {r sheptwo,  echo=TRUE, message=FALSE, comment="",fig.width=8., fig.cap="Shepard's plot of an nMDS ordination using 2 axes to represent the varespec data in the vegan package", , fig.alt="This figure shows two plots placed side by side. The left plot has x-axis labelled 'Observed Dissimilarity' that scales from 0.0 to 0.4 and a y-axis with label 'Ordination Distance' that scales from 0.0 to 0.8. The left plot shows a cluster of blue points that form a thickened line that trends upwards. The top of the plot also has text with label 'Non-metric fit, R^2^ = 0.999' and 'Linear fit, R^2^ = 0.995'. The right plot has x-axis labelled 'nMDS1' y-axis labelled 'nMDS2'.  The plot shows two clusters of points beside each other near the center of the plot. There are 4 arrows originating from the (0,0) point. From left to right, they are labeled 'Sepal.Width', 'Sepal.Length', 'Petal.Length' and 'Petal.Width'."}
 par(mfrow=c(1,2))
+# Plot the stressplot
 stressplot(nMDS, pch=16,l.col=NA, las=1)
+
+# Plot the ordination
 plot(nMDS$points, pch=16,col=as.numeric(iris$Species)+1,
      ylim=c(-.3,.3), xlim=c(-.6,.75),
      cex=0.7,
      xlab="nMDS1",
      ylab="nMDS2")
 legend("bottomleft", legend=unique(iris$Species), pch=16, col=c(2,3,4), bty="n", cex=0.6)
+
 # Get co-ordinates of variables, and multiply by scale
     l.x2 <- nMDS$species[-1,1]*1.25
     l.y2 <- nMDS$species[-1,2]*1.25
-# Draw arrows
+
+    # Draw arrows
     arrows(x0=0, x1=l.x2, y0=0, y1=l.y2, col="purple", length=0.1, lwd=1.5)
 
-        # Variable labels
+# Variable labels
     l.x1 <- nMDS$species[,1]*1.25
     l.y1 <- nMDS$species[,2]*1.25
     text(l.x1, l.y1, labels=row.names(nMDS$species), col="black", pos=3, cex=0.7)
@@ -791,7 +787,7 @@ nMDS often achieves a less deformed representation of the dissimilarity relation
 
 * **isoMDS( )** (MASS)
 
-### Exercise: nMDS and PCoA
+### Example: nMDS and PCoA
 We are going to use the vegan package, and some built-in data with it to run the nMDS and PcOA. Varespec is a data frame of observations of 44 species of lichen at 24 sites. We’ll calculate both an nMDS and a PCoA using the (cmdscale() function) on the Bray-Curtis distance matrix of these data. In each case, we will specify that we want 2 dimensions as our output. The vegan wrapper for nMDS ordination (**metaMDS()** standardizes our community data by default, using a Wisconsin transform. This is a method of double standardization that avoids negative values in the transformed data, and is completed by first standardizing species data using the maxima, and then the site by totals. We will have to apply this standardization manually for the PCoA analysis, and then calculate the dissimilarity matrix.
 
 ```{r, echo=TRUE, message=FALSE,comment=""}
@@ -824,11 +820,11 @@ abline(v=0, col="grey")
 
 ```
 
-Interpretation of the plots is straightforward: sites ordinated closer to one another are more similar than those ordinated further away. We can interpret the nMDS, remembering that the first ordination axis corresponds to the most variance in our data and so on. Looking at the plot, it seems that sites 28, 27 and possibly 21 are pretty similar to each other, and different from other sites, possibly due to the species aligned in that direction on the x-axis such as *Betupube*. Sites 2 and 5 might be rather different from other sites. The might be due species like Cladcerv for site 2. Some sites (e.g., 6, 13, 20) are not well distinguished by the ordination. Others like 9, 10, 11, and 12 might group together.
+#### Exercise # 3
+Provide an interpretation of these plots
 
-PCoA gives us broadly the same information and also suggests that sites 21, 28, 27 are similar to each other and different from other sites. This visualization also agrees that sites 2 and 5 might be different from the others, and that 9, 10, 11, and 12 might be similar.
 
-### Constrained Ordination
+## Constrained Ordination
 
 The patterns we see in the previous exercise are created by differences among thie sites in the relative abundances in species aligned with the major direction of difference (e.g. *Betupube*). However, biologists often go further than this, and attempt to explain the differences in characteristics (in this case, species abundances) that drives data object differences (in this case, sampling sites) by superimposing relationships of environmental variation associated with the sites in a regression type exercise. This is **constrained** or **canonical ordination**
 
@@ -891,7 +887,7 @@ Redundancy analysis was created by Rao (1964) and also independently by Wollenbe
 
 As in PCA, the variables in Y should be standardized if they are not dimensionally homogeneous (e.g., if they are a mixture of temperatures, concentrations, and pH values), or transformations applicable to community composition data applied if data is species abundance or presence/absence (Legendre & Legendre 2012). 
 
-As in multiple regression analysis, matrix X can contain explanatory variables of different mathematical types: quantitative, multistate qualitative (e.g. factors), or binary variables. If present, collinearity among the X variables should be reduced. In cases where several correlated explanatory variables are present, without clear *a priori* reasons to eliminate one or the other, one can examine the variance inflation factors (VIF) which measure how much the variance of the regression or canonical coefficients is inflated by the presence of correlations among explanatory variables. As a rule of thumb, ter Braak recommends that variables that have a VIF larger than 20 be removed from the analysis. (Beware: always remove the variables one at a time and recompute the analysis, since the VIF of every variable depends on all the others!)
+As in multiple regression analysis, matrix X can contain explanatory variables of different mathematical types: quantitative, multistate qualitative (e.g. factors), or binary variables. If present, collinearity among the X variables should be reduced. In cases where several correlated explanatory variables are present, without clear *a priori* reasons to eliminate one or the other, one can examine the variance inflation factors (VIF) which measure how much the variance of the regression or canonical coefficients is inflated by the presence of correlations among explanatory variables. As a rule of thumb, ter Braak recommends that variables that have a VIF larger than 20 be removed from the analysis. (Note: always remove the variables one at a time and recompute the analysis, since the VIF of every variable depends on all the others!)
 
 So our steps for an RDA are a combination of the things we would do for a multiple linear regression, and the things we would do for an ordination:
 
@@ -908,8 +904,7 @@ So our steps for an RDA are a combination of the things we would do for a multip
 
 BEWARE: many things are called rda in R that have nothing to do with ordination!!
 
-* **rda** (vegan package)- this function calculates RDA if a matrix of environmental variables is supplied (if not, it calculates PCA). Two types of syntax are available: matrix syntax - rda (Y, X, W), where Y is the response matrix (species composition),X s the explanatory matrix (environmental factors) and W is the matrix of covariables, or 
-formula syntax (e.g., RDA = rda (Y ~ var1 + factorA + var2*var3 + Condition (var4), data = XW, where var1 is quantitative, factorA is  categorical, there is an interaction term between var2 and var3, while var4 is used as covariable and hence partialled out).
+**rda** (vegan package)- this function calculates RDA if a matrix of environmental variables is supplied (if not, it calculates PCA). Two types of syntax are available: matrix syntax - rda (Y, X, W), where Y is the response matrix (species composition), X is the explanatory matrix (environmental factors) and W is the matrix of covariables, or formula syntax (e.g., RDA = rda (Y ~ var1 + factorA + var2*var3 + Condition (var4), data = XW, where var1 is quantitative, factorA is  categorical, there is an interaction term between var2 and var3, while var4 is used as covariable and hence partialled out).
 
 We should mention that there are several closely related forms of RDA analysis:
 
@@ -919,12 +914,11 @@ We should mention that there are several closely related forms of RDA analysis:
 
 **db-RDA** can also be computed directly by function **dbrda()** in vegan. For a Euclidean matrix, the result is the same as if PCoA had been computed, followed by regular RDA. Function dbrda() can directly handle non-Euclidean D matrices, but beware of the results if the matrix is strongly non-Euclidean and make certain this is what you want.
 
+Vegan has three methods of constrained ordination: constrained or “canonical” correspondence analysis (**cca()**), redundancy analysis (**rda()**), and distance-based redundancy analysis (**capscale()**). All these functions can have a conditioning term that is “partialled out”. All functions accept similar commands and can be used in the same way. The preferred way is to use formula interface, where the left hand side gives the community data frame and the right hand side lists the constraining variables:
 
-Vegan has three methods of constrained ordination: constrained or “canonical” correspondence analysis (function cca), redundancy analysis (function rda) and distance-based redundancy analysis (function capscale). All these functions can have a conditioning term that is “partialled out”.  All functions accept similar commands and can be used in the same way. The preferred way is to use formula interface, where the left hand side gives the community data frame and the right hand side lists the constraining variables:
+### Example: Constrained ordination
 
-### Exercise: Constrained ordination
-
-The rda approach is best for continuous data. Let’s use the lichen ta in the vegan package again, with the related environmental variables regarding soil chemistry.
+The rda approach is best for continuous data. Let’s use the lichen data in the vegan package again, with the related environmental variables regarding soil chemistry.
 
 ````{r, echo=TRUE, messages=FALSE}
 library(vegan)
@@ -939,8 +933,6 @@ Remember that the environmental data can be inspected using commands str which s
 plot(varechem, gap=0, panel=panel.smooth, cex.lab=1.2, lwd=2, pch=16, cex=.75, col=rgb(.5,.5,.7,.8))
 
 ```
-
-
 
 
 We will use a formula interface to constrain the ordination. The shortcut "~." indicates that we want to use all the variables in the environmental dataset. We will of course remember to standardize and scale our data. The output shows the eigenvalues for both the constrained and unconstrained ordination axes. In particular, see how the inertia and rank (number of axes) are decomposed in constrained ordination.
@@ -971,7 +963,7 @@ The vegan package provides permutation tests for the significance of constraints
 anova(ord3)
 ```
 
-So the results suggest that our predictors expain a signficant amount of variation in the data. We can also perform significance tests for each variable:
+So the results suggest that our model explains a signficant amount of variation in the data. We can also perform significance tests for each variable:
 
 ```{r, echo=TRUE, comment=""}
 anova(ord3, by="term", permutations=199)
@@ -979,7 +971,7 @@ anova(ord3, by="term", permutations=199)
 
 The analysis suggests that maybe we haven't chosen the best set of predictors. This test is sequential: the terms are analyzed in the order they happen to be in the model, so you may get different results depending on how the model is specified. See if you can detect this, by rearranging your model terms in the call to ordination. 
 
-NB It is also possible to analyze the significance of marginal effects (“Type III effects") using anova(ord, by="mar", permutations=199). Moreover, it is possible to analyse significance of each axis: anova(ord, by="axis", permutations=499)
+NB It is also possible to analyze the significance of marginal effects (“Type III effects") by specifying that option (by='mar'). Moreover, it is possible to analyse significance of each axis, again by specifiying that option in the anova call (i.e.,by='axis').
 
 ### Forward Selection of explanatory variables
 You may wonder if you have selected the correct variables! We can use the **ordiR2step()** function to perform forward selection (and backwards selection or both directions) on a null model.  In automatic model building we usually need two extreme models: the smallest and the largest model considered. First we specify a full model with all the environmental variables, and then a minimal model with intercept only, where both are defined using a formula so that terms can be added or removed from the model. Then we allow an automated model selection function to move between these extremes, trying to minimze a metric of model fit, such as $R^2$. We will then use ordiR2step() to find an optimal model based on both permutation and adjusted R2 values. If you switch the trace=FALSE option to trace=TRUE you can watch the function doing its work.
@@ -992,8 +984,8 @@ optm <- ordiR2step(m0, scope = formula(mfull), trace=FALSE)
 optm$anova 
 ```
 
-Examine the significance test. Does this automatically selected model differ from the full model and your manually selected version? 
-
+#### Exercise #4
+Examine the significance test. How does this automatically selected model differ from the full model and your manually selected version? 
 
 Next check the variance (i.e., inertia). If the variance explained by the constrained model is not much higher than your unconstrained variance, then it may be that the rda is not really needed.
 
@@ -1031,7 +1023,7 @@ Now! We are all set to produce some ordination plots
 
 If the constrained ordination is significant, we go on to display the results graphically.  All ordination results of vegan can be displayed with a plot command. For a constrained ordination we will want a triplot, which has three different things plotted: the data objects, the response variables and the explanatory variables. For the varespec and varechem data these will be sites, species, and environmental predictors respectively. 
 
-Plotting an biplot or triplot is not as simple as it sounds, as I mentioned above, one can choose various scaling conventions that will dramatically change the appearance and interpretation of the plot.  One of the editors of the vegan package, Gavin Simpson, has more to say about this [here](https://fromthebottomoftheheap.net/2015/10/08/user-friendly-scaling/). Essentially, there can be no scaling ("none"), or either the data object ("site") or characteristic ("species") scores are scaled by eigenvalues, and the other set of scores is left unscaled, or both scores are scaled symmetrically by square root of eigenvalues ("symmetric"). The general advice is to sse scaling for "sites" where you want a biplot focussed on the sites/samples and the (dis)similarity between them in terms of the species (or variables), and use scaling for "species" where you want to best represent the correlations between species (or variables). I've plotted the "site" and "species" types below (Fig. \@ref(fig:triplotscale2)). Were you able to produce the same ordinations?
+Plotting an biplot or triplot is not as simple as it sounds, as I mentioned above, one can choose various scaling conventions that will dramatically change the appearance and interpretation of the plot.  One of the editors of the vegan package, Gavin Simpson, has more to say about this [here](https://fromthebottomoftheheap.net/2015/10/08/user-friendly-scaling/). Essentially, there can be no scaling ("none"), or either the data object ("site") or characteristic ("species") scores are scaled by eigenvalues, and the other set of scores is left unscaled, or both scores are scaled symmetrically by square root of eigenvalues ("symmetric"). The general advice is to use scaling for "sites" where you want a biplot focussed on the sites/samples and the (dis)similarity between them in terms of the species (or variables), and use scaling for "species" where you want to best represent the correlations between species (or variables). I've plotted the "site" and "species" types below (Fig. \@ref(fig:triplotscale2)). Were you able to produce the same ordinations?
 
 
 ```{r triplotscale2, echo=TRUE, comment="",fig.cap="Triplots of an RDA ordination on the lichen data with either site or species scaling using a basic plot command", fig.alt="Two plots each with with y-axis labelled 'RDA2' and x-axis labelled 'RDA1'. The plots contains the variable names of the 44 species in the varaspec dataset. There are three blue arrows that emerge from the point (0,0). One arrow points towards the top left of the plot and has label 'P'. Another arrow points towards the right and has label 'Fe'. The last arrow points slightly towards the bottom left of the plot and has label 'Mn'. There are 24 site numbers scaterred throughout the plots."}
@@ -1091,3 +1083,52 @@ So, looking at our first plot, sites 2, 28 and perhaps 3 seem quite different fr
 
 In this short introduction we have not demonstrated how to completed an interpret other forms of constrained ordination such as **C**anonical **C**orrespondence **A**nalysis, partial RDA (which would allow you to control for well-known linear effects), or analysis designed for qualiticative variables, such as **M**ultiple **C**orrespondence **A**nalysis (MCA). There are functions in the vegan and FactoMineR packages to do many of these things. 
 
+### Other literature cited
+
+Goodall, D. W. (1954). Objective methods for the classification of vegetation. III. An essay in the use of factor analysis. Australian Journal of Botany, 2(3), 304–324. https://doi.org/10.1071/bt9540304
+
+Greenacre, M. (2017). Ordination with any dissimilarity measure: A weighted Euclidean solution. Ecology, 98(9), 2293–2300. https://doi.org/10.1002/ecy.1937
+
+Hotelling, H. (1933). Analysis of a complex of statistical variables into principal components. Journal of Educational Psychology, 24(6), 417–441. https://doi.org/10.1037/h0071325
+
+Legendre, P., & Legendre, L. (2012). Numerical ecology. Elsevier.
+
+Pearson, K. (1901). LIII. On lines and planes of closest fit to systems of points in space. The London, Edinburgh, and Dublin Philosophical Magazine and Journal of Science, 2(11), 559–572. https://doi.org/10.1080/14786440109462720
+
+Perkins, M. J., McDonald, R. A., Veen, F. J. F. van, Kelly, S. D., Rees, G., & Bearhop, S. (2014). Application of Nitrogen and Carbon Stable Isotopes (δ15N and δ13C) to Quantify Food Chain Length and Trophic Structure. PLOS ONE, 9(3), e93281. https://doi.org/10.1371/journal.pone.0093281
+
+Pielou, E. C. (1984). The interpretation of ecological data: A primer on classification and ordination. John Wiley & Sons.
+
+Rao, C. R. (1964). The Use and Interpretation of Principal Component Analysis in Applied Research. Sankhyā: The Indian Journal of Statistics, Series A (1961-2002), 26(4), 329–358. https://www.jstor.org/stable/25049339
+
+Watson, N. H. F., & Carpenter, G. F. (1974). Seasonal Abundance of Crustacean Zooplankton and Net Plankton Biomass of Lakes Huron, Erie, and Ontario. Journal of the Fisheries Research Board of Canada, 31(3), 309–317. https://doi.org/10.1139/f74-050
+
+van den Wollenberg, A. L. (1977). Redundancy analysis an alternative for canonical correlation analysis. Psychometrika, 42(2), 207–219. https://doi.org/10.1007/BF02294050
+
+
+### Answer Key
+
+**1\.** All we need to do is to take the square root of the sum of the squared differences to obtain the Euclidean distance as
+```{r, echo=TRUE, comment=""}
+round(sqrt(eu[11,4]),2)
+```
+
+**2\.** We use the **kmeans()** function with 4 clusters to find groups in the isotope data. We can then save the assigned clusters to our dataframe and plot in a similar way
+```{r kclust, echo=FALSE, fig.cap="K means clustering on Perkins et al (2014) data", fig.alt="This figure shows a plot of the Isotope dataset. The plot has x-axis with label 'δ13C' that scales from -35 to 0, and y-axis with label 'δ15N' that scales from -6 to 8. The right side of the plot contains two legends. The top right legend has label 'kcluster' and contains 4 circles of varying colors as symbols. The symbols from top to bottom have labels '1' with a black circle, '2', with a red circle, '3' with a green circle and '4' with a blue circle. The bottom right legend is labelled 'Species' and has symbols 'X' for 'Plant, circle for 'Aphid', plus sign for 'Hoverfly' and triangle for 'Diplazon. There is a cluster of black symbols of varying species where 'δ13C' is between -32 to -25 and 'δ15N' is between -6 to 8, blue symbols with varying species where 'δ13C' is between -23 to -20 and 'δ15N' is between 0 to 4, and red symbols with varying species where 'δ13C' is between -14 to -11 and 'δ15N' is between -3 to 5."}
+kclust=kmeans(niso[,c("C", "N")], 4)
+niso$kclust=kclust$cluster
+
+plot(iso$N~iso$C, col=as.numeric(as.factor(niso$clust)),xlim=c(-35, 0), pch=as.numeric(as.factor(niso$Species)),  xlab="δ13C", ylab="δ15N")
+
+legend("topright", legend=unique(as.factor(niso$kclust)),pch=1,
+col=as.numeric(unique(as.factor(niso$kclust))), bty="n", title="kcluster")
+
+legend("bottomright",legend=as.character(unique(as.factor(niso$Species))), pch=as.numeric(unique(as.factor(niso$Species))), bty="n",title="Species")
+```
+It looks like kmeans has the same problem with distinguishing C3 plant-based foodwebs. But we still get three groups that roughly map onto our information about the data. 
+
+**3\.** Interpretation of the PCoA and the nMDS oridination plots of the varespec data is straightforward: sites ordinated closer to one another are more similar than those ordinated further away. We can interpret the nMDS, remembering that the first ordination axis corresponds to the most variance in our data and so on. Looking at the plot, it seems that sites 28, 27 and possibly 21 are pretty similar to each other, and different from other sites, possibly due to the species aligned in that direction on the x-axis such as *Betupube*. Sites 2 and 5 might be rather different from other sites. This might be due species like *Cladcerv* for site 2. Some sites (e.g., 6, 13, 20) are not well distinguished by the ordination. Others like 9, 10, 11, and 12 might group together.
+
+PCoA gives us broadly the same information and also suggests that sites 21, 28, 27 are similar to each other and different from other sites. This visualization also agrees that sites 2 and 5 might be different from the others, and that 9, 10, 11, and 12 might be similar.
+
+**4\.** The automatically selected rda model of the lichen data includes three significant predictors: Fe, P and Mn, while the full model has 14 potential predictors. Our manually selected model of three predictors N, K and Al don't even appear in the automatically selected model.
