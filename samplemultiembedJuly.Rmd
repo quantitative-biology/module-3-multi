@@ -4,7 +4,7 @@ knitr::opts_chunk$set(echo = FALSE,kableExtra.auto_format = FALSE,tidy=TRUE,tidy
 
 ```
 
-# Introduction to multivariate analysis: Clustering and Ordination{#multi}
+# Multivariate analysis: Clustering and Ordination{#multi}
 
 Imagine you are a public health researcher and you wish to determine how the health of individuals in a population is related to their living and working conditions, and access to health services. You will, of course, have to define health in terms of factors that can be measured for each individual such as: body mass index, mobility, sick days per year, blood pressure, self-reported well-being on a scale of 1 to 5, and so on. One could create a single synthetic "health" metric to which standard univariate approaches, such as multiple linear regression, could be applied. However, it is certainly plausible that different components of this metric could be related to different aspects of the potential predictors. In addition, some of the components of health may not not responsive to the potential predictors. It may be better to explore how all the different indicator and predictor variables are related.
 
@@ -57,7 +57,7 @@ knitr::kable(my_tbl, digits = 3, row.names = FALSE, caption = "List of shared at
 ```
 
 <br>
-We could also use a shared *lack* of features as an indicator of similarity. The simple matching coefficient uses both shared features, and shared absent features, to quantify similarity as $S_m=\frac{a+d}{a+b+c+d}$, where *a* refers to the number of shared characteristics of object 1 and object 2,  *b* is the number characterisitics that object 1 possesses but object 2 does not and so on (see Table \@ref(tab:t2)).
+We could also use a shared *lack* of features as an indicator of similarity. The simple matching coefficient uses both shared features, and shared absent features, to quantify similarity as $S_m=\frac{a+d}{a+b+c+d}$, where *a* refers to the number of shared characteristics of object 1 and object 2,  *b* is the number characteristics that object 1 possesses but object 2 does not and so on (see Table \@ref(tab:t2)).
 <br>
 <br>
 
@@ -120,13 +120,13 @@ S_s
 A final note: when a dissimilarity or similarity metric has a finite range,  we can simply convert from one to the other. For example, for similarities that range from 1 (identical) to 0 (completely different), dissimilarity would simply be 1-similarity.
 
 ### Quantitative similarity & dissimilarity metrics
-While binary similarity metrics are easy to understand, there are a few problems. These metrics work best when we have a small number of characteristics and we have sampled very well (e.g., the zooplankton in Lake Erie and Ontario). However, these metrics are biased against maximum similarity values when we have lots of charactersitics (or species) and poor sampling. 
+While binary similarity metrics are easy to understand, there are a few problems. These metrics work best when we have a small number of characteristics and we have sampled very well (e.g., the zooplankton in Lake Erie and Ontario). However, these metrics are biased against maximum similarity values when we have lots of characteristics (or species) and poor sampling. 
 
-In addition, we sometimes have more information than just a "yes" or "no" which we could use to further characterize similarity. Quantiative similarity and dissimilarity metrics make use of this information. Some examples of quantitative similarity metrics are: Percentage similarity (Renkonen index), Morisita’s index of similarity (not dispersion) and Horn’s index. However, quantitative dissimilarity metrics are perhaps more commonly used. In this case, we often talk about the "distance" between two things. Distances are of two types, either dissimilarity, converted from analogous similarity indices, or specific distance measures, such as Euclidean distance, which doesn't have a counterpart in any similarity index. There are many, many such metrics, and obviously, you should choose the most accurate and meaningful distance measure for a given  application. Legendre & Legendre (2012) offer a key on how to select an appropriate measure for given data and problem (check their Tables 7.4-7.6). If you are uncertain, then choose several distance measures and compare the results.
+In addition, we sometimes have more information than just a "yes" or "no" which we could use to further characterize similarity. Quantitative similarity and dissimilarity metrics make use of this information. Some examples of quantitative similarity metrics are: Percentage similarity (Renkonen index), Morisita’s index of similarity (not dispersion) and Horn’s index. However, quantitative dissimilarity metrics are perhaps more commonly used. In this case, we often talk about the "distance" between two things. Distances are of two types, either dissimilarity, converted from analogous similarity indices, or specific distance measures, such as Euclidean distance, which doesn't have a counterpart in any similarity index. There are many, many such metrics, and obviously, you should choose the most accurate and meaningful distance measure for a given  application. Legendre & Legendre (2012) offer a key on how to select an appropriate measure for given data and problem (check their Tables 7.4-7.6). If you are uncertain, then choose several distance measures and compare the results.
 
 #### Euclidean Distance
 
-Perhaps the mostly commonly used, and easiest to understand distance measure is Euclidian distance. This metric is zero for identical sampling units and has no fixed upper bound. 
+Perhaps the mostly commonly used, and easiest to understand distance measure is Euclidean distance. This metric is zero for identical sampling units and has no fixed upper bound. 
 
 Euclidean distance in multivariate space is derived from our understanding of distance in a Cartesian plane. If we had two species abundances measured in two different samples, we could then plot the abundance of species 1 and species 2 for each sample on a 2D plane, and draw a line between them. This would be our Euclidean distance: the shortest path between the two points (Fig. \@ref(fig:f2)).
 
@@ -170,7 +170,7 @@ knitr::kable(eu, digits = 3, row.names = FALSE, caption = "Species abundance and
 
 
 **Exercise 1** 
-Finish the calculation the euclidean distance for this data.
+Finish the calculation of the Euclidean distance for this data.
 
 Of course, R makes this much easier, I can calculate Euclidean distance using the **dist()** function, after creating a matrix of the two rows of species abundance data from my original *eu* dataframe.
 
@@ -206,7 +206,7 @@ There are other disadvantages as well, and in general, there is simply no perfec
 
 There are a number of functions in R that can be used to calculate similarity and dissimilarity metrics. Since we are usually not just comparing two objects, sites or samples, these functions can help make your calculations much quicker when you are comparing many units.
 
-**dist()** (base R, no package needed) offers a number of quantitative distance measures (e.g. euclidean,canberra and manhattan). The result is the distance matrix which gives the dissimilarity of each pair of objects, sites or samples. the matrix is an object of the class dist in R.
+**dist()** (base R, no package needed) offers a number of quantitative distance measures (e.g. Euclidean,Canberra and Manhattan). The result is the distance matrix which gives the dissimilarity of each pair of objects, sites or samples. the matrix is an object of the class dist in R.
 
 **vegdist()** (library vegan). The default distance used in this function is Bray-Curtis distance, which is considered more suitable for ecological data.
 
@@ -214,7 +214,7 @@ There are a number of functions in R that can be used to calculate similarity an
 
 For full comparison of dist, vegdist and dsvdis, see http://ecology.msu.montana.edu/labdsv/R/labs/lab8/lab8.html.
 
-**daisy()** (library cluster) Offers euclidean, manhattan and gower distance.
+**daisy()** (library cluster) Offers Euclidean, Manhattan and Gower distance.
 
 **designdist()** (library vegan) Allows one to design virtually any distance measure using the formula for their calculation.
 
@@ -224,7 +224,7 @@ For full comparison of dist, vegdist and dsvdis, see http://ecology.msu.montana.
 
 ## Cluster Analysis
 
-When we have a large number of things to compare, an examination of a matrix of similarlity or dissimilatiry metrics can be tedious or even impossible to do. One way to visualize the similarity among units is to use some form of cluster analysis. Clustering is the grouping of data objects into discrete similarity categories according to a defined similarity or dissimilarity measure.
+When we have a large number of things to compare, an examination of a matrix of similarity or dissimilarity metrics can be tedious or even impossible to do. One way to visualize the similarity among units is to use some form of cluster analysis. Clustering is the grouping of data objects into discrete similarity categories according to a defined similarity or dissimilarity measure.
 
 We can contrast clustering, which assumes that units (e.g., sites, communities, species or genes) can be grouped into discrete categories based on similarity, with ordination,  which treats the similarity between units as a continuous gradient (we'll discuss ordination in section \@ref(Ord)). We can use clustering to do things like discern whether there are one or two or three different communities in three or four or five sampling units. It is used in many fields, such as machine learning, data mining, pattern recognition, image analysis, genomics, systems biology, etc. Machine learning typically regards data clustering as a form of unsupervised learning, or from our figure above (Fig \@ref(fig:f1)), as a technique that uses "latent" variables because we are not guided by *a priori* ideas of which variables or samples belong in which clusters. 
 
@@ -362,9 +362,9 @@ In contrast to strict (or hard) clustering approaches, fuzzy (or soft) clusterin
 
 **diana()** divisive hierarchical clustering  
 
-**kmeans()** - kmeans clustering
+**kmeans()** kmeans clustering
 
-**fanny()**(cluster package) - fuzzy clustering
+**fanny()**(cluster package) fuzzy clustering
 
 ### Example: Cluster analysis of isotope data
 
@@ -506,7 +506,7 @@ text(20,-25, labels = "X", font = 3, cex = 2, col = "purple")
 
 
 There are lots of different ways to perform an ordination, but most methods are based on extracting the eigenvalues of a similarity matrix. The four most commonly used methods are: *Principle Component Analysis (PCA)*, which is the main eigenvector-based method, *Correspondence Analysis (CA)* which is used used on frequency data, *Principle Coordinate Analysis (PCoA)* which works on dissimilarity matrices, and *Non Metric Multidimensional Scaling (nMDS)* which is not an eigenvector method, instead it represents objects along a predetermined number of axes. 
-Legendre & Legendre (2012) provide a nice summary of when you should use each method (Table \@ref(tab:tord)).
+Legendre & Legendre (2012) provide a nice summary of when you can use each method (Table \@ref(tab:tord)). I would like to reiterate that this is a very basic introduction to these methods, and once you are oriented, I suggest you go in search materials authored by experts like Legendre & Legendre (2012), and related materials for R such as Borcard et al. (2011).
 
 
 ```{r tord}
@@ -527,7 +527,7 @@ knitr::kable(dt, caption= "Domains of application of ordination methods (adapate
 **P**rincipal **C**omponents **A**nalysis (PCA) is probably the most widely-used and well-known of the standard multivariate methods. It was invented by Pearson (1901) and Hotelling (1933), and first applied in ecology by Goodall (1954) under the name "factor analysis” (NB “principal factor analysis” is also a synonym of PCA). Like most ordination methods, PCA takes a data matrix of *n* objects by *p* variables, which may be correlated, and summarizes it by uncorrelated axes (principal components or principal axes) that are linear combinations of the original *p* variables. The first *k* components display as much as possible of the variation among objects. PCA uses Euclidean distance calculated from the *p* variables as the measure of dissimilarity among the *n* objects, and derives the best possible k-dimensional representation of the Euclidean distances among objects, where $k < p$ . 
 
 We can think about this spatially. Objects are represented as a cloud of n points in a multidimensional space with an axis for each of the p variables. So the centroid of the points is defined by the mean of each variable, and 
-the variance of each variable is the average squared deviation of its n values around the mean of that variable (i.e., $V_i= \frac{1}{n-1}\sum_{m=1}^{n}{(X_{im}-\bar{X_i)}^2}$). The degree to which the variables are linearly correlated is given by their covariances $C_{ij}=\frac{1}{n-1}\sum_{m=1}^n{(X_{im}-\bar{X_i})(X_{jm}-\bar{X_j})}$. The objective of PCA is to rigidly rotate the axes of the p-dimenional space to new positions (principal axes) that have the following properties: they are ordered such that principal axis 1 (or the *principal component* has the highest variance, axis 2 has the next highest variance etc, and the covariance among each pair of principal axes is zero (the principal axes are uncorrelated) (Fig. \@ref(fig:varord)). 
+the variance of each variable is the average squared deviation of its n values around the mean of that variable (i.e., $V_i= \frac{1}{n-1}\sum_{m=1}^{n}{(X_{im}-\bar{X_i)}^2}$). The degree to which the variables are linearly correlated is given by their covariances $C_{ij}=\frac{1}{n-1}\sum_{m=1}^n{(X_{im}-\bar{X_i})(X_{jm}-\bar{X_j})}$. The objective of PCA is to rigidly rotate the axes of the p-dimensional space to new positions (principal axes) that have the following properties: they are ordered such that principal axis 1 (or the *principal component* has the highest variance, axis 2 has the next highest variance etc, and the covariance among each pair of principal axes is zero (the principal axes are uncorrelated) (Fig. \@ref(fig:varord)). 
 
 ```{r varord, fig.cap="Selecting the synthetic axes in ordination", fig.alt="This figure shows two plots stacked on top of each other. One plot has blue x-axis labelled 'X1' and a blue y-axis labelled 'X2'. The plot has 24 scattered nyon green points that show an upwards trend and a yellow dashed line that begins at the origin and extends 45° from the x-axis. The second plot is placed on top of the first plot and has a dark red x-axis labelled 'Y1' and a dark red y-axis labelled 'Y2'. The second plot is angled such that the x-axis of the second plot is parallel to the yellow dashed line in the first plot and the center of the y-axis of the second plot touches the origin of the first plot as well as the starting point of the yellow dashed line. The second plot shows two hill-like functions. The first one is located on the dark red x-axis labelled 'Y1' and the second one is on the dark red y-axis labelled 'Y2'. There is text below the plots that says 'Y1 axis selected to maximize variation explained' and 'Y2 axis must be orthogonal to Y1 and maximize variation explained'."}
 ctlns<-list(structure(list(level = 10, x = c(-0.8,0,1,2,2.5,3,3.1,2.8,2.3,2,1.8), 
@@ -709,24 +709,32 @@ This nonlinearity can lead to characteristic artifacts, where, for example, comm
 
 #### R functions for PCA
 
-* **prcomp()** (base R, no library needed)
-* **rda()** (vegan) 
-* **PCA()** (FactoMineR library)
-* **dudi.pca()** (ade4)
-* **acp()** (amap)
+**prcomp()** (base R, no library needed)
+
+**rda()** (vegan)
+
+**PCA()** (FactoMineR library)
+
+**dudi.pca()** (ade4)
+
+**acp()** (amap)
 
 ### Principle Coordinates Analysis (PCoA)
 The PCoA method may be used with all types of distance descriptors, and so might be able to avoid some problems of PCA. Although, a PCoA computed on a Euclidean distance matrix gives the same results as a PCA conducted on the original data
 
 
 #### R functions for PCoA
-* **cmdscale()** 
-(base R, no package needed)
-* **smacofSym()** (library smacof)
-* **pco()**(ecodist)
-* **pco()**(labdsv)
-* **pcoa()**(ape)
-* **dudi.pco()**(ade4)
+**cmdscale()** (base R, no package needed)
+
+**smacofSym()** (library smacof)
+
+**pco()**(ecodist)
+
+**pco()**(labdsv)
+
+**pcoa()**(ape)
+
+**dudi.pco()**(ade4)
 
 ### Nonmetric Multidimensional Scaling (nMDS)
 Like PCoA, the method of nonmetric multidimensional scaling (nMDS), produces ordinations of objects from any resemblance matrix. However, nMDS compresses the distances in a non-linear way and its algorithm is computer-intensive, requiring more computing time than PCoA. PCoA is faster for large distance matrices.
@@ -787,11 +795,13 @@ In addition to the original dissimilarity and ordination distance, the plot disp
 nMDS often achieves a less deformed representation of the dissimilarity relationships among objects than a PCoA in the same number of dimensions. But nMDS is a computer-intensive iterative technique exposed to the risk of suboptimum solutions. In comparison, PCoA finds the optimal solution by eigenvalue decomposition. 
 
 #### R functions for nMDS
-* **metaMDS()** (vegan package)
-* **isoMDS( )** (MASS)
+
+**metaMDS()** (vegan package)
+
+**isoMDS( )** (MASS)
 
 ### Example: nMDS and PCoA
-We are going to use the vegan package, and some built-in data with it to run the nMDS and PcOA. Varespec is a data frame of observations of 44 species of lichen at 24 sites. We’ll calculate both an nMDS and a PCoA using the (cmdscale() function) on the Bray-Curtis distance matrix of these data. In each case, we will specify that we want 2 dimensions as our output. The vegan wrapper for nMDS ordination (**metaMDS()**) standardizes our community data by default, using a Wisconsin transform. This is a method of double standardization that avoids negative values in the transformed data, and is completed by first standardizing species data using the maxima, and then the site by totals. We will have to apply this standardization manually for the PCoA analysis, and then calculate the dissimilarity matrix.
+We are going to use the vegan package, and some built-in data with it to run the nMDS and PcOA. Varespec is a data frame of observations of 44 species of lichen at 24 sites. We’ll calculate both an nMDS and a PCoA using the (**cmdscale()** function) on the Bray-Curtis distance matrix of these data. In each case, we will specify that we want 2 dimensions as our output. The vegan wrapper for nMDS ordination (**metaMDS()**) standardizes our community data by default, using a Wisconsin transform. This is a method of double standardization that avoids negative values in the transformed data, and is completed by first standardizing species data using the maxima, and then the site by totals. We will have to apply this standardization manually for the PCoA analysis, and then calculate the dissimilarity matrix.
 
 ```{r, echo=TRUE, message=FALSE,comment=""}
 library(vegan)
@@ -915,7 +925,7 @@ We should mention that there are several closely related forms of RDA analysis:
 
 **db-RDA** (distance-based RDA, Legendre & Anderson 1999): compute PCoA from a pre-computed dissimilarity matrix D, then use the principal coordinates as input matrix Y in RDA. 
 
-**db-RDA** can also be computed directly by function **dbrda()** in vegan. For a Euclidean matrix, the result is the same as if PCoA had been computed, followed by regular RDA. Function dbrda() can directly handle non-Euclidean D matrices, but beware of the results if the matrix is strongly non-Euclidean and make certain this is what you want.
+**db-RDA** can also be computed directly by function **dbrda()** in vegan. For a Euclidean matrix, the result is the same as if PCoA had been computed, followed by regular RDA. Function dbrda() can directly handle non-Euclidean dissimilarity matrices, but beware of the results if the matrix is strongly non-Euclidean and make certain this is what you want.
 
 Vegan has three methods of constrained ordination: constrained or “canonical” correspondence analysis (**cca()**), redundancy analysis (**rda()**), and distance-based redundancy analysis (**capscale()**). All these functions can have a conditioning term that is “partialled out”. All functions accept similar commands and can be used in the same way. The preferred way is to use formula interface, where the left hand side gives the community data frame and the right hand side lists the constraining variables:
 
@@ -966,7 +976,7 @@ The vegan package provides permutation tests for the significance of constraints
 anova(ord3)
 ```
 
-So the results suggest that our model explains a signficant amount of variation in the data. We can also perform significance tests for each variable:
+So the results suggest that our model explains a significant amount of variation in the data. We can also perform significance tests for each variable:
 
 ```{r, echo=TRUE, comment=""}
 anova(ord3, by="term", permutations=199)
@@ -974,10 +984,10 @@ anova(ord3, by="term", permutations=199)
 
 The analysis suggests that maybe we haven't chosen the best set of predictors. For example, N does not explain a significant amount of variation. This test is sequential: the terms are analyzed in the order they happen to be in the model, so you may get different results depending on how the model is specified. See if you can detect this, by rearranging your model terms in the call to ordination. 
 
-NB It is also possible to analyze the significance of marginal effects (“Type III effects") by specifying that option (by='mar') or analyse the significance of each axis, again by specifiying that option in the anova call (i.e.,by='axis').
+NB It is also possible to analyze the significance of marginal effects (“Type III effects") by specifying that option (by='mar') or analyse the significance of each axis, again by specifying that option in the anova call (i.e.,by='axis').
 
 ### Forward Selection of explanatory variables
-You may wonder if you have selected the correct variables! We can use the **ordiR2step()** function to perform forward selection (and backwards selection or both directions) on a null model.  In automatic model building we usually need two extreme models: the smallest and the largest model considered. First we specify a full model with all the environmental variables, and then a minimal model with intercept only, where both are defined using a formula so that terms can be added or removed from the model. Then we allow an automated model selection function to move between these extremes, trying to minimze a metric of model fit, such as $R^2$. We will then use ordiR2step() to find an optimal model based on both permutation and adjusted $R^2$ values. If you switch the trace=FALSE option to trace=TRUE you can watch the function doing its work.
+You may wonder if you have selected the correct variables! We can use the **ordiR2step()** function to perform forward selection (and backwards selection or both directions) on a null model.  In automatic model building we usually need two extreme models: the smallest and the largest model considered. First we specify a full model with all the environmental variables, and then a minimal model with intercept only, where both are defined using a formula so that terms can be added or removed from the model. Then we allow an automated model selection function to move between these extremes, trying to minimize a metric of model fit, such as $R^2$. We will then use ordiR2step() to find an optimal model based on both permutation and adjusted $R^2$ values. If you switch the trace=FALSE option to trace=TRUE you can watch the function doing its work.
 
 ```{r, echo=TRUE, comment=""}
 mfull <- vegan::rda(stvarespec~., data=scvarechem)
@@ -1092,6 +1102,8 @@ We value your input! Please take the time to let us know how we might improve th
 
 ## References
 
+Borcard, D., Gillet, F., & Legendre, P. (2011). Numerical ecology with R. New York: springer.
+
 Goodall, D. W. (1954). Objective methods for the classification of vegetation. III. An essay in the use of factor analysis. Australian Journal of Botany, 2(3), 304–324. https://doi.org/10.1071/bt9540304
 
 Greenacre, M. (2017). Ordination with any dissimilarity measure: A weighted Euclidean solution. Ecology, 98(9), 2293–2300. https://doi.org/10.1002/ecy.1937
@@ -1129,10 +1141,13 @@ round(sqrt(eu[11,4]),2)
 ```
 
 **Exercise  2\.** We use the **kmeans()** function with 4 clusters to find groups in the isotope data. We can then save the assigned clusters to our dataframe and plot in a similar way
-```{r kclust, echo=FALSE, fig.cap="K means clustering on Perkins et al (2014) data", fig.alt="This figure shows a plot of the Isotope dataset. The plot has x-axis with label 'δ13C' that scales from -35 to 0, and y-axis with label 'δ15N' that scales from -6 to 8. The right side of the plot contains two legends. The top right legend has label 'kcluster' and contains 4 circles of varying colors as symbols. The symbols from top to bottom have labels '1' with a black circle, '2', with a red circle, '3' with a green circle and '4' with a blue circle. The bottom right legend is labelled 'Species' and has symbols 'X' for 'Plant, circle for 'Aphid', plus sign for 'Hoverfly' and triangle for 'Diplazon. There is a cluster of black symbols of varying species where 'δ13C' is between -32 to -25 and 'δ15N' is between -6 to 8, blue symbols with varying species where 'δ13C' is between -23 to -20 and 'δ15N' is between 0 to 4, and red symbols with varying species where 'δ13C' is between -14 to -11 and 'δ15N' is between -3 to 5."}
+```{r kclust, echo=TRUE, fig.cap="K means clustering on Perkins et al (2014) data", fig.alt="This figure shows a plot of the Isotope dataset. The plot has x-axis with label 'δ13C' that scales from -35 to 0, and y-axis with label 'δ15N' that scales from -6 to 8. The right side of the plot contains two legends. The top right legend has label 'kcluster' and contains 4 circles of varying colors as symbols. The symbols from top to bottom have labels '1' with a black circle, '2', with a red circle, '3' with a green circle and '4' with a blue circle. The bottom right legend is labelled 'Species' and has symbols 'X' for 'Plant, circle for 'Aphid', plus sign for 'Hoverfly' and triangle for 'Diplazon. There is a cluster of black symbols of varying species where 'δ13C' is between -32 to -25 and 'δ15N' is between -6 to 8, blue symbols with varying species where 'δ13C' is between -23 to -20 and 'δ15N' is between 0 to 4, and red symbols with varying species where 'δ13C' is between -14 to -11 and 'δ15N' is between -3 to 5."}
+
+# select 4 clusters and run the kmeans function
 kclust=kmeans(niso[,c("C", "N")], 4)
 niso$kclust=kclust$cluster
 
+#superimpose the saved clusters on our plotted isotope data
 plot(iso$N~iso$C, col=as.numeric(as.factor(niso$clust)),xlim=c(-35, 0), pch=as.numeric(as.factor(niso$Species)),  xlab=expression(paste(delta, "13C")), 
 ylab=expression(paste(delta, "15N")))
 
