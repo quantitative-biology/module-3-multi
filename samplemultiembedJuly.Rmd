@@ -1,6 +1,6 @@
 
 ```{r setup1, include=FALSE}
-
+knitr::opts_chunk$set(echo = FALSE,kableExtra.auto_format = FALSE,tidy=TRUE,tidy.opts=list(width.cutoff=60))
 
 ```
 
@@ -16,17 +16,17 @@ In this module we'll be discussing multivariate quantitative methods. Analyses s
 <br>
 
 
-```{r f1, fig.height=5., fig.width=6., echo=FALSE, fig.cap="Types of multivariate analysis", fig.alt = "A 4 quadrant plane titled Types of mulitvariate analysis where the vertical axis has lables response variable at the top and latent variable at the bottom. The top left quadrant contains the text Regression in green, the bottom left contains the word Ordination in orange, the top right contains the word Classification in red, and the bottom right contains the word Clustering in blue."}
+```{r f1, fig.height=5., fig.width=6., echo=FALSE, fig.cap="Types of multivariate analysis", fig.alt = "A 4 quadrant plane titled Types of mulitvariate analysis where the vertical axis has lables 'response variable' at the top and 'latent variable' at the bottom. The top left quadrant contains the text 'Regression', the bottom left contains the word 'Ordination', the top right contains the word 'Classification', and the bottom right contains the word 'Clustering'."}
 
 x =0
 y =0
 plot(x,y, type = "n", xlim = c(-100,100), ylim = c(-100,100), frame.plot = FALSE, xaxt = "n", yaxt= "n", ann = FALSE)
 par(mar = c(5,7,5,4))
 abline(h=0, v=0)
-text(x=-50, y=50, labels = "Regression", col = 1, cex = 1.3)
-text(x=50, y=50, labels = "Classification", col = 2, cex = 1.3)
-text(x=-50, y=-50, labels = "Ordination", col = 3, cex = 1.3)
-text(x=50, y=-50, labels = "Clustering", col = 4, cex = 1.3)
+text(x=-50, y=50, labels = "Regression", col = '#025A3D', cex = 1.3)
+text(x=50, y=50, labels = "Classification", col = '#9A0E1C', cex = 1.3)
+text(x=-50, y=-50, labels = "Ordination", col = '#744106', cex = 1.3)
+text(x=50, y=-50, labels = "Clustering", col = '#1F2EB7', cex = 1.3)
 #title(main = "Types of Multivariate Analysis")
 mtext("Discrete", side = 4, line = 0.3, at=0, las = 1)
 mtext("Latent Variable", side = 1, line = 0.3, at = 0)
@@ -130,16 +130,16 @@ Perhaps the mostly commonly used, and easiest to understand distance measure is 
 
 Euclidean distance in multivariate space is derived from our understanding of distance in a Cartesian plane. If we had two species abundances measured in two different samples, we could then plot the abundance of species 1 and species 2 for each sample on a 2D plane, and draw a line between them. This would be our Euclidean distance: the shortest path between the two points (Fig. \@ref(fig:f2)).
 
-```{r f2, echo=FALSE, fig.cap="Example of a Euclidean distance calculation in a two dimensional space of species abundance", fig.alt="This is plot with x-axis labelled 'Species 1' and y-axis labelled 'Species 2'. There is a blue point at coordinate (19,35) titled 'sample j' and a blue point at coordinate (30,10) titled 'sample k'. Both points are connected by a blue line labelled 'c'. Dotted lines emerge downwards from point 'sample j' labelled 'b' and leftwards from point 'sample k' labelled 'a', and meet up perpendicularly at the coordinate (19,10)."}
+```{r f2, echo=FALSE, fig.cap="Example of a Euclidean distance calculation in a two dimensional space of species abundance", fig.alt="This is a plot with x-axis labelled 'Species 1' and y-axis labelled 'Species 2'. A descending linear blue line connects two blue points title 'sample j' and 'sample k' which are connected by dotted vertical and horizontal lines titled 'b' and 'a' respectively."}
 x=c(19, 35)
 y=c(30, 10)
-plot(x,y, xlim = c(0,40), ylim = c(0,40), xlab = "Species 1", ylab = "Species 2",frame.plot = FALSE, box(bty="l"), pch = 19, col = 3, cex = 2, font.lab = 2, cex.lab = 1.5)
+plot(x,y, xlim = c(0,40), ylim = c(0,40), xlab = "Species 1", ylab = "Species 2",frame.plot = FALSE, box(bty="l"), pch = 19, col = "#2436D6", cex = 2, font.lab = 2, cex.lab = 1.5)
 text(x=19, y=35, labels = "sample j")
 text(x=35, y=5, labels = "sample k")
-text(x=17, y=20, labels = "b", col=4)
-text(x=25, y=5, labels = "a", col=4)
-text(x=28, y=23, labels = "c", col=4)
-lines(x,y, lwd = 3, col = 3)
+text(x=17, y=20, labels = "b", col="#2436D6")
+text(x=25, y=5, labels = "a", col="#2436D6")
+text(x=28, y=23, labels = "c", col="#2436D6")
+lines(x,y, lwd = 3, col = "#2436D6")
 lines(c(19,19), c(29,10), lty = "dotted", lwd = 2)
 lines(c(19,34), c(10,10), lty = "dotted", lwd = 2)
 ```
@@ -232,7 +232,7 @@ We can contrast clustering, which assumes that units (e.g., sites, communities, 
 
 Perhaps the most familiar type of clustering is hierarchical. There are two kinds of hierarchical clustering: **divisive** and **agglomerative**. In the divisive method, the entire set of units is divided into smaller and smaller groups. The agglomerative method starts with small groups of few units, and groups them into larger and larger clusters, until the entire data set is sampled (Pielou, 1984). Of course, once you have more than two units, you need some way to assess similarity between the clusters. There are a couple of different methods here. Single linkage assigns the similarity between clusters to the most similar units in each cluster. Complete linkage uses the similarity between the most dissimilar units in each cluster, while average linkage averages over all the units in each cluster (Fig. \@ref(fig:f6)). 
 
-```{r f6, fig.height=6., fig.width=8., fig.cap="Different methods of determining similarity between clusters", fig.alt="This figure shows six circles arranged in three rows and two columns. Each circle contains three black dots. The first two circles in the first row are labelled 'Simple Linkage' and a single dot from each circle of this row is connected by a black line. The two circles in the second row are labelled 'Complete Linkage' and a single dot in each circle of this row is connected by a black line. The two circles in the last row are labelled 'Average Linkage' and all the dots in each circle make connections to each other through black lines."}
+```{r f6, fig.height=6., fig.width=8., fig.cap="Different methods of determining similarity between clusters", fig.alt="This figure shows six ovals arranged in three rows and two columns with individual rows labelled 'Simple Linkage', 'Complete Linkage', and 'Average Linkage' respectfully. Each oval contains three dots with the first and second row connecting a single dot from each oval with a solid line and the third row connecting all dots in each oval with many lines."}
 library(plotrix)
 plot(rbind(c(-3,9), c(-2,10), c(-2,7), c(1,9), c(2,10), c(2,7), c(-3,1), c(-2,2), c(-2,-1), c(1,1), c(2,2), c(2,-1), c(-3,-7), c(-2,-6), c(-2,-9), c(1,-7), c(2,-6), c(2,-9)), xlim = c(-8,7), ylim = c(-10, 13), xaxt = "n", yaxt = "n", frame.plot = FALSE, ann = FALSE, pch = 16)
 draw.ellipse(-2.4,8.5,1.8,3.)
@@ -273,7 +273,7 @@ round(clsd,0)
 
 We can see that we construct the cluster diagram by first grouping a and b, followed by c & d, and so on (Fig. \@ref(fig:clust5)).
 
-```{r clust5, fig.height=6., fig.cap="Example of using a dissimilarity matrix to construct a single-linkage cluster diagram", fig.alt="This figure shows three dendrograms, separated horizontally into sections 'a)', 'b)' and 'c)'. Each section contains 5 categories labelled 'a', 'b', 'c', 'd' and 'e'. In section 'a)', cateogries 'a' and 'b' are connected to each other and given the label '33'. In section 'b)', categories 'a' and 'b' are connected to each other and categories 'c' and 'd' are connected to each other with labels '33' and '36' respectively. Section 'c)' contains the same groupings as in section 'b)' with two additional connections between group 'c', 'd' and category 'e' with label '48' and group 'a', 'b' with group 'c', 'd', 'e' labelled '51'.",echo=FALSE}
+```{r clust5, fig.height=6., fig.cap="Example of using a dissimilarity matrix to construct a single-linkage cluster diagram", fig.alt="This figure shows three dendrograms, separated horizontally into sections (containing categories a to e) known as 'a)', 'b)' and 'c)'. In section 'a)' categories 'a' and 'b' are connected and labelled '33', in section 'b)', categories 'a' and 'b' and categories 'c' and 'd' are connected with labels '33' and '36' respectively, and section 'c)' has the same groupings as in section 'b)' with two additional connections between group '36' and category 'e' labelled '48' and group '33' and group '48' labelled '51'.",echo=FALSE}
 plot(rbind(c(0,0)), xlim = c(-50,50), ylim = c(-100, 100), frame.plot = FALSE, ann = FALSE, type = "n", xaxt = "n", yaxt = "n")
 text(x=-40, y=75, labels = "a")
 text(x=-20, y=75, labels = "b")
@@ -330,11 +330,11 @@ These hierarchical methods just keep going until all objects are included (agglo
 
 If we set our dissimilarity threshold at 40, we find that there are three groups: a&b, c&d, and e in its own group.
 
-```{r hclustfig, comment="", fig.height=5, fig.width=5, fig.cap="Cluster diagram produced by the function **hclust()** with cut-off line at euclidean distance=40 for group membership", fig.alt="This figure shows a dendrogram with 5 categories labelled 'a', 'b', 'c', 'd' and 'e'. There is a y-axis with title 'Height' that scales from 33 to 51. Category 'a' and 'b' are connected together and category 'c' and 'd' are connected together. Category 'e' is connected to the 'c', 'd' grouping. Group 'a', 'b' and group 'e', 'c', 'd' also form a connection. There is a horizontal red line where 'Height' is at 40."}
+```{r hclustfig, comment="", fig.height=5, fig.width=5, fig.cap="Cluster diagram produced by the function **hclust()** with cut-off line at euclidean distance=40 for group membership", fig.alt="This figure shows a dendrogram with y-axis labelled 'Height', a horizontal red line, and 5 categories labelled 'a' to 'e'. Category 'a' and 'b' as well as 'c' and 'd' are connected together, category 'e' leads from grouping 'c' and 'd' which connects to 'a' and 'b'."}
 hcl=hclust(clsd, method="single")
 
 plot(hcl, main="", hang=0, xlab="")
-abline(h=40, col=2)
+abline(h=40, col="#AA0E1D")
 cutree(hcl, h=40)
 ```
 
@@ -383,7 +383,7 @@ download.file(urlj, "p.xlsx", mode="wb")
 iso=read.xlsx("p.xlsx")
 ```
 
-```{r chkperkins,echo=TRUE, fig.cap="Isotope data from Perkins et al (2014)", fig.alt="This figure shows a plot of the Isotope dataset. The plot has x-axis with label 'δ13C' that scales from -35 to 0, and y-axis with label 'δ15N' that scales from -6 to 8. The right side of the plot contains two legends. The top right legend is labelled 'Food chain' and has 4 circles of varying colors for symbols. The symbols from top to bottom have labels 'Wheat' with a green circle, 'Maize' with a black circle, 'Wheat.Maize' with a blue circle and 'Nettle' with a red circle. The bottom right legend has 4 different characters: an 'X' with label 'Plant', a circle with label 'Aphid', a plus sign with label 'Hoverfly' and a triangle with label 'Diplazon'. There is a cluster of green symbols with varying characters where 'δ13C' is at -30 and 'δ15N' is between -6 and 6, red symbols with varying characters where 'δ13C' is between -29 and -25 and 'δ15N' is between 0 and 8, blue symbols with varying characters where 'δ13C' is between -23 and -20 and 'δ15N' is between 0 and 5, and black symbols with varying characters where 'δ13C' is between -14 and -11 and 'δ15N' is between -4 and 4."}
+```{r chkperkins,echo=TRUE, fig.cap="Isotope data from Perkins et al (2014)", fig.alt="This figure has x-axis labelled 'δ13C', y-axis labelled 'δ15N', and two legends, one as 'Food chain' with 'Wheat', 'Nettle', 'Wheat.Maize', and 'Maize', and the second with 'Plant', 'Aphid', 'Hoverfly', and 'Diplazon' with varying symbols. Moving from left to right on the x-axis, 'Wheat' is at the bottom with all species, 'Nettle' is near the top with all species, 'Wheat.Maize is centered with 'Diplazon' and 'Hoverfly', and 'Maize' has all but 'Diplazon'."}
 plot(iso$N~iso$C, col=as.numeric(as.factor(iso$Food.Chain)),xlim=c(-35, 0), pch=as.numeric(as.factor(iso$Species)),  xlab=expression(paste(delta, "13C")), 
 ylab=expression(paste(delta, "15N")))
 
@@ -400,7 +400,7 @@ In addition, our analysis will be affected by the missing data. So let’s get r
 
 The function **dist()** will generate a matrix of the pairwise Euclidean distances between pairs of observations. Now that you have a dissimilarity matrix, you can complete a cluster analysis. The function **hclust()** will produce a data frame that can be sent to the plot() function to visualize the recommended clustering. The method used to complete the analysis is indicated below the graph. Please adjust the arguments of the function to complete a single linkage analysis (type ?hclust to call the help page for the function and determine the method to do this).
 
-```{r perkclust, echo=TRUE, comment="", fig.cap="Cluster figure of isotope data from Perkins et al. 2014)", fig.alt="This figure shows a cluster diagram of isotope data from Perkins et al. (2014) with y-axis labelled 'Height' that scales from 0 to 5. "}
+```{r perkclust, echo=TRUE, comment="", fig.cap="Cluster figure of isotope data from Perkins et al. 2014)", fig.alt="This figure shows a cluster diagram of isotope data from Perkins et al. (2014) with y-axis labelled 'Height' and x-axis labelled 'diso'."}
 str(iso)
 diso<-dist((iso[,c("C","N")]), method="euclidean")
 p=hclust(diso,method="single")
@@ -412,7 +412,7 @@ When you graph your cluster using plot(), you notice that there are many individ
 
 When you examine the data set, you noted that there are 4 Food.chain designations. We will use the cutree() function to cut our cluster tree to get the desired number of groups (4), and then save the group numbers to a new column in our original dataframe. For example, iso$clust<- cutree(p,4).We can then plot the data using colours and symbols to see how well our cluster analysis matches the original data classification.
 
-```{r clustdata, echo=TRUE, fig.cap="Data from Perkins et al (2014) with grouping from single linkage clustering superimposed", fig.alt="This figure shows a plot of the isotope dataset. The plot has x-axis with label 'δ13C' that scales from -35 to 0, and y-axis with label 'δ15N' that scales from -6 to 8. The right side of the plot contains two legends. The top right legend has label 'cluster' and contains 4 circles of varying colors as symbols. The symbols from top to bottom have labels '1' with a black circle, '2', with a red circle, '3' with a green circle and '4' with a blue circle. The bottom right legend is labelled 'Species' and has symbols 'X' for 'Plant, circle for 'Aphid', plus sign for 'Hoverfly' and triangle for 'Diplazon. There is a cluster of black symbols of varying species where 'δ13C' is between -32 to -25 and 'δ15N' is between -6 to 8, blue symbols with varying species where 'δ13C' is between -23 to -20 and 'δ15N' is between 0 to 4, and red symbols with varying species where 'δ13C' is between -14 to -11 and 'δ15N' is between -3 to 5."}
+```{r clustdata, echo=TRUE, fig.cap="Data from Perkins et al (2014) with grouping from single linkage clustering superimposed", fig.alt="This figure has x-axis labelled 'δ13C', y-axis labelled 'δ15N'and two legends, one as 'cluster' which ranges from 1 to 4, and the second with 'Species' with categories 'Plant', 'Aphid', 'Hoverfly', and 'Diplazon' with varying symbols. Moving from left to right on the x-axis, '1' goes from bottom to top with all species, '4' is near midde with 'Diplazon' and 'Hoverfly', '2' is near the middle with all but 'Diplazon', and '3' is directly under with two 'Plant'."}
 niso=iso[complete.cases(iso),]
 niso=niso[-5,]
 diso<-dist((niso[,c("C","N")]), method="euclidean")
@@ -441,7 +441,7 @@ While cluster analysis lets us visualize multivariate data by grouping objects i
 Essentially, we find axes in the data that explain a lot of variation, and rotate so we can use the axes as our dimensions of visual representation (Fig. \@ref(fig:dummy1)). I've left the scatter about the line, but actually each point would have only a location on the synthetic xy axis.
 
 
-```{r dummy1, fig.height=5., fig.width=6., echo=FALSE,fig.cap="Synthetic axis rotation in ordination. We find the axis in 2D that explains most variation, and rotate to give a 1D representation", fig.alt="This figure shows two untitled plots placed side by side. Both plots contain a set of light green points and a blue fitted line. The left plot has x-axis label 'x' and y-axis label 'y'. The light green points in the left plot are scattered and show an upwards trend. The blue fitted line in the left plot is shown going upwards and to the right. The right plot has x-axis label 'xy synthesis' and no y-axis label. The light green points in the right plot are scaterred in the center of the plot and the blue fitted line is also located at the center of the plot and is parallel with the x-axis."}
+```{r dummy1, fig.height=5., fig.width=6., echo=FALSE,fig.cap="Synthetic axis rotation in ordination. We find the axis in 2D that explains most variation, and rotate to give a 1D representation", fig.alt="This figure shows two plots with green points and a blue line of best fit. The left plot has x-axis labelled 'x' and y-axis labelled 'y' with the green points and blue line of best fit in an upwards trend, and the right plot has x-axis labelled 'xy synthesis' with the green points and blue line of best fit centered."}
 
 x1=rnorm(50, 0,7)
 y1=0.85*x1
@@ -455,14 +455,14 @@ plot(x1,y1,
      xlim = c(-20,20),ylim=c(-20,20),
      pch=16, col=rgb(red=0.3, green=0.6, blue=0.3, alpha=0.3),
      xlab="x", ylab="y")
-#points(x2,y2,pch=16,col=4)
-lines(x1, fitted(lm(y1 ~ x1)), col = 4, lwd=2) 
+#points(x2,y2,pch=16,col="blue")
+lines(x1, fitted(lm(y1 ~ x1)), col = "#293BDB", lwd=2) 
 
 plot(x1,y2,
      xlim = c(-20,20),ylim=c(-20,20),
      pch=16, col=rgb(red=0.3, green=0.6, blue=0.3, alpha=0.3),
      xlab="xy synthesis", ylab="")
-lines(x1, rep(0, length(x1)), col = 4, lwd=2) 
+lines(x1, rep(0, length(x1)), col = "#293BDB", lwd=2) 
 
 ```
 
@@ -470,7 +470,7 @@ lines(x1, rep(0, length(x1)), col = 4, lwd=2)
 Another way to think about it is that we are going to summarize the raw data, which has many variables, *p*, by a smaller set of synthetic variables, *k* (Fig. \@ref(fig:dimred)). If the ordination is informative, it reduces a large number of original correlated variables to a small number of new uncorrelated variables. But it really is a bit of a balancing act between clarity of representation, ease of understanding, and oversimplification. We will lose information in this data reduction, and if that information is important, then we can make the multivariate data harder to understand! Also note that if the original variables are not correlated, then we won't gain anything with ordination.
 
 
-```{r dimred, fig.height=3., fig.width=5., echo=FALSE,fig.cap="Ordination as data reduction. We summarize data with many observations (n) and variables (p) by a smaller set of derived or synthetic variables (k)", fig.alt="This figure shows two grids placed side by side each other. The left grid is a wide grid with black borders and labels 'n' on the left side of the grid and 'p' on the top of the grid. In the center of this grid is a large, italicized letter 'A'. The right grid is a narrower grid with purple borders and labels 'n' in purple on the left side of the grid and 'k' in purple on the top of the grid. In the center of this grid is a large, italicized, purple letter 'X'."}
+```{r dimred, fig.height=3., fig.width=5., echo=FALSE,fig.cap="Ordination as data reduction. We summarize data with many observations (n) and variables (p) by a smaller set of derived or synthetic variables (k)", fig.alt="This figure shows two grids. The left grid is a wide black grid with y-axis labelled 'n' and x-axis 'p' with a centered capital 'A', and the right grid is a narrow purple grid with y-axis labelled 'n' and x-axis labelled 'k' with a centered capital 'X'."}
 par(mar = c(0, 0, 0, 0))
 plot(0,pch = '',ann=FALSE,frame.plot = FALSE,axes = FALSE,
      xlim = c(-40,40),ylim = c(-65,10))
@@ -489,18 +489,18 @@ segments(-35,-60,-7,-60, lwd = 2.5)
 text(-21,3, labels = "p", font = 2)
 text(-38,-26, labels = "n", font = 2)
 text(-21,-25, labels = "A", font = 3, cex = 2)
-segments(15,0,15,-60, lwd = 2.5, col = 4)
+segments(15,0,15,-60, lwd = 2.5, col = "#7A1FB7")
 c=seq(from=16, to=24, by=1)
 segments(c,0,c,-60)
-segments(25,0,25,-60, lwd = 2.5, col = 4)
-segments(15,0,25,0, lwd = 2.5, col = 4)
+segments(25,0,25,-60, lwd = 2.5, col = "#7A1FB7")
+segments(15,0,25,0, lwd = 2.5, col = "#7A1FB7")
 
 b=seq(from=-3, to=-57, by=-3)
 segments(15,b,25,b)
-segments(15,-60,25,-60, lwd = 2.5, col = 4)
-text(20,3, labels = "k", font = 2, col = 4)
-text(12,-26, labels = "n", font = 2, col = 4)
-text(20,-25, labels = "X", font = 3, cex = 2, col = 4)
+segments(15,-60,25,-60, lwd = 2.5, col = "#7A1FB7")
+text(20,3, labels = "k", font = 2, col = "#7A1FB7")
+text(12,-26, labels = "n", font = 2, col = "#7A1FB7")
+text(20,-25, labels = "X", font = 3, cex = 2, col = "#7A1FB7")
 ```
 
 
@@ -529,7 +529,7 @@ knitr::kable(dt, caption= "Domains of application of ordination methods (adapate
 We can think about this spatially. Objects are represented as a cloud of n points in a multidimensional space with an axis for each of the p variables. So the centroid of the points is defined by the mean of each variable, and 
 the variance of each variable is the average squared deviation of its n values around the mean of that variable (i.e., $V_i= \frac{1}{n-1}\sum_{m=1}^{n}{(X_{im}-\bar{X_i)}^2}$). The degree to which the variables are linearly correlated is given by their covariances $C_{ij}=\frac{1}{n-1}\sum_{m=1}^n{(X_{im}-\bar{X_i})(X_{jm}-\bar{X_j})}$. The objective of PCA is to rigidly rotate the axes of the p-dimensional space to new positions (principal axes) that have the following properties: they are ordered such that principal axis 1 (or the *principal component* has the highest variance, axis 2 has the next highest variance etc, and the covariance among each pair of principal axes is zero (the principal axes are uncorrelated) (Fig. \@ref(fig:varord)). 
 
-```{r varord, fig.cap="Selecting the synthetic axes in ordination", fig.alt="This figure shows two plots stacked on top of each other. One plot has blue x-axis labelled 'X1' and a blue y-axis labelled 'X2'. The plot has 24 scattered nyon green points that show an upwards trend and a yellow dashed line that begins at the origin and extends 45° from the x-axis. The second plot is placed on top of the first plot and has a dark red x-axis labelled 'Y1' and a dark red y-axis labelled 'Y2'. The second plot is angled such that the x-axis of the second plot is parallel to the yellow dashed line in the first plot and the center of the y-axis of the second plot touches the origin of the first plot as well as the starting point of the yellow dashed line. The second plot shows two hill-like functions. The first one is located on the dark red x-axis labelled 'Y1' and the second one is on the dark red y-axis labelled 'Y2'. There is text below the plots that says 'Y1 axis selected to maximize variation explained' and 'Y2 axis must be orthogonal to Y1 and maximize variation explained'."}
+```{r varord, fig.cap="Selecting the synthetic axes in ordination", fig.alt="This figure shows two plots, the first blue plot has x-axis labelled 'X1' and y-axis labelled 'X2' with green points and an upwards trend shownb by a yellow dashed line of best fit. The second red plot overlaps the first and has x-axis labelled 'Y1' which is parallel to the dashed line and y-axis labelled 'Y2'; there are two guassian functions, one located on the y-axis and one on the x-axis."}
 ctlns<-list(structure(list(level = 10, x = c(-0.8,0,1,2,2.5,3,3.1,2.8,2.3,2,1.8), 
                            y = c(2.7,2.3,2.5,2.7,2.5,2,1.5,0,-1,-2,-3)),
                       .Names = c("level", "x", "y")))
@@ -544,13 +544,13 @@ plot(rbind(c(2.6,3),c(3,4),c(3.5,4.6),c(3.6,5.2),c(3.5,2),c(4,2.8),c(4.5,2),
            c(5,3.2),c(5.2,4),c(6,2.5),c(6,5),c(6.5,4),c(7,2),c(7,3),c(7,6.5),
            c(7,5),c(8,4),c(8,5.5),c(8.5,4.5),c(9,6),c(9,7.2),c(9.5,5),c(10,7.5),
            c(11,6)),pch = 21,ann=FALSE,frame.plot = FALSE,axes = FALSE,
-     xlim = c(-10,20),ylim = c(-10,12),col=4,
+     xlim = c(-10,20),ylim = c(-10,12),col="#176204",
      bg=rgb(red=0.3, green=0.6, blue=0.3, alpha=0.3))
-arrows(0,0,18,0,col=4,cex=3,length = 0.1)
-arrows(0,0,0,11,col=4,cex=3,length = 0.1)
-arrows(1.5,-3.5,-1.5,3.5,col=2,cex=3,length = 0.1)
-arrows(1.5,-3.5,17,7,col=2,cex=3,length = 0.1)
-segments(0,0,15,10,col=5,cex=3,lty="dashed")
+arrows(0,0,18,0,col="#1B0AFF",cex=3,length = 0.1)
+arrows(0,0,0,11,col="#1B0AFF",cex=3,length = 0.1)
+arrows(1.5,-3.5,-1.5,3.5,col="#A80000",cex=3,length = 0.1)
+arrows(1.5,-3.5,17,7,col="#A80000",cex=3,length = 0.1)
+segments(0,0,15,10,col="#372601",cex=3,lty="dashed")
 text(x=18, y=-1, labels = "X1")
 text(x=-1, y=11, labels = "X2")
 text(x=17, y=5, labels = "Y1")
@@ -566,11 +566,11 @@ So our steps are to compute the variance-covariance matrix of the data, calculat
 
 #### Example: PCA on the iris data
 We’re going to use a sample dataset in R and the base R version of PCA to start exploring this data analysis technique. Get the iris dataset into memory by typing data(“iris”). Take a look at this dataset using the **head()**, **str()** or **summary()** functions. For a multivariate data set, you would also like to take a look at the pairwise correlations. Remember that PCA can’t help us if the variables are not correlated.  Let’s use the **pairs()** function to do this
-```{r coriris, echo=TRUE, comment="", fig.cap="Correlation matrix for the iris data", fig.alt="The graph shows a total of twelve pairwise correlation plots given four dimensions in iris dataset: speal length, sepal width, petal length, and petal width. In each pairwise correlation plot, one of the four dimensions is selected as x axis and one is selected as y axis. Data points are colored in red, green and blue based on  species."}
+```{r coriris, echo=TRUE, comment="", fig.cap="Correlation matrix for the iris data", fig.alt="The graph shows a total of twelve pairwise correlation plots given four dimensions in iris dataset: speal length, sepal width, petal length, and petal width. In each pairwise correlation plot, one of the four dimensions is selected as x-axis and one is selected as y-axis and data points are coloured in red, green and blue based on  species."}
 
 data("iris")
 str(iris); summary(iris[1:4])
-pairs(iris[1:4],main="Iris Data", pch=as.numeric(iris$Species)+14, col=as.numeric(iris$Species)+1)
+pairs(iris[1:4],main="Iris Data", pch=19, col=as.numeric(iris$Species)+1)
 ```
 
 The colours let us see the data for each species, the graph is all the pairwise plots of each pair of the 4 variables (Fig. \@ref(fig:coriris)). Do you see any correlations?
@@ -608,8 +608,8 @@ Now we need to determine how many axes to use to interpret our analysis. For 4 v
 
 
 
-```{r scree, echo=TRUE, fig.cap="Screeplot: a display of the variance explained by each of the synthetic axes", fig.alt="The graph shows the relationship between variances and the number of axes that explain the dataset. As the number of axes increasing from 1 to 4, the variances decrease from 3 to 0.",comment=""}
-screeplot(p, type=("lines"),main="",pch=16, cex=1)
+```{r scree, echo=TRUE, fig.cap="Screeplot: a display of the variance explained by each of the synthetic axes", fig.alt="The graph shows the relationship between variances and the number of axes that explain the dataset. As the number of axes increasing from 1 to 4, the variances decrease from 3 to 0 shown in a downwards line.",comment=""}
+screeplot(p, type=("lines"),main="")
 ```
 An ideal curve should be steep, then bend at an “elbow” — this is your cutting-off point — and after that flattens out. To deal with a not-so-ideal scree plot curve you can apply the Kaiser rule: pick PCs with eigenvalues of at least 1. Or you can select using the proportion of variance where the PCs should be able to describe at least 80% of the variance.
 
@@ -620,14 +620,13 @@ It looks like synthetic axes 1 & 2 explain most of the variation. This is, of co
 A PCA plot displays our samples in terms of their position (or **scores**) on the new axes. We can add information about how much variation each axis explains, and colour our points to match species identity. In this 2D representation of 4 dimensional space, it looks like species *I. versicolor* and *I. viriginica* are the most similar (Fig. \@ref(fig:pacfirst)). 
 
 
-```{r pacfirst, echo=TRUE, fig.cap="PCA plot for the iris data", fig.alt="This figure shows a scatterplot with x-axis labelled 'PC1 (73%)' that scales from -3 to 3 and y-axis labelled 'PC2 (23%)' that scales from -3 to 3. The top right of the plot has a legend with three symbols. They are labelled 'setosa', 'versicolor' and 'virginica' and are denoted by a red circle, a green circle and a blue circle, respectively. The plot shows a cluster of 'setosa' red points where 'PC1 (73%)' is between -3 and -2 and 'PC2 (23%)' is between -3 and 2. A cluster of 'versicolor' green points are located where 'PC1 (73%)' is between -0.5 and 0.5 and 'PC2 (23%)' is between -1 and 3. A cluster of blue points are located where 'PC1 (73%)' is between 0.5 and 3.5 and 'PC2 (23%)' is between -3 and 2."}
+```{r pacfirst, echo=TRUE, fig.cap="PCA plot for the iris data", fig.alt="This figure shows a scatterplot with x-axis labelled 'PC1 (73%)' and y-axis labelled 'PC2 (23%)' with a legend showing three symbols, 'setosa', 'versicolor' and 'virginica'. From left to right on the x-axis, the plot shows a cluster of 'setosa' points, 'versicolor' points, to 'virginica' points."}
 pvar=round(summary(p)$importance[2,1:2],2)
 
-plot(p$x[,1:2], col=as.numeric(iris$Species)+1,ylim=c(-3,3), cex=1, 
-     pch=as.numeric(iris$Species)+14,
+plot(p$x[,1:2], col=as.numeric(iris$Species)+1,ylim=c(-3,3), cex=0.7, pch=16,
      xlab=paste0("PC1 (", pvar[1]*100, "%)"),
      ylab=paste0("PC2 (", pvar[2]*100, "%)"))
-legend("topright", legend=unique(iris$Species),pch=as.numeric(unique(iris$Species))+14, col=c(2,3,4), bty="n")
+legend("topright", legend=unique(iris$Species), pch=16, col=c(2,3,4), bty="n")
 ```
 
 I've plotted the amount of variance explained by each axis, but remember that the 1st axis always explains the most variance. Your interpretation of the ordination plot hould reflect this fact
@@ -643,7 +642,7 @@ kable(p$rotation,digits=2,caption="Eigenvectors for each variable and synthetic 
 <br>
 We can see that a lot of information is coming from the petal variables for PC1, but less from the sepal variables (Table \@ref(tab:barload)).  We can plot this out to show how strongly each variable affects each principle component (or synthetic axis).
 
-```{r loadplot, echo=TRUE, fig.cap="Contribution of each variable to the first two principal component axes", fig.alt="This figure shows a plot with x-axis labelled 'PC1 (73%)' that scales from -4 to 4 and y-axis labelled 'PC2 (23%)' that scales from -4 to 4. 4 purple arrowed lines emerge from the coordinate (0,0). One line ends at the coordinate (-1,-4) and has label 'Sepal.Width'. Another line ends at coordinate (2.2,-2) and has label 'Sepal.Length'. Another line ends at coordinate (2.4,0.2) and has label 'Petal.Length'. The last line ends at coordinate (2.5,0.1) and has label 'Petal.Width'."}
+```{r loadplot, echo=TRUE, fig.cap="Contribution of each variable to the first two principal component axes", fig.alt="This figure shows a plot with x-axis labelled 'PC1 (73%)' and y-axis labelled 'PC2 (23%)'. 4 purple arrowed lines emerge from the center and one purple line points bottom left labelled 'Sepal.Width', one points bottom right labelled 'Sepal.Length', one points higher than the previous labelled 'Petal.Length', and one point directly right labelled 'Petal.Width'."}
 plot(NA,ylim=c(-5,4), xlim=c(-5,4),
          xlab=paste0("PC1 (", pvar[1]*100, "%)"),
      ylab=paste0("PC2 (", pvar[2]*100, "%)"))
@@ -653,7 +652,7 @@ abline(h=0, col="grey90")
     l.x <- p$rotation[,1]*4
     l.y <- p$rotation[,2]*4
 # Draw arrows
-    arrows(x0=0, x1=l.x, y0=0, y1=l.y, col=5, length=0.15, lwd=1.5)
+    arrows(x0=0, x1=l.x, y0=0, y1=l.y, col="#64067F", length=0.15, lwd=1.5)
 # Label position
     l.pos <- l.y # Create a vector of y axis coordinates
     lo <- which(l.y < 0) # Get the variables on the bottom half of the plot
@@ -664,7 +663,7 @@ abline(h=0, col="grey90")
     l.pos[4] <- "3"
     l.x[3:4] <- l.x[3:4]+0.75
         # Variable labels
-    text(l.x, l.y, labels=row.names(p$rotation), col=5, pos=l.pos, cex=1)
+    text(l.x, l.y, labels=row.names(p$rotation), col="#64067F", pos=l.pos, cex=0.75)
 
 ```
 
@@ -674,22 +673,19 @@ Another way to portray this information is to create a **biplot** which, in addi
 
 I have used an arbitrary scaling to display the variable loadings on each axis. Some of the R packages will use a specific scaling that will emphasize particular parts of the plot, either preserving the Euclidean distances between samples or the correlations/covariances between variables (e.g., the vegan package can do this for you, see section \@ref(tri)).
 
-```{r pactwo, echo=TRUE, fig.cap="PCA biplot for the iris data", fig.alt="This figure shows a plot with x-axis labelled 'PC1 (73%)' that scales from -4 to 4 and y-axis labelled 'PC2 (23%)' that scales from -4 to 4. 4 purple arrowed lines emerge from the coordinate (0,0). One line ends at the coordinate (-1,-4) and has label 'Sepal.Width'. Another line ends at coordinate (2.2,-2) and has label 'Sepal.Length'. Another line ends at coordinate (2.4,0.2) and has label 'Petal.Length'. The last line ends at coordinate (2.5,0.1) and has label 'Petal.Width'. The top left of the plot has a legend with three symbols. They are labelled 'setosa', 'versicolor' and 'virginica' and are denoted by a red circle, a green circle and a blue circle respectively. The plot shows a cluster of 'setosa' red points where 'PC1 (73%)' is between -3 and -2 and 'PC2 (23%)' is between -3 and 2. A cluster of 'versicolor' green points are located where 'PC1 (73%)' is between -0.5 and 0.5 and 'PC2 (23%)' is between -1 and 3. A cluster of blue points are located where 'PC1 (73%)' is between 0.5 and 3.5 and 'PC2 (23%)' is between -3 and 2."}
-plot(p$x[,1:2], 
-     pch=as.numeric(iris$Species)+14,
-     col=as.numeric(iris$Species)+1,
+```{r pactwo, echo=TRUE, fig.cap="PCA biplot for the iris data", fig.alt="This figure shows a plot with x-axis labelled 'PC1 (73%)' and y-axis labelled 'PC2 (23%)' with a legend categorized as 'setosa', 'versicolor' and 'virginica'. 4 arrowed lines emerge from the center and one purple line points bottom left labelled 'Sepal.Width', one points bottom right labelled 'Sepal.Length', one points higher than the previous labelled 'Petal.Length', and one point directly right labelled 'Petal.Width and from left to right on the x-axis it shows a centered cluster of 'setosa', 'versicolor' to 'virginica'."}
+plot(p$x[,1:2], pch=16,col=as.numeric(iris$Species)+1,
      ylim=c(-5,4), xlim=c(-4,4),
-     cex=1,
+     cex=0.7,
      xlab=paste("PC1 (", pvar[1]*100, "%)"),
      ylab=paste("PC2 (", pvar[2]*100, "%)"))
-legend("topleft", legend=unique(iris$Species), pch=as.numeric(unique(iris$Species))+14,
-       col=c(2,3,4), bty="n")
+legend("topleft", legend=unique(iris$Species), pch=16, col=c(2,3,4), bty="n")
 
 # Get co-ordinates of variables (loadings), and multiply by a constant
     l.x <- p$rotation[,1]*4
     l.y <- p$rotation[,2]*4
 # Draw arrows
-    arrows(x0=0, x1=l.x, y0=0, y1=l.y, col=5, length=0.15, lwd=1.5)
+    arrows(x0=0, x1=l.x, y0=0, y1=l.y, col="#64067F", length=0.15, lwd=1.5)
 # Label position
     l.pos <- l.y # Create a vector of y axis coordinates
     lo <- which(l.y < 0) # Get the variables on the bottom half of the plot
@@ -700,7 +696,7 @@ legend("topleft", legend=unique(iris$Species), pch=as.numeric(unique(iris$Specie
     l.pos[4] <- "3"
     l.x[3:4] <- l.x[3:4]+0.75
         # Variable labels
-    text(l.x, l.y, labels=row.names(p$rotation), col=5, pos=l.pos, cex=1)
+    text(l.x, l.y, labels=row.names(p$rotation), col="purple", pos=l.pos, cex=0.75)
 
 ```
 
@@ -766,33 +762,30 @@ library(vegan)
 nMDS <- metaMDS(iris[,-5], distance = "bray", k = 2, trace=FALSE)
 ```
 
-``` {r sheptwo,  echo=TRUE, message=FALSE, comment="",fig.width=8., fig.cap="Shepard's plot of an nMDS ordination using 2 axes to represent the varespec data in the vegan package", , fig.alt="This figure shows two plots placed side by side. The left plot has x-axis labelled 'Observed Dissimilarity' that scales from 0.0 to 0.4 and a y-axis with label 'Ordination Distance' that scales from 0.0 to 0.8. The left plot shows a cluster of blue points that form a thickened line that trends upwards. The top of the plot also has text with label 'Non-metric fit, R^2^ = 0.999' and 'Linear fit, R^2^ = 0.995'. The right plot has x-axis labelled 'nMDS1' y-axis labelled 'nMDS2'.  The plot shows two clusters of points beside each other near the center of the plot. There are 4 arrows originating from the (0,0) point. From left to right, they are labeled 'Sepal.Width', 'Sepal.Length', 'Petal.Length' and 'Petal.Width'."}
+``` {r sheptwo,  echo=TRUE, message=FALSE, comment="",fig.width=8., fig.cap="Shepard's plot of an nMDS ordination using 2 axes to represent the varespec data in the vegan package", , fig.alt="This figure shows two plots, the left plot has x-axis labelled 'Observed Dissimilarity' and a y-axis labelled 'Ordination Distance', with a cluster of blue points that trends upwards described as 'Non-metric fit, R^2^ = 0.999' and 'Linear fit, R^2^ = 0.995'. The right plot has x-axis labelled 'nMDS1' and y-axis labelled 'nMDS2' with three clusters of points and 4 arrows originating from the center labelled (from left to right) 'Sepal.Width', 'Sepal.Length', 'Petal.Length' and 'Petal.Width'."}
 par(mfrow=c(1,2))
 # Plot the stressplot
 stressplot(nMDS, pch=16,l.col=NA, las=1)
 
 # Plot the ordination
-plot(nMDS$points, 
-     pch=as.numeric(iris$Species)+14,
-     col=as.numeric(iris$Species)+1,
+plot(nMDS$points, pch=16,col=as.numeric(iris$Species)+1,
      ylim=c(-.3,.3), xlim=c(-.6,.75),
      cex=0.7,
      xlab="nMDS1",
      ylab="nMDS2")
-legend("bottomleft", legend=unique(iris$Species), 
-       pch=as.numeric(unique(iris$Species))+14,col=c(2,3,4), bty="n", cex=1)
+legend("bottomleft", legend=unique(iris$Species), pch=16, col=c(2,3,4), bty="n", cex=0.6)
 
 # Get co-ordinates of variables, and multiply by scale
     l.x2 <- nMDS$species[-1,1]*1.25
     l.y2 <- nMDS$species[-1,2]*1.25
 
     # Draw arrows
-    arrows(x0=0, x1=l.x2, y0=0, y1=l.y2, col=5, length=0.1, lwd=2)
+    arrows(x0=0, x1=l.x2, y0=0, y1=l.y2, col="#64067F", length=0.1, lwd=1.5)
 
 # Variable labels
     l.x1 <- nMDS$species[,1]*1.25
     l.y1 <- nMDS$species[,2]*1.25
-    text(l.x1, l.y1, labels=row.names(nMDS$species), col=1, pos=3, cex=.8)
+    text(l.x1, l.y1, labels=row.names(nMDS$species), col="black", pos=3, cex=0.7)
 
 
 ```
@@ -824,7 +817,7 @@ str(PCoA)
 
 We'll plot the PCoA and the nMDS side by side to see if they differ, using the **par(mfrow())** functions. In this case, our species are the variables and our sites are the objects of our attention. For the nMDS it does not make sense to plot the species as vectors, as that implies directionality or increasing abundance, and there is no reason to assume that the abundance will increase linearly in a given direction across the nMDS plot. For this package, the "species score" is calculated as the weighted average of the site scores, where the weights are the abundance of that species at each site. If we look at the object PCoA we see the new 2D coordinates for each site ("points"). These are raw scores, but we can weight them using the in the same way as the nMDS using the **wascores()** function. We can plot the results as plot(PCoA$points). But, since this will be a crowded plot, let's use a vegan package function **ordipointlabel()** for both instead, which will use an optimization routine to produce the best plot
 
-```{r 2panelord, echo=TRUE, comment="", fig.width=8., fig.cap="Biplots of the lichen data for nMDS and PCoA ordinations", fig.alt="This figure shows two plots placed side by side. The right plot is titled 'PCoA', has x-axis labelled 'PCoA1'.  The left plot is titled 'nMDS', has x-axis labelled 'MDS1' and y-axis labelled 'MDS2'  Each plot contains 24 scattered numbers which represent the sites as well as 44 scattered red species names"}
+```{r 2panelord, echo=TRUE, comment="", fig.width=8., fig.cap="Biplots of the lichen data for nMDS and PCoA ordinations", fig.alt="This figure shows two plots, the right plot is titled 'PCoA', has x-axis labelled 'PCoA1' and the left plot is titled 'nMDS', has x-axis labelled 'MDS1' and y-axis labelled 'MDS2'. Each plot contains 24 scattered numbers which represent the sites as well as 44 scattered species names."}
 
 par(mfrow=c(1,2))
 ordipointlabel(nMDS, pch=c(NA,NA), cex=c(1.2, .6), xlim=c(-.6, 1.2))
@@ -852,7 +845,7 @@ Simple (or unconstrained) ordination is done on one data set, and we try to expl
 
 In contrast, constrained ordination associates two or more data sets in the ordination and explicitly explores the relationships between two matrices: a response matrix and an explanatory matrix (Fig \@ref(fig:ordreg)). Both matrices are used in the production of the ordination. In this method, we can formally test statistical hypotheses about the significance of these relationships. The constrained ordination axes correspond to the directions of the greatest variability of the data set that can be explained by the environmental variables
 
-```{r ordreg, fig.wdith=7,fig.cap="Diagram showing the differences between uncontrained ordination, multiple regression and constrained ordination (adapted from Legendre & Legendre 2012)", fig.alt="This figure shows three sets of diagrams.The top left of the figure has title 'Simple ordination:PCA/CA' and is represented by a box with label 'matrix Y' in the middle. The box has label 'Variables y1...yp' at the top and 'Objects 1 to n' on the left. The top right of the figure has title 'Multiple regression' and is represented by two boxes placed side by side and a double sided arrow that connects them. The left rectangle has text 'y' in the middle with label 'Variable y' at the top of the box and 'Objects 1 to n' on the left. The right triangle is labelled 'Matrix X' with 'Variables x1 ... xm' at the top. The bottom of the figure has title 'Ordination under constraint:RDA/CCA' and is represented by two boxes placed side by side and a double sided arrow that connects them. The left box has label 'matrix Y' in the middle of the box with 'Variables y1 ... yp' at the top and 'Objects 1 to n' to the left. The right box has label 'matrix X' at the center and 'Variables x1 ... xm' at the top."}
+```{r ordreg, fig.wdith=7,fig.cap="Diagram showing the differences between uncontrained ordination, multiple regression and constrained ordination (adapted from Legendre & Legendre 2012)", fig.alt="There are three figures all with the y-axis labelled 'Objects 1 to n'; 'Simple ordination:PCA/CA' has one rectangle named 'matrix Y' with x-axis labelled 'Vairables y1 ... yp'. 'Multiple regression' and 'Ordination under constraint: RDA/CCA' both have two retangles connected by a double arrow, the left ones named 'y' and 'matrix Y' with x-axis 'Variable y' and 'Variables y1 ... yp' respectively, and the right ones both named 'matrix X' with the x-axis 'Variables x1 ... xm'."}
 par(mar=c(0,0,0,0))
 plot(1,pch = '',ann=FALSE,frame.plot = FALSE,axes = FALSE,
      xlim = c(-36,36),ylim = c(-35,35))
@@ -949,7 +942,7 @@ data("varechem")
 Remember that the environmental data can be inspected using commands **str()** which shows the structure of any object in a compact form, and by asking for a summary of a data frame (e.g., str(varechem) or summary(varechem)). We can also plot the data to get a sense of how correlated the various predictors might be but it is very large for this much data (Fig. \@ref(fig:lichCOR))
 
 
-```{r lichCOR, echo=TRUE, fig.cap="Pairwise correlations between environmental variables in the varechem dataset, where variable name is listed on the diagonal. Chemical measurements are denoted by their chemical element names. 'Baresoil' gives the estimated cover of bare soil, 'Humdepth' provides the thickness of the humus layer and 'pH'.", fig.alt="Large plot matrix with pairwise correlations where individual point and overall trend lines are give."}
+```{r lichCOR, echo=TRUE, fig.cap="Correlations between environmental variables", fig.alt="This figure shows a plot of the varechem dataset containing chemical measurements. Displayed by their chemical element names as well as variables 'Baresoil' which gives the estimated cover of bare soil, 'Humdepth' which provides the thickenss of the humus layer and 'pH'."}
 plot(varechem, gap=0, panel=panel.smooth, cex.lab=1.2, lwd=2, pch=16, cex=.75, col=rgb(.5,.5,.7,.8))
 
 ```
@@ -1045,7 +1038,7 @@ If the constrained ordination is significant, we go on to display the results gr
 Plotting an biplot or triplot is not as simple as it sounds, as I mentioned above, one can choose various scaling conventions that will dramatically change the appearance and interpretation of the plot.  One of the editors of the vegan package, Gavin Simpson, has more to say about this [here](https://fromthebottomoftheheap.net/2015/10/08/user-friendly-scaling/). Essentially, there can be no scaling ("none"), or either the data object ("site") or characteristic ("species") scores are scaled by eigenvalues, and the other set of scores is left unscaled, or both scores are scaled symmetrically by square root of eigenvalues ("symmetric"). The general advice is to use scaling for "sites" where you want a biplot focussed on the sites/samples and the (dis)similarity between them in terms of the species (or variables), and use scaling for "species" where you want to best represent the correlations between species (or variables). I've plotted the "site" and "species" types below (Fig. \@ref(fig:triplotscale2)). Were you able to produce the same ordinations?
 
 
-```{r triplotscale2, echo=TRUE, comment="",fig.cap="Triplots of an RDA ordination on the lichen data with either site or species scaling using a basic plot command", fig.alt="Two plots each with with y-axis labelled 'RDA2' and x-axis labelled 'RDA1'. The plots contains the variable names of the 44 species in the varaspec dataset. There are three blue arrows that emerge from the point (0,0). One arrow points towards the top left of the plot and has label 'P'. Another arrow points towards the right and has label 'Fe'. The last arrow points slightly towards the bottom left of the plot and has label 'Mn'. There are 24 site numbers scaterred throughout the plots."}
+```{r triplotscale2, echo=TRUE, comment="",fig.cap="Triplots of an RDA ordination on the lichen data with either site or species scaling using a basic plot command", fig.alt="Two plots each with with y-axis labelled 'RDA2' and x-axis labelled 'RDA1' contains the variable names of the species in the varaspec dataset and site numbers respectively. There are three blue arrows that emerge from the center: pointing to the top labelled 'P', the right labelled 'Fe', and slightly towards the bottom left labelled 'Mn'."}
 
 par(mfrow=c(1,2))
 
@@ -1063,7 +1056,7 @@ Its pretty hard to see what is going on in these basic plots, so I am going to t
 
 
 
-```{r triplotscale3, echo=TRUE, comment="",fig.cap="Triplot of an RDA ordination on the lichen data with site scaling", fig.alt="A plot with y-axis labelled 'RDA2' and x-axis labelled 'RDA1'. The plot contains the variable names of the 44 species in the varaspec dataset. There are three blue arrows that emerge from the point (0,0). One arrow points towards the top left of the plot and has label 'P'. Another arrow points towards the right and has label 'Fe'. The last arrow points slightly towards the bottom left of the plot and has label 'Mn'. There are 24 site numbers scattered throughout the plots."}
+```{r triplotscale3, echo=TRUE, comment="",fig.cap="Triplot of an RDA ordination on the lichen data with site scaling", fig.alt="A plot with y-axis labelled 'RDA2' and x-axis labelled 'RDA1' contain the variable names of the species in the varaspec dataset and site numbers. There are three blue arrows that emerge from the center: pointing to the top labelled 'P', the right labelled 'Fe', and slightly towards the bottom left labelled 'Mn'."}
 
 par(mfrow=c(1,1))
 sp.scores=scores(optm, display="species", scaling=1)
@@ -1075,20 +1068,20 @@ plot(optm,scaling=1,type="n",main="Sites scaling (scaling=1)",
 arrows(x0=0,y0=0,sp.scores[,1], sp.scores[,2], length=0.05)
 text(sp.scores, row.names(sp.scores), col=2, cex=.6, pos=3)
 text(optm, display="bp", scaling=1,cex=.8,lwd=1.5,
-row.names(scores(optm, display="bp")), col=4)
+row.names(scores(optm, display="bp")), col="blue")
 text(optm,display=c("sites"),scaling=1, cex=1)
 
 ```
-```{r triplotscale4, echo=TRUE, comment="",fig.cap="Triplot of an RDA ordination on the lichen data with species scaling", fig.alt="A plot with y-axis labelled 'RDA2' and x-axis labelled 'RDA1'. The plot contains the variable names of the 44 species in the varaspec dataset. There are three blue arrows that emerge from the point (0,0). One arrow points towards the top left of the plot and has label 'P'. Another arrow points towards the right and has label 'Fe'. The last arrow points slightly towards the bottom left of the plot and has label 'Mn'. There are 24 site numbers scattered throughout the plots."}
+```{r triplotscale4, echo=TRUE, comment="",fig.cap="Triplot of an RDA ordination on the lichen data with species scaling", fig.alt="A plot with y-axis labelled 'RDA2' and x-axis labelled 'RDA1' contain the variable names of the species in the varaspec dataset and site numbers. There are three blue arrows that emerge from the center: pointing to the top labelled 'P', the right labelled 'Fe', and slightly towards the bottom left labelled 'Mn'."}
 
 
 plot(optm,scaling=2,type="n",main="Species scaling (scaling=2)",
      ylim=c(-.4,.4))
      
 arrows(x0=0,y0=0,sp.scores[,1], sp.scores[,2], length=0.05)
-text(sp.scores, row.names(sp.scores), col=2, cex=.7, pos=3)
-text(optm, display="bp", scaling=2,cex=.8,lwd=1.5,
-row.names(scores(optm, display="bp")), col=4)
+text(sp.scores, row.names(sp.scores), col=2, cex=.6, pos=3)
+text(optm, display="bp", scaling=2,cex=.7,lwd=1.5,
+row.names(scores(optm, display="bp")), col="blue")
 text(optm,display=c("sites"),scaling=2, cex=1)
 ```
 
@@ -1148,7 +1141,7 @@ round(sqrt(eu[11,4]),2)
 ```
 
 **Exercise  2\.** We use the **kmeans()** function with 4 clusters to find groups in the isotope data. We can then save the assigned clusters to our dataframe and plot in a similar way
-```{r kclust, echo=TRUE, fig.cap="K means clustering on Perkins et al (2014) data", fig.alt="This figure shows a plot of the Isotope dataset. The plot has x-axis with label 'δ13C' that scales from -35 to 0, and y-axis with label 'δ15N' that scales from -6 to 8. The right side of the plot contains two legends. The top right legend has label 'kcluster' and contains 4 circles of varying colors as symbols. The symbols from top to bottom have labels '1' with a black circle, '2', with a red circle, '3' with a green circle and '4' with a blue circle. The bottom right legend is labelled 'Species' and has symbols 'X' for 'Plant, circle for 'Aphid', plus sign for 'Hoverfly' and triangle for 'Diplazon. There is a cluster of black symbols of varying species where 'δ13C' is between -32 to -25 and 'δ15N' is between -6 to 8, blue symbols with varying species where 'δ13C' is between -23 to -20 and 'δ15N' is between 0 to 4, and red symbols with varying species where 'δ13C' is between -14 to -11 and 'δ15N' is between -3 to 5."}
+```{r kclust, echo=TRUE, fig.cap="K means clustering on Perkins et al (2014) data", fig.alt="This figure has x-axis labelled 'δ13C', y-axis labelled 'δ15N'and two legends, one as 'kcluster' which ranges from 1 to 4, and the second with 'Species' with categories 'Plant', 'Aphid', 'Hoverfly', and 'Diplazon' with varying symbols. Moving from left to right on the x-axis, '1' goes from bottom to top with all species, '4' is near midde with 'Diplazon' and 'Hoverfly', '2' is near the middle with all but 'Diplazon', and '3' is directly under with two 'Plant'."}
 
 # select 4 clusters and run the kmeans function
 kclust=kmeans(niso[,c("C", "N")], 4)
